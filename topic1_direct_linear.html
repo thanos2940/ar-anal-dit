@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 1 · Άμεσες Μέθοδοι &amp; Gauss-Jordan (Αναλυτικός Οδηγός Αρχαρίων)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--bdim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'O(n³)';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(88,166,255,.08);
+  pointer-events:none;font-weight:700;
+}
+.cb{background:#060a10;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;margin:12px 0;overflow-x:auto}
+.kw{color:var(--blue);font-weight:600}
+.fn{color:var(--yellow);font-weight:600}
+.st{color:var(--orange)}
+.cm{color:var(--dim);font-style:italic}
+.nm{color:var(--purple)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 8px;margin-left:6px}
+.step-box{background:var(--surf2);border-left:4px solid var(--blue);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue);margin-bottom:6px;font-size:0.95rem}
+.matrix-demo{background:#060a10;border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;margin:12px 0;text-align:center;line-height:1.8;color:var(--cyan)}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script src="data/flashcards.js" defer></script>
+<script src="js/flashcards.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · TOPIC 01</div>
+  <h1>Άμεσες Μέθοδοι &amp; <em>Gauss-Jordan</em></h1>
+  <p>Πλήρης, αναλυτικός οδηγός για αρχάριους: Απαλοιφή Gauss βήμα-βήμα, Μερική Οδήγηση (Partial Pivoting) με παραδείγματα, Gauss-Jordan για $A^{-1}$ και η Άλγεβρα Μετασχηματισμών Πολυπλοκότητας.</p>
+  <div class="chips">
+    <span class="chip">Gauss-Jordan</span>
+    <span class="chip">Partial Pivoting</span>
+    <span class="chip">Matrix Inversion</span>
+    <span class="chip">O(n³) Complexity</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#essence">🎯 Η Ουσία</a>
+  <a href="#gauss_elim">1. Απαλοιφή Gauss</a>
+  <a href="#pivoting">2. Μερική Οδήγηση</a>
+  <a href="#jordan">3. Μέθοδος Gauss-Jordan</a>
+  <a href="#complexity">4. Πολυπλοκότητα &amp; Μετασχηματισμοί</a>
+  <a href="#flashcards">🗂️ Flashcards</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ΠΡΟΑΠΑΙΤΟΥΜΕΝΟ ΥΠΟΒΑΘΡΟ · STEP 0</div>
+      <div class="prereq-title">Ξεκινάς τώρα με την Απαλοιφή Gauss και τους Πίνακες;</div>
+      <p class="prereq-text">
+        Αν έχεις αμφιβολία για την ανατομία των πινάκων ($m \times n$, γραμμές $\times$ στήλες), τον υπολογισμό του πολλαπλασιαστή $m_{ik} = a_{ik}/a_{kk}$ ή θέλεις να αποφύγεις την κλασική παγίδα προσήμου στις γραμμοπράξεις ($R_i \leftarrow R_i - m R_k$), δες πρώτα τα θεμέλια.
+      </p>
+      <a href="prerequisites.html#sec-matrices" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν: Πίνακες &amp; Γραμμοπράξεις &rarr;</a>
+    </div>
+  </div>
+
+<!-- 🎯 ESSENCE SECTION -->
+<section id="essence">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🎯</div>
+    <h2>Η Ουσία σε 60 δευτερόλεπτα</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΤΙ ΚΑΝΕΙ</div>
+    Οι άμεσες μέθοδοι επιλύουν γραμμικά συστήματα $Ax = b$ σε πεπερασμένο πλήθος αλγεβρικών πράξεων. Μετασχηματίζουν τον πίνακα συντελεστών $A$ σε άνω τριγωνικό (Gauss) ή σε μοναδιαίο πίνακα $I$ (Gauss-Jordan) μέσω στοιχειωδών γραμμοπράξεων.
+  </div>
+
+  <p style="margin-bottom:14px">
+    <strong>💡 Διαίσθηση για Αρχάριους:</strong> Σκέψου τις στοιχειώδεις γραμμοπράξεις σαν εξάλειψη αγνώστων ένα-ένα από το σύστημα εξισώσεων, όπως στη σχολική άλγεβρα: παίρνεις την 1η εξίσωση, την πολλαπλασιάζεις με κατάλληλο αριθμό (πολλαπλασιαστή) και την αφαιρείς από τις επόμενες ώστε να "εξαφανιστεί" ο άγνωστος $x_1$!
+  </p>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">✅ Δουλεύει καλά όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Ο πίνακας $A$ είναι μη ιδιάζων ($\det(A) \neq 0$).</li>
+        <li>Εφαρμόζεται μερική οδήγηση (Partial Pivoting) για αριθμητική σταθερότητα.</li>
+        <li>Το μέγεθος $n$ είναι μικρό έως μεσαίο ($n \le 1000$).</li>
+      </ul>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">❌ Αποτυγχάνει όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Το διαγώνιο/οδηγό στοιχείο είναι $0$ ή πολύ κοντά στο μηδέν (χωρίς οδήγηση).</li>
+        <li>Ο πίνακας είναι κακώς ορισμένος (μεγάλος δείκτης συνθήκης $\text{cond}(A) \gg 1$).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-icon">📝</div>
+    <div class="tip-text">
+      <strong>Για τις εξετάσεις θυμήσου:</strong>
+      <ol style="margin:4px 0 0 18px;padding:0">
+        <li>Η επίλυση συστήματος κοστίζει $\frac{1}{3}n^3$ με Gauss και $\frac{1}{2}n^3$ με Jordan. Ο <strong>αντίστροφος</strong> κοστίζει $\frac{4}{3}n^3$ με Gauss και $\frac{3}{2}n^3$ με Jordan.</li>
+        <li><strong>Μερική Οδήγηση (Pivot Selection):</strong> Στο βήμα $k$, ψάχνουμε στην κολώνα $k$ από τη διαγώνιο και κάτω ($i = k, \dots, n$) το element με τη μέγιστη απόλυτη τιμή $|a_{ik}|$ και κάνουμε εναλλαγή γραμμών!</li>
+        <li><strong>SOS Θέμα Μετασχηματισμού:</strong> Ποτέ μην υπολογίζεις αντιστρόφους $A^{-1}$ αν μπορείς να πολλαπλασιάσεις ολόκληρη την εξίσωση από αριστερά με $A$! Π.χ. $(A^{-1}C + BD^{-1})x = A^{-1}b \implies (C + ABD^{-1})x = b$.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic1" data-section="essence"></div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="gauss_elim">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--bdim)">1️⃣</div>
+    <h2>1. Απαλοιφή Gauss (Gauss Elimination) — Βήμα-βήμα</h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Η μέθοδος απαλοιφής Gauss αποτελείται από δύο κύριες φάσεις: την <strong>Εμπρός Απαλοιφή (Forward Elimination)</strong> που μετατρέπει τον επαυξημένο πίνακα $[A|b]$ σε άνω τριγωνικό $[U|y]$, και την <strong>Πίσω Αντικατάσταση (Back Substitution)</strong> που υπολογίζει τις τιμές των αγνώστων.
+  </p>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Πολλαπλασιαστής Απαλοιφής ($m_{ik}$)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Ο συντελεστής $m_{ik} = \frac{a_{ik}^{(k)}}{a_{kk}^{(k)}}$ είναι ο αριθμός με τον οποίο πολλαπλασιάζουμε την «οδηγό» γραμμή $k$, ώστε όταν την αφαιρέσουμε από τη γραμμή $i$ ($R_i \leftarrow R_i - m_{ik}R_k$), το στοιχείο κάτω από τη διαγώνιο να γίνει ακριβώς μηδέν ($a_{ik} - m_{ik}a_{kk} = 0$).</p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> Είναι η καρδιά της απαλοιφής Gauss. <strong>Προσοχή στο Πρόσημο:</strong> Αν το στοιχείο που θες να μηδενίσεις είναι αρνητικό (π.χ. $a_{21} = -4$ και οδηγός $a_{11} = 2$), ο πολλαπλασιαστής είναι $m_{21} = \frac{-4}{2} = -2$. Η γραμμοπράξη είναι $R_2 - (-2)R_1 = R_2 + 2R_1$. Το 80% των λαθών στα πρόχειρα γίνεται επειδή οι φοιτητές ξεχνούν το διπλό μείον!</p>
+    </div>
+  </details>
+
+  <div class="step-box">
+    <div class="step-title">Βήμα 1: Υπολογισμός Πολλαπλασιαστών $m_{ik}$</div>
+    <p style="margin:4px 0;font-size:0.9rem">
+      Για τη στήλη $k$, θέλουμε να μηδενίσουμε όλα τα στοιχεία κάτω από τη διαγώνιο $a_{kk}$. Για κάθε γραμμή $i = k+1, \dots, n$, ο πολλαπλασιαστής είναι:
+    </p>
+    $$m_{ik} = \frac{a_{ik}^{(k)}}{a_{kk}^{(k)}}$$
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Βήμα 2: Ενημέρωση Γραμμών (Γραμμοπράξεις)</div>
+    <p style="margin:4px 0;font-size:0.9rem">
+      Αφαιρούμε από τη γραμμή $i$ το $m_{ik}$ πολλαπλάσιο της οδηγού γραμμής $k$:
+    </p>
+    $$\text{Γραμμή}_i \leftarrow \text{Γραμμή}_i - m_{ik} \cdot \text{Γραμμή}_k$$
+    $$a_{ij}^{(k+1)} = a_{ij}^{(k)} - m_{ik} a_{kj}^{(k)}, \quad b_i^{(k+1)} = b_i^{(k)} - m_{ik} b_k^{(k)}$$
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Βήμα 3: Πίσω Αντικατάσταση (Back Substitution)</div>
+    <p style="margin:4px 0;font-size:0.9rem">
+      Όταν ο πίνακας γινεί άνω τριγωνικός $U$, ξεκινάμε από την τελευταία εξίσωση και υπολογίζουμε προς τα πάνω:
+    </p>
+    $$x_n = \frac{y_n}{u_{nn}}, \quad x_i = \frac{y_i - \sum_{j=i+1}^n u_{ij} x_j}{u_{ii}}, \quad i = n-1, n-2, \dots, 1$$
+  </div>
+
+  <!-- Concrete Numerical Example -->
+  <div class="card" style="border-left:4px solid var(--green)">
+    <h4 style="color:var(--green);margin-top:0">🔍 Πλήρες Αριθμητικό Παράδειγμα Gauss για Αρχάριους</h4>
+    <p>Έστω το σύστημα:</p>
+    $$\begin{cases} 2x_1 + x_2 - x_3 = 8 \\ 4x_1 + 3x_2 + x_3 = 19 \\ -2x_1 + x_2 + 2x_3 = -3 \end{cases} \implies [A \mid b] = \begin{bmatrix} 2 & 1 & -1 & \mid & 8 \\ 4 & 3 & 1 & \mid & 19 \\ -2 & 1 & 2 & \mid & -3 \end{bmatrix}$$
+    
+    <p><strong>1ο Βήμα ($k=1$, οδηγός $a_{11}=2$):</strong></p>
+    <ul>
+      <li>$m_{21} = \frac{4}{2} = 2 \implies R_2 \leftarrow R_2 - 2 R_1 = [0, 1, 3 \mid 3]$</li>
+      <li>$m_{31} = \frac{-2}{2} = -1 \implies R_3 \leftarrow R_3 - (-1) R_1 = [0, 2, 1 \mid 5]$</li>
+    </ul>
+    <p>Νέος πίνακας:</p>
+    $$\begin{bmatrix} 2 & 1 & -1 & \mid & 8 \\ 0 & 1 & 3 & \mid & 3 \\ 0 & 2 & 1 & \mid & 5 \end{bmatrix}$$
+
+    <p><strong>2ο Βήμα ($k=2$, οδηγός $a_{22}=1$):</strong></p>
+    <ul>
+      <li>$m_{32} = \frac{2}{1} = 2 \implies R_3 \leftarrow R_3 - 2 R_2 = [0, 0, -5 \mid -1]$</li>
+    </ul>
+    <p>Άνω τριγωνικός πίνακας $U$:</p>
+    $$\begin{bmatrix} 2 & 1 & -1 & \mid & 8 \\ 0 & 1 & 3 & \mid & 3 \\ 0 & 0 & -5 & \mid & -1 \end{bmatrix}$$
+
+    <p><strong>Πίσω Αντικατάσταση:</strong></p>
+    <ul>
+      <li>$-5 x_3 = -1 \implies x_3 = 0.2$</li>
+      <li>$x_2 + 3(0.2) = 3 \implies x_2 = 2.4$</li>
+      <li>$2x_1 + 2.4 - 0.2 = 8 \implies 2x_1 = 5.8 \implies x_1 = 2.9$</li>
+    </ul>
+  </div>
+
+  <div class="student-trap">
+    <div class="student-trap-header">
+      <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ ΕΞΕΤΑΣΕΩΝ</span>
+      <span class="student-trap-scope">ΘΕΜΑ 1.2 · ΠΡΟΣΗΜΟ ΠΟΛΛΑΠΛΑΣΙΑΣΤΗ</span>
+    </div>
+    <div class="student-trap-title">Το κλασικό λάθος στο πρόσημο του πολλαπλασιαστή $m_{ik}$</div>
+    <div class="student-trap-body">
+      <div class="student-trap-comparison">
+        <div class="student-trap-wrong">
+          <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+          <p>Όταν $a_{21} = -4$ και οδηγός $a_{11} = 2$, ο φοιτητής υπολογίζει $m_{21} = -2$ αλλά μετά γράφει $R_2 - 2R_1$, διπλασιάζοντας το λάθος ($(-4) - 4 = -8 \ne 0$).</p>
+        </div>
+        <div class="student-trap-right">
+          <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+          <p>Ο τύπος είναι $R_i \leftarrow R_i - m_{ik}R_k$. Όταν $m_{ik} < 0$, το μείον με μείον γίνεται συν: $R_2 \leftarrow R_2 - (-2)R_1 = R_2 + 2R_1$. Έλεγχος: $-4 + 2(2) = 0$ ✅!</p>
+        </div>
+      </div>
+      <div class="student-trap-takeaway">
+        <strong>💡 Κανόνας:</strong> Πριν προχωρήσεις στην επόμενη στήλη, κάνε πάντα έλεγχο ότι το στοιχείο κάτω από τον οδηγό μηδενίστηκε πραγματικά!
+      </div>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic1" data-section="gauss_elim"></div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="pivoting">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--ydim)">🎯</div>
+    <h2>2. Μερική Οδήγηση (Partial Pivoting) <span class="exam-badge">Θέμα 1.2</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Όταν το οδηγό στοιχείο $a_{kk}^{(k)}$ είναι μηδέν ($0$) ή πολύ μικρό κατ' απόλυτη τιμή, η διαίρεση $m_{ik} = a_{ik}/a_{kk}$ προκαλεί διαίρεση δια μηδενός ή τεράστιο σφάλμα στρογγυλοποίησης.
+  </p>
+
+  <div class="recognition-formula">
+    <div class="recognition-header">
+      <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+      <span class="recognition-topic">ΘΕΜΑ 1.2 · ΕΥΡΕΣΗ ΟΔΗΓΟΥ</span>
+    </div>
+    <div class="recognition-title">Μηχανική Αναζήτηση Οδηγού στη Στήλη $k$</div>
+    <div class="recognition-trigger">
+      <div class="recognition-lbl">🔍 Πού και πώς ψάχνεις</div>
+      <p>Στο βήμα $k$, κοιτάς <strong>αποκλειστικά</strong> την $k$-οστή στήλη, <strong>από τη γραμμή $k$ και κάτω</strong>. Βρίσκεις το $\max_{k \le i \le n} |a_{ik}|$.</p>
+    </div>
+    <div class="recognition-recipe">
+      <div class="recognition-lbl">📋 Τα 3 Βήματα</div>
+      <ol class="recognition-steps">
+        <li><strong>Σύγκριση απολύτων τιμών:</strong> Υπολόγισε $|a_{kk}|, |a_{k+1,k}|, \dots, |a_{nk}|$ (αγνοώντας τα πρόσημα).</li>
+        <li><strong>Επιλογή μέγιστου:</strong> Βρες σε ποια γραμμή $r \ge k$ βρίσκεται το μέγιστο.</li>
+        <li><strong>Πλήρης εναλλαγή:</strong> Αντάλλαξε <strong>ολόκληρη</strong> τη γραμμή $R_k \longleftrightarrow R_r$ σε όλο το πλάτος (συμπεριλαμβανομένου του δεξιού μέλους $b$ ή του ταυτοτικού $I$).</li>
+      </ol>
+    </div>
+    <div class="key-formula-box">
+      <div class="key-formula-lbl">🔑 ΣΥΝΘΗΚΗ ΜΕΡΙΚΗΣ ΟΔΗΓΗΣΗΣ</div>
+      <div class="key-formula-math">
+        $$|a_{rk}| = \max_{k \le i \le n} |a_{ik}| \implies R_k \longleftrightarrow R_r$$
+      </div>
+    </div>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Μερική Οδήγηση (Partial Pivoting)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Στο βήμα $k$, κοιτάμε <strong>αποκλειστικά</strong> την τρέχουσα στήλη $k$, από το διαγώνιο στοιχείο και προς τα κάτω ($i = k, \dots, n$), βρίσκουμε το στοιχείο με τη μεγαλύτερη απόλυτη τιμή $|a_{ik}|$ και αλλάζουμε θέσεις στις δύο αντίστοιχες ολόκληρες γραμμές ($R_k \leftrightarrow R_{\text{max}}$).</p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> Αν ο οδηγός είναι $0$, η διαίρεση είναι αδύνατη. Αν είναι πολύ κοντά στο $0$ (π.χ. $0.0001$), ο πολλαπλασιαστής εκτοξεύεται στο $10.000$, καταστρέφοντας τα δεκαδικά ψηφία λόγω στρογγυλοποίησης. <strong>SOS Παγίδα Εξετάσεων:</strong> Ψάχνεις για το μέγιστο ΜΟΝΟ στην ίδια στήλη από τη διαγώνιο και κάτω — ΠΟΤΕ σε όλο τον πίνακα και ΠΟΤΕ στις προηγούμενες γραμμές που έχουν ήδη τακτοποιηθεί!</p>
+    </div>
+  </details>
+
+  <div class="wbox">
+    <strong style="color:var(--yellow)">💡 Γιατί χρειάζεται η Μερική Οδήγηση (Σε απλά ελληνικά):</strong><br>
+    Αν διαιρέσεις με το $0.0001$, ο πολλαπλασιαστής γινεται $10000$! Πολλαπλασιάζοντας μια γραμμή με το $10000$, το παραμικρό σφάλμα δεκαδικών διογκώνεται κατά $10.000$ φορές και καταστρέφει το αποτέλεσμα! Για να το αποτρέψουμε, διαλέγουμε πάντα το μεγαλύτερο διαθέσιμο αριθμό στη στήλη ως οδηγό.
+  </div>
+
+  <div class="ibox">
+    <strong>Παράδειγμα Εξέτασης (Θέμα 1.2):</strong><br>
+    Δίνεται το σύστημα:<br>
+    $$\begin{cases} x_1 + 2x_2 - x_3 = -6 \\ \tau x_1 - x_2 + x_3 = \tau+5 \\ 3x_1 + 2x_3 = 9 \end{cases} \implies A = \begin{bmatrix} 1 & 2 & -1 \\ \tau & -1 & 1 \\ 3 & 0 & 2 \end{bmatrix}$$
+    <strong>1ο Βήμα ($k=1$):</strong> Εξετάζουμε την 1η στήλη: $|1|, |\tau|, |3|$. Αν $\tau < 3$, το μεγαλύτερο στοιχείο είναι το $3$ στην 3η γραμμή. Άρα κάνουμε ανταλλαγή γραμμών $R_1 \leftrightarrow R_3$!<br>
+    Ο νέος οδηγός είναι το $3$, και οι νέες γραμμές είναι $R_1' = [3, 0, 2 \mid 9]$ και $R_3' = [1, 2, -1 \mid -6]$.
+  </div>
+
+  <div class="section-quiz" data-topic="topic1" data-section="pivoting"></div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="jordan">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">🔄</div>
+    <h2>3. Μέθοδος Gauss-Jordan &amp; Υπολογισμός $A^{-1}$ <span class="exam-badge">Θέμα 1.2α</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Η μέθοδος Gauss-Jordan μηδενίζει στοιχεία <strong>και πάνω και κάτω</strong> από τη διαγώνιο. Μετατρέπει τον επαυξημένο πίνακα $[A | I]$ στον πίνακα $[I | A^{-1}]$.
+  </p>
+
+  <div class="card">
+    <h4 style="color:var(--cyan);margin-top:0">🔍 Βήματα Υπολογισμού Αντιστρόφου $A^{-1}$</h4>
+    <ol>
+      <li>Γράφουμε δίπλα-δίπλα τον πίνακα $A$ και τον μοναδιαίο $I$: $[A \mid I]$.</li>
+      <li>Για κάθε στήλη $k=1, \dots, n$:
+        <ul>
+          <li>Επιλέγουμε οδηγό με μερική οδήγηση (αν χρειάζεται).</li>
+          <li>Διαιρούμε ολόκληρη τη γραμμή $k$ με το $a_{kk}$ ώστε το διαγώνιο στοιχείο να γίνει $1$.</li>
+          <li>Αφαιρούμε κατάλληλα πολλαπλάσια της γραμμής $k$ από <strong>ΟΛΕΣ τις άλλες γραμμές</strong> (και τις πάνω και τις κάτω) ώστε να μηδενιστούν όλα τα άλλα στοιχεία της στήλης $k$.</li>
+        </ul>
+      </li>
+      <li>Όταν το αριστερό τμήμα γινεί $I$, το δεξί τμήμα είναι ακριβώς ο $A^{-1}$!</li>
+    </ol>
+  </div>
+
+  <div class="section-quiz" data-topic="topic1" data-section="jordan"></div>
+</section>
+
+<!-- SECTION 4 -->
+<section id="complexity">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">⚡</div>
+    <h2>4. Πολυπλοκότητα &amp; Μετασχηματισμοί Συστήματος <span class="exam-badge">Θέμα 1.3 - SOS</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Στις εξετάσεις ζητείται συχνά ο υπολογισμός της υπολογιστικής πολυπλοκότητας ενός γραμμικού συστήματος και ο μετασχηματισμός του για τη βελτιστοποίηση των πράξεων.
+  </p>
+
+  <table class="vtbl" style="width:100%;margin:16px 0;border-collapse:collapse">
+    <thead>
+      <tr style="background:var(--surf2);color:var(--txt)">
+        <th style="padding:10px;text-align:left">Διεργασία / Μέθοδος</th>
+        <th style="padding:10px;text-align:left">Πολλαπλασιασμοί / Διαιρέσεις</th>
+        <th style="padding:10px;text-align:left">Τάξη Μεγέθους</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Απαλοιφή Gauss ($Ax = b$)</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">$\frac{n^3}{3} + n^2 - \frac{n}{3}$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--green)">$\frac{1}{3}n^3 \approx O(n^3)$</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Απαλοιφή Gauss-Jordan ($Ax = b$)</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">$\frac{n^3}{2} + n^2$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--yellow)">$\frac{1}{2}n^3 \approx O(n^3)$</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Υπολογισμός Αντιστρόφου $A^{-1}$ (Gauss)</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">$\frac{4n^3}{3}$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--orange)">$\frac{4}{3}n^3$</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Υπολογισμός Αντιστρόφου $A^{-1}$ (Jordan)</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">$\frac{3n^3}{2}$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--orange)">$\frac{3}{2}n^3$</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Πολλαπλασιασμός Πινάκων $A \cdot B$ ($n \times n$)</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">$n^3$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--purple)">$O(n^3)$</td>
+      </tr>
+      <tr>
+        <td style="padding:10px">Πίνακας × <strong>διάνυσμα</strong> (ο αντίστροφος ήδη γνωστός)</td>
+        <td style="padding:10px">$n^2$</td>
+        <td style="padding:10px;color:var(--dim)"><strong>αμελητέο</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="wbox">
+    <div class="lbl" style="color:var(--yellow)">⚠️ Ποια μέθοδο ζητάει η άσκηση;</div>
+    Οι σταθερές <strong>δεν</strong> είναι ίδιες. Διάβασε προσεκτικά αν λέει «με τη μέθοδο απαλοιφής του
+    <em>Gauss</em>» ή «του <em>Jordan</em>» — αλλιώς χάνεις μονάδες παρότι η μέθοδος είναι σωστή.
+  </div>
+
+  <div class="rbox">
+    <div class="lbl" style="color:var(--red)">🎯 SOS Τεχνική Βελτιστοποίησης Πολυπλοκότητας (Θέμα 1.3)</div>
+    Δίνεται το σύστημα $(A^{-1}C + BD^{-1})x = A^{-1}b$, με απαλοιφή <strong>Jordan</strong>.
+
+    <p style="margin:10px 0 4px"><strong>1) Χρέωσε την αρχική μορφή, όρο-όρο:</strong></p>
+    <ul style="padding-left:1.5rem;line-height:1.8;margin:0">
+      <li>$A^{-1}C$ : $\frac{3n^3}{2}$ (αντίστροφος) $+\; n^3$ (γινόμενο)</li>
+      <li>$BD^{-1}$ : $\frac{3n^3}{2}$ (αντίστροφος) $+\; n^3$ (γινόμενο)</li>
+      <li>$A^{-1}b$ : $n^2$ — <strong>αμελητέο</strong>, ο $A^{-1}$ έχει ήδη υπολογιστεί</li>
+      <li>Τελική επίλυση: $\frac{n^3}{2}$</li>
+    </ul>
+    $$\text{Σύνολο} = 5n^3 + \frac{n^3}{2} = \frac{11n^3}{2}$$
+
+    <p style="margin:10px 0 4px"><strong>2) Μετασχηματισμός</strong> — πολλαπλασιάζουμε από αριστερά με $A$, ώστε να <em>εξαφανιστεί</em> ο $A^{-1}$:</p>
+    $$A(A^{-1}C + BD^{-1})x = A A^{-1} b \implies (C + ABD^{-1})x = b$$
+
+    <p style="margin:10px 0 4px"><strong>3) Ξαναχρέωσε:</strong></p>
+    <ul style="padding-left:1.5rem;line-height:1.8;margin:0">
+      <li>$ABD^{-1}$ : $n^3$ ($A\!\cdot\!B$) $+\; \frac{3n^3}{2}$ ($D^{-1}$) $+\; n^3$ ($(AB)\!\cdot\!D^{-1}$) $= \frac{7n^3}{2}$</li>
+      <li>Επίλυση: $\frac{n^3}{2}$</li>
+    </ul>
+    $$\text{Σύνολο} = \frac{8n^3}{2} = 4n^3$$
+
+    <p style="margin:10px 0 0">
+      <strong>Μειώσαμε από $\frac{11n^3}{2}$ σε $4n^3$.</strong> Ο κανόνας σε μία γραμμή:
+      <em>κάθε αντίστροφος που εξαφανίζεται γλιτώνει $\frac{3n^3}{2}$</em> — ψάξε τον πολλαπλασιαστή
+      που σβήνει τους περισσότερους και αφήνει δεξιά σκέτο $b$.
+    </p>
+  </div>
+
+  <div class="section-quiz" data-topic="topic1" data-section="complexity"></div>
+</section>
+
+
+<section id="flashcards">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">🗂️</div>
+    <h2>Flashcards — Gauss &amp; Jordan</h2>
+  </div>
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάρτες θεωρίας για γρήγορη επανάληψη. Κάνε κλικ σε μια κάρτα για να τη γυρίσεις,
+    ή πάτησε «Υπόδειξη» αν κολλήσεις. Για τεστ σε όλα τα κεφάλαια δες τη
+    <a href="flashcards.html">σελίδα Flashcards</a>.
+  </p>
+  <div data-fc-deck="topic1"></div>
+</section>
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>

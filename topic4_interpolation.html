@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 4 · Παρεμβολή Newton &amp; Διηρημένες Διαφορές (Οδηγός Αρχαρίων)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--cdim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'P_n(x)';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(57,212,200,.08);
+  pointer-events:none;font-weight:700;
+}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 8px;margin-left:6px}
+.step-box{background:var(--surf2);border-left:4px solid var(--cyan);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--cyan);margin-bottom:6px;font-size:0.95rem}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script src="data/flashcards.js" defer></script>
+<script src="js/flashcards.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · TOPIC 04</div>
+  <h1>Παρεμβολή Newton &amp; <em>Διηρημένες Διαφορές</em></h1>
+  <p>Πλήρης οδηγός για αρχάριους: Κατασκευή πίνακα Διηρημένων Διαφορών βήμα-βήμα, σχηματισμός Πολυωνύμου Newton &amp; Αιτιολόγηση Σφάλματος.</p>
+  <div class="chips">
+    <span class="chip">Newton Interpolation</span>
+    <span class="chip">Divided Differences</span>
+    <span class="chip">Error Bound</span>
+    <span class="chip">Lagrange</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#essence">🎯 Η Ουσία</a>
+  <a href="#divided_diff">1. Διηρημένες Διαφορές</a>
+  <a href="#stepbystep">2. Βήμα-βήμα Λύση Θέματος 2.1</a>
+  <a href="#error_analysis">3. Θεωρία &amp; Εκτίμηση Σφάλματος</a>
+  <a href="#flashcards">🗂️ Flashcards</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ΠΡΟΑΠΑΙΤΟΥΜΕΝΟ ΥΠΟΒΑΘΡΟ · STEP 0</div>
+      <div class="prereq-title">Προαπαιτούμενα για την Παρεμβολή Newton &amp; Διηρημένες Διαφορές</div>
+      <p class="prereq-text">
+        Η κατασκευή του πίνακα διηρημένων διαφορών και ο σχηματισμός του $P_n(x)$ απαιτούν προσεκτική διαχείριση αρνητικών προσήμων στους παρονομαστές $(x_i - x_{i-k})$ και σαφή κατανόηση του σφάλματος αποκοπής.
+      </p>
+      <a href="prerequisites.html#sec-row-ops" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν: Αριθμητική Προσήμων &amp; Σφάλμα &rarr;</a>
+    </div>
+  </div>
+
+<!-- 🎯 ESSENCE SECTION -->
+<section id="essence">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🎯</div>
+    <h2>Η Ουσία σε 60 δευτερόλεπτα</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΤΙ ΚΑΝΕΙ</div>
+    Η παρεμβολή υπολογίζει ένα πολυώνυμο $P_n(x)$ βαθμού το πολύ $n$ το οποίο διέρχεται ακριβώς από $n+1$ δοσμένα σημεία $(x_0, f_0), (x_1, f_1), \dots, (x_n, f_n)$. Επιτρέπει τον υπολογισμό προσεγγιστικών τιμών της $f(x)$ σε ενδιάμεσα σημεία.
+  </div>
+
+  <p style="margin-bottom:14px">
+    <strong>💡 Διαίσθηση για Αρχάριους:</strong> Φαντάσου ότι συνδέεις μια σειρά από κουκκίδες με μια ομαλή καμπύλη πολυωνύμου!
+  </p>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">✅ Δουλεύει καλά όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Τα σημεία παρεμβολής είναι διακριτά μεταξύ τους ($x_i \neq x_j$).</li>
+        <li>Προσθέτουμε νέα σημεία (η μέθοδος Newton επιτρέπει την προσθήκη νέων σημείων χωρίς επανυπολογισμό των προηγούμενων όρων!).</li>
+      </ul>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">❌ Αποτυγχάνει όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Ο βαθμός του πολυωνύμου είναι πολύ μεγάλος (φαινόμενο Runge στις άκρες του διαστήματος).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic4" data-section="essence"></div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="divided_diff">
+  <div id="divided-diff"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">📊</div>
+    <h2>1. Πίνακας Διηρημένων Διαφορών <span class="exam-badge">Θέμα 2.1</span></h2>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Τύπος Διηρημένης Διαφοράς k-τάξης:</div>
+    $$f[x_i, \dots, x_{i+k}] = \frac{f[x_{i+1}, \dots, x_{i+k}] - f[x_i, \dots, x_{i+k-1}]}{x_{i+k} - x_i}$$
+    <p style="margin:4px 0;font-size:0.9rem">
+      Στον παρανομαστή αφαιρούμε πάντα το <strong>τελευταίο</strong> $x$ με το <strong>πρώτο</strong> $x$ της παρένθεσης!
+    </p>
+  </div>
+
+  <div class="recognition-formula">
+    <div class="recognition-header">
+      <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+      <span class="recognition-topic">ΘΕΜΑ 2.1 · ΠΑΡΕΜΒΟΛΗ NEWTON</span>
+    </div>
+    <div class="recognition-title">Μηχανική Κατασκευή Πολυωνύμου Παρεμβολής Newton</div>
+    <div class="recognition-trigger">
+      <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+      <p>Δίνεται πίνακας σημείων $(x_i, f_i)$ και ζητείται πολυώνυμο παρεμβολής με την «πλέον αποτελεσματική μέθοδο», σφάλμα και επέκταση σε όλα τα σημεία.</p>
+    </div>
+    <div class="recognition-recipe">
+      <div class="recognition-lbl">📋 Τα 3 Βήματα</div>
+      <ol class="recognition-steps">
+        <li><strong>Έλεγχος αποστάσεων (SOS):</strong> Έλεγξε αν $x_{i+1} - x_i = h$ σταθερό. Αν όχι $\implies$ Διηρημένες Διαφορές!</li>
+        <li><strong>Πίνακας Διηρημένων:</strong> Υπολόγισε τις διαφορές. Η <strong>πάνω διαγώνιος</strong> δίνει τους συντελεστές $c_0, c_1, \dots, c_n$.</li>
+        <li><strong>Επέκταση:</strong> Για το πολυώνυμο σε όλα τα σημεία, προσθέτεις <strong>μόνο τον επόμενο όρο</strong>: $P_{k+1}(x) = P_k(x) + c_{k+1}\prod_{i=0}^k (x - x_i)$. Ποτέ από την αρχή!</li>
+      </ol>
+    </div>
+    <div class="key-formula-box">
+      <div class="key-formula-lbl">🔑 ΤΥΠΟΣ ΔΙΗΡΗΜΕΝΩΝ ΔΙΑΦΟΡΩΝ NEWTON</div>
+      <div class="key-formula-math">
+        $$P_n(x) = f[x_0] + \sum_{k=1}^n f[x_0,\dots,x_k] \prod_{j=0}^{k-1} (x - x_j)$$
+      </div>
+    </div>
+  </div>
+
+  <div class="student-trap">
+    <div class="student-trap-header">
+      <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ ΕΞΕΤΑΣΕΩΝ</span>
+      <span class="student-trap-scope">ΘΕΜΑ 2.1 · ΕΛΕΓΧΟΣ ΙΣΑΠΕΧΟΝΤΩΝ ΣΗΜΕΙΩΝ</span>
+    </div>
+    <div class="student-trap-title">Μην αρχίζεις ποτέ εμπρός διαφορές χωρίς έλεγχο ισαπεχόντων!</div>
+    <div class="student-trap-body">
+      <div class="student-trap-comparison">
+        <div class="student-trap-wrong">
+          <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+          <p>Βλέπει σημεία $x = -2, -1, 1, 3$ και γράφει κατευθείαν εμπρός διαφορές με $\Delta f_0$, υποθέτοντας λανθασμένα ότι ισαπέχουν επειδή είναι ακέραιοι.</p>
+        </div>
+        <div class="student-trap-right">
+          <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+          <p>Γράφεις ρητά τον έλεγχο: $x_1 - x_0 = 1 \ne x_2 - x_1 = 2$. Τα σημεία <strong>δεν ισαπέχουν</strong>, άρα η «πλέον αποτελεσματική μέθοδος» είναι <strong>υποχρεωτικά οι διηρημένες διαφορές</strong>!</p>
+        </div>
+      </div>
+      <div class="student-trap-takeaway">
+        <strong>💡 Κανόνας:</strong> Ο παρονομαστής στην $f[x_0, x_1, x_2]$ είναι $x_2 - x_0$, όχι $x_1 - x_0$!
+      </div>
+    </div>
+  </div>
+
+  <div class="rbox">
+    <div class="lbl" style="color:var(--red)">🚨 ΠΡΩΤΑ ΑΠ' ΟΛΑ: ισαπέχουν τα σημεία;</div>
+    Η φράση <em>«χρησιμοποιώντας την πλέον αποτελεσματική μέθοδο παρεμβολής»</em> είναι κρυφή ερώτηση.
+    Υπολόγισε τις διαφορές $x_1-x_0,\; x_2-x_1,\; \dots$ και απάντησε:
+    <table class="vtbl" style="margin:10px 0">
+      <thead><tr><th>Αν…</th><th>Μέθοδος</th><th>Γιατί</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--green)"><strong>ισαπέχουν</strong> (σταθερό $h$)</td>
+          <td><strong>Newton με ΕΜΠΡΟΣ ΔΙΑΦΟΡΕΣ</strong></td>
+          <td>Μόνο αφαιρέσεις — καμία διαίρεση</td>
+        </tr>
+        <tr>
+          <td style="color:var(--yellow)"><strong>δεν ισαπέχουν</strong></td>
+          <td>Newton με <strong>διηρημένες διαφορές</strong> (ή Lagrange)</td>
+          <td>Χρειάζεται ο παρονομαστής $x_{i+k}-x_i$</td>
+        </tr>
+      </tbody>
+    </table>
+    Να το γράψεις <strong>ρητά</strong> στο γραπτό σου — είναι μονάδες.
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--cyan)">Newton με εμπρός διαφορές — ο τύπος</div>
+    <p style="color:var(--muted);font-size:0.9rem">
+      Θέτουμε $h = x_1 - x_0$ (το κοινό βήμα) και $\theta = \dfrac{x - x_0}{h}$.
+    </p>
+    $$P_n(x) = f_0 + \binom{\theta}{1}\Delta f_0 + \binom{\theta}{2}\Delta^2 f_0 + \binom{\theta}{3}\Delta^3 f_0 + \dots$$
+    $$= f_0 + \frac{\theta\,\Delta f_0}{1!} + \frac{\theta(\theta-1)\,\Delta^2 f_0}{2!} + \frac{\theta(\theta-1)(\theta-2)\,\Delta^3 f_0}{3!} + \dots$$
+
+    <div class="step-box">
+      <div class="step-title">Ο πίνακας εμπρός διαφορών — παράδειγμα $f(x)=x^3+1$</div>
+      <div style="overflow-x:auto">
+      <table class="vtbl" style="width:auto;font-family:'JetBrains Mono',monospace">
+        <thead><tr><th>$x$</th><th>$f$</th><th>$\Delta f$</th><th>$\Delta^2 f$</th><th>$\Delta^3 f$</th><th>$\Delta^4 f$</th></tr></thead>
+        <tbody>
+          <tr><td>−2</td><td style="color:var(--green)"><strong>−7</strong></td><td style="color:var(--green)"><strong>7</strong></td><td style="color:var(--green)"><strong>−6</strong></td><td style="color:var(--green)"><strong>6</strong></td><td style="color:var(--green)"><strong>0</strong></td></tr>
+          <tr><td>−1</td><td>0</td><td>1</td><td>0</td><td>6</td><td></td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>6</td><td></td><td></td></tr>
+          <tr><td>1</td><td>2</td><td>7</td><td></td><td></td><td></td></tr>
+          <tr><td>2</td><td>9</td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p style="margin:8px 0 0;font-size:0.9rem">
+        Κάθε στήλη είναι η <strong>απλή αφαίρεση</strong> των διαδοχικών της προηγούμενης
+        (π.χ. $\Delta f_0 = 0-(-7) = 7$). Οι συντελεστές του πολυωνύμου είναι η
+        <strong style="color:var(--green)">πάνω διαγώνιος</strong>.
+      </p>
+    </div>
+
+    <p>Με $h = 1$, $\theta = x+2$:</p>
+    $$P_4(x) = -7 + 7(x{+}2) - \frac{6(x{+}2)(x{+}1)}{2} + \frac{6(x{+}2)(x{+}1)x}{6} + 0 = x^3 + 1$$
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:0">
+      Και άρα $P_4(1.5) = 1.5^3 + 1 = 4.375$ — <strong>ακριβές</strong>, αφού $P_4 \equiv f$.
+    </p>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">✅ Το «(i) στα k πρώτα σημεία, (ii) σε όλα» — μην ξαναρχίσεις</div>
+    Αυτό ακριβώς κάνει τη Newton «πιο αποτελεσματική» από τη Lagrange: <strong>το επόμενο
+    πολυώνυμο είναι το προηγούμενο συν έναν όρο.</strong>
+    $$P_3(x) = \underbrace{P_2(x)}_{\text{το έχεις ήδη}} + \binom{\theta}{3}\Delta^3 f_0$$
+    Με τη Lagrange θα ξανάχτιζες όλα τα βασικά πολυώνυμα από την αρχή. Στον πίνακα διαφορών
+    απλώς <strong>προσθέτεις μία γραμμή</strong> και διαβάζεις έναν νέο αριθμό από την πάνω διαγώνιο.
+  </div>
+
+  <div class="section-quiz" data-topic="topic4" data-section="divided_diff"></div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="stepbystep">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--bdim)">🔍</div>
+    <h2>2. Βήμα-βήμα Λύση Θέματος 2.1 (Φεβ 2024)</h2>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Δεδομένα Εξέτασης:</div>
+    <p style="margin:4px 0">Πίνακας τιμών για τη συνάρτηση $f(x) = x^3 + 1$ στο $[-2, 2]$:</p>
+    $$\begin{array}{c|ccccc} i & 0 & 1 & 2 & 3 & 4 \\ \hline x_i & -2 & -1 & 0 & 1 & 2 \\ \hline f_i & -7 & 0 & 1 & 2 & 9 \end{array}$$
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Βήμα 1: Κατασκευή Πίνακα Διηρημένων Διαφορών</div>
+    <ol style="margin:4px 0 0 18px;padding:0;line-height:1.7">
+      <li><strong>1ες Διηρημένες ($k=1$):</strong>
+        <ul>
+          <li>$f[x_0, x_1] = \frac{0 - (-7)}{-1 - (-2)} = \frac{7}{1} = 7$</li>
+          <li>$f[x_1, x_2] = \frac{1 - 0}{0 - (-1)} = 1$</li>
+          <li>$f[x_2, x_3] = \frac{2 - 1}{1 - 0} = 1$</li>
+          <li>$f[x_3, x_4] = \frac{9 - 2}{2 - 1} = 7$</li>
+        </ul>
+      </li>
+      <li><strong>2ες Διηρημένες ($k=2$):</strong>
+        <ul>
+          <li>$f[x_0, x_1, x_2] = \frac{f[x_1,x_2] - f[x_0,x_1]}{x_2 - x_0} = \frac{1 - 7}{0 - (-2)} = \frac{-6}{2} = -3$</li>
+          <li>$f[x_1, x_2, x_3] = \frac{1 - 1}{1 - (-1)} = 0$</li>
+          <li>$f[x_2, x_3, x_4] = \frac{7 - 1}{2 - 0} = 3$</li>
+        </ul>
+      </li>
+      <li><strong>3ες Διηρημένες ($k=3$):</strong>
+        <ul>
+          <li>$f[x_0, x_1, x_2, x_3] = \frac{0 - (-3)}{1 - (-2)} = \frac{3}{3} = 1$</li>
+          <li>$f[x_1, x_2, x_3, x_4] = \frac{3 - 0}{2 - (-1)} = \frac{3}{3} = 1$</li>
+        </ul>
+      </li>
+      <li><strong>4η Διηρημένη ($k=4$):</strong>
+        <ul>
+          <li>$f[x_0, x_1, x_2, x_3, x_4] = \frac{1 - 1}{2 - (-2)} = 0$</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+  <div class="step-box" style="border-left-color:var(--green)">
+    <div class="step-title" style="color:var(--green)">Βήμα 2: Σχηματισμός Πολυωνύμου &amp; Υπολογισμός $f(1.5)$</div>
+    <p style="margin:4px 0">Παίρνουμε τους συντελεστές της 1ης διαγωνίου: $f[x_0]=-7, f[x_0,x_1]=7, f[x_0,x_1,x_2]=-3, f[x_0,x_1,x_2,x_3]=1$.</p>
+    $$P_3(x) = -7 + 7(x+2) - 3(x+2)(x+1) + 1(x+2)(x+1)x$$
+    <p>Για $x = 1.5$:</p>
+    $$P_3(1.5) = -7 + 7(3.5) - 3(3.5)(2.5) + 1(3.5)(2.5)(1.5) = -7 + 24.5 - 26.25 + 13.125 = 4.375$$
+    <p>Πραγματική τιμή: $f(1.5) = (1.5)^3 + 1 = 3.375 + 1 = 4.375$ (Ακριβής σύμπτωση!) ✅</p>
+  </div>
+
+  <div class="section-quiz" data-topic="topic4" data-section="newton_poly"></div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="error_analysis">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--rdim)">⚠️</div>
+    <h2>3. Θεωρία &amp; Αιτιολόγηση Σφάλματος <span class="exam-badge">Θέμα 2.1β - SOS</span></h2>
+  </div>
+
+  <div class="wbox">
+    <strong style="color:var(--red)">Θεώρημα Σφάλματος Παρεμβολής:</strong><br>
+    Αν $f \in C^{n+1}[a,b]$, το σφάλμα παρεμβολής σε κάθε σημείο $x \in [a,b]$ δίνεται από τη σχέση:
+    $$E(x) = f(x) - P_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} (x - x_0)(x - x_1)\dots(x - x_n)$$
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Φαινόμενο Runge &amp; Σφάλμα Παρεμβολής ($E(x)$)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong>
+        <br>• <strong>Σφάλμα Παρεμβολής $E(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} \prod_{i=0}^n (x - x_i)$:</strong> Το σφάλμα εξαρτάται από την $(n+1)$-οστή παράγωγο της $f$. Αν η $f(x)$ είναι πολυώνυμο βαθμού $\le n$, τότε $f^{(n+1)} \equiv 0$, δηλαδή το πολυώνυμο παρεμβολής ταυτίζεται απόλυτα με τη συνάρτηση και το σφάλμα είναι <strong>ακριβώς 0</strong>!
+        <br>• <strong>Φαινόμενο Runge:</strong> Όταν αυξάνουμε το βαθμό $n$ χρησιμοποιώντας ισαπέχοντα σημεία, το πολυώνυμο εμφανίζει έντονες ταλαντώσεις κοντά στα άκρα του διαστήματος, αυξάνοντας το σφάλμα αντί να το μειώνει.
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> Στο κλασικό υποερώτημα «αιτιολογήστε το σφάλμα στο σημείο $x^*$»: αν η αρχική συνάρτηση ήταν π.χ. $f(x) = x^3 + 1$ και έφτιαξες πολυώνυμο $P_3(x)$ (3ου βαθμού), η 4η παράγωγος είναι ταυτοτικά μηδέν ($f^{(4)} \equiv 0$). Γράφεις κατευθείαν $E(x^*) = 0$ και κερδίζεις 3-4 μονάδες χωρίς καμία πρόσθετη πράξη!</p>
+    </div>
+  </details>
+
+  <div class="rbox">
+    <strong>🎯 Αιτιολόγηση Σφάλματος στις Εξετάσεις (Θέμα 2.1β):</strong><br>
+    Αν η συνάρτηση που δίνεται είναι πολυώνυμο βαθμού $m$ (π.χ. $f(x) = x^3 + 1$ βαθμού $m=3$) και παρεμβάλλουμε σε $n+1 = 5$ σημεία ($n=4$), τότε η 5η παράγωγος $f^{(5)}(x) \equiv 0$.<br>
+    Επομένως, το θεωρητικό σφάλμα παρεμβολής είναι <strong>ακριβώς μηδέν ($E(x) = 0$)</strong> και η τιμή του πολυωνύμου παρεμβολής ταυτίζεται απόλυτα με την πραγματική τιμή της συνάρτησης!
+  </div>
+
+  <div class="section-quiz" data-topic="topic4" data-section="error_analysis"></div>
+</section>
+
+
+<section id="flashcards">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">🗂️</div>
+    <h2>Flashcards — Παρεμβολή Newton</h2>
+  </div>
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάρτες θεωρίας για γρήγορη επανάληψη. Κάνε κλικ σε μια κάρτα για να τη γυρίσεις,
+    ή πάτησε «Υπόδειξη» αν κολλήσεις. Για τεστ σε όλα τα κεφάλαια δες τη
+    <a href="flashcards.html">σελίδα Flashcards</a>.
+  </p>
+  <div data-fc-deck="topic4"></div>
+</section>
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>

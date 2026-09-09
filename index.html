@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Αριθμητική Ανάλυση · PASS Webnotes</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/base.css">
+    <style>
+        :root {
+            --bg:#05070a; --surf:#0c0f16; --surf2:#141822; --border:#1e2433;
+            --green:#4ade80; --green-rgb:74,222,128;
+            --blue:#60a5fa;  --purple:#c084fc;
+            --orange:#fb923c; --orange-rgb:251,146,60;
+            --txt:#f1f5f9; --muted:#94a3b8; --dim:#475569;
+        }
+        .hub-hero {
+            padding: 120px 40px 60px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 0%, rgba(74,222,128,0.08) 0%, transparent 70%);
+        }
+        .hub-hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 7vw, 4.2rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hub-hero p {
+            font-size: 1.2rem; color: var(--muted);
+            max-width: 750px; margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+        .hero-label {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--green);
+            background: rgba(74,222,128,0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: 1px solid rgba(74,222,128,0.3);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        .search-container { max-width: 500px; margin: 0 auto; position: relative; }
+        .search-container input {
+            width: 100%;
+            background: var(--surf); border: 1px solid var(--border);
+            padding: 1.125rem 1.75rem; border-radius: 6.25rem;
+            color: var(--txt); font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem; outline: none;
+            transition: var(--transition);
+        }
+        .search-container input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(74,222,128,0.15);
+        }
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px; padding: 40px;
+            max-width: 1240px; margin: 0 auto;
+        }
+        .topic-card {
+            background: var(--surf); border: 1px solid var(--border);
+            border-radius: 20px; padding: 32px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .topic-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--green); background: var(--surf2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .topic-card::before {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, transparent, rgba(var(--green-rgb), 0.05));
+            border-radius: 0 0 0 100%;
+            transition: var(--transition);
+        }
+        .topic-card:hover::before {
+            width: 150px; height: 150px;
+            background: linear-gradient(135deg, transparent, rgba(var(--green-rgb), 0.1));
+        }
+        .topic-num {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--green); font-size: 0.875rem;
+            font-weight: 700; letter-spacing: 2px;
+        }
+        .topic-card h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4rem; color: var(--txt); font-weight: 700;
+        }
+        .topic-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
+        .topic-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+        .tag {
+            font-size: 0.75rem; font-family: 'JetBrains Mono', monospace;
+            color: var(--dim); background: rgba(255,255,255,0.03);
+            padding: 0.2rem 0.6rem; border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+    </style>
+    <script src="js/nav.js" defer></script>
+    <script src="js/study_plan.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div id="site-nav"></div>
+
+    <div class="hub-hero">
+        <div class="hero-label">ΕΚΠΑ · ΤΜΗΜΑ ΠΛΗΡΟΦΟΡΙΚΗΣ & ΤΗΛΕΠΙΚΟΙΝΩΝΙΩΝ</div>
+        <h1>Αριθμητική Ανάλυση</h1>
+        <p>Διαδραστικός οδηγός μελέτης <strong>PASS Mode</strong>, χτισμένος πάνω σε <strong>έξι πλήρη γραπτά με λύσεις</strong>. Εστιασμένος στα επαναλαμβανόμενα μοτίβα: Gauss/Jordan &amp; οδήγηση, μετασχηματισμοί πολυπλοκότητας, σταθερό σημείο, παρεμβολή Newton, Simpson και MATLAB drills.</p>
+
+        <!-- ZERO-BACKGROUND CTA CALLOUT -->
+        <div class="hero-prereq-cta" style="margin-bottom: 28px;">
+            <a href="prerequisites.html" style="display: inline-flex; align-items: center; gap: 10px; background: rgba(88, 166, 255, 0.12); border: 1px solid rgba(88, 166, 255, 0.4); padding: 10px 22px; border-radius: 50px; color: var(--txt); text-decoration: none; font-size: 0.95rem; transition: all 0.2s ease;">
+                <span style="font-size: 1.25rem; line-height: 1;">📖</span>
+                <span>Ξεκινάς από το μηδέν; <strong>Μαθηματικά από το Μηδέν (Step 0) &rarr;</strong></span>
+            </a>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="topic-search" placeholder="Αναζήτηση θεμάτων, Gauss, Newton, Simpson, MATLAB...">
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 5-DAY HIGH-ROI STUDY SPRINT PLAN (DAYS 1 TO 5)                       -->
+    <!-- ==================================================================== -->
+    <section id="sprint-plan" class="sprint-section" aria-label="5-Day High-ROI Study Sprint Plan">
+      <div id="sprint-checklist-container" class="sprint-container">
+
+        <!-- SPRINT HEADER & LIVE PROGRESS BAR -->
+        <div class="sprint-header sprint-header-card">
+          <div class="sprint-header-top">
+            <div class="sprint-badge-group">
+              <span class="sprint-badge sprint-tag">⚡ HIGH-ROI EXAM STRATEGY</span>
+              <span id="sprint-marks-badge" class="sprint-marks-badge">0 / 100 Μόρια</span>
+            </div>
+            <div class="sprint-action-group">
+              <button id="sprint-reset-btn" class="sprint-reset-btn" type="button" title="Μηδενισμός προόδου και επανεκκίνηση sprint">
+                <span class="btn-icon">🔄</span> <span class="btn-text">Επαναφορά Sprint</span>
+              </button>
+            </div>
+          </div>
+
+          <h2 class="sprint-title">
+            5-Day Study Sprint: Από το Μηδέν στο 100
+            <span class="sprint-marks-track">(30 &rarr; 60 &rarr; 100 Μονάδες)</span>
+          </h2>
+          <p class="sprint-subtitle sprint-desc">
+            Στοχευμένο πλάνο μελέτης ταξινομημένο αυστηρά κατά <strong>Exam Yield (ROI)</strong>.
+            Κλείδωσε <strong>60/100 στις Ημέρες 1–3</strong> (εξασφάλιση PASS με καθαρή άλγεβρα &amp; MATLAB)
+            και στόχευσε το <strong>100/100 στις Ημέρες 4–5</strong>.
+          </p>
+
+          <!-- PROGRESS TRACKER -->
+          <div class="sprint-progress-wrapper sprint-progress-box">
+            <div class="sprint-progress-info sprint-progress-meta">
+              <span class="progress-status-label progress-label">Συνολική Πρόοδος Οροσήμων:</span>
+              <span id="sprint-progress-text" class="progress-percent progress-stats">0% Ολοκληρώθηκε (0/21 SOS Milestones)</span>
+            </div>
+            <div class="sprint-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="sprint-progress-fill" class="sprint-progress-fill sprint-progress-bar" style="width: 0%;"></div>
+            </div>
+            <div class="sprint-milestones-legend">
+              <span class="legend-step legend-pill pill-day1">🏁 <strong>Day 1:</strong> 30μ (MATLAB)</span>
+              <span class="legend-step legend-pill pill-day2">⚡ <strong>Day 2:</strong> 45μ (Πολυπλοκότητα)</span>
+              <span class="legend-step legend-pill pill-pass">🎓 <strong>Day 3:</strong> 60μ (PASS LOCKED!)</span>
+              <span class="legend-step legend-pill pill-day4">📈 <strong>Day 4:</strong> 75μ (Simpson)</span>
+              <span class="legend-step legend-pill pill-day5">🏆 <strong>Day 5:</strong> 100μ (Άριστα)</span>
+            </div>
+            <div id="sprint-progress-status" class="sprint-progress-status-msg sprint-progress-status">
+              Ξεκίνα με την 1η Ημέρα (MATLAB) για τα πρώτα 30 μόρια!
+            </div>
+          </div>
+        </div>
+
+        <!-- SPRINT DAYS STACK -->
+        <div class="sprint-days-grid">
+
+          <!-- ================================================================ -->
+          <!-- DAY 1: MATLAB POWER-PACK (30 MARKS)                              -->
+          <!-- ================================================================ -->
+          <article class="sprint-day-card" data-day="1" id="sprint-day-1">
+            <div class="sprint-day-header day-card-header">
+              <div class="day-meta-bar day-header-left">
+                <div class="day-badges-left day-badges">
+                  <span class="day-num-badge day-pill">DAY 01</span>
+                  <span class="day-tier-badge badge badge-target">🎯 30 Μονάδες (Θέμα 3)</span>
+                  <span class="day-time-badge badge badge-time">⏱️ ~3.5 ώρες</span>
+                </div>
+                <div class="day-progress-pill">
+                  <span class="day-progress-text" data-day="1" id="day-1-progress-text">0% (0/4)</span>
+                </div>
+              </div>
+              <h3 class="sprint-day-title day-heading">MATLAB Power-Pack (Θέμα 3)</h3>
+              <p class="sprint-day-desc day-intro">
+                Το Θέμα 3 χαρίζει <strong>30 ολόκληρες μονάδες</strong> με καθαρή μηχανική αποστήθιση 10 εντολών,
+                κατανόηση column-major indexing και ένα στάνταρ script 8 γραμμών για επαναληπτικούς πίνακες.
+                Είναι το <em>υψηλότερο ROI ανά λεπτό μελέτης</em> σε ολόκληρο το μάθημα!
+              </p>
+            </div>
+
+            <div class="sprint-tasks-section">
+              <h4 class="tasks-title">📋 Καθημερινά Ορόσημα Μελέτης (Ημέρα 1)</h4>
+              <ul class="sprint-tasks-list">
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day1-1" data-task-id="day1-task1">
+                  <div class="task-content">
+                    <label for="task-day1-1" class="task-label-text sprint-chk-label">
+                      <strong>Αποστήθιση των 10 SOS Εντολών MATLAB</strong>
+                    </label>
+                    <div class="task-desc">
+                      Εκμάθηση των εντολών: <code>norm(A, 1/2/inf)</code>, <code>cond(A, 2)</code>, <code>eig(A)</code>, <code>det(A)</code>, <code>trace(A)</code>, <code>rank(A)</code>, <code>roots(p)</code>, <code>poly(r)</code>, <code>polyder(p)</code>, <code>polyfit(x, y, n)</code>.
+                      <strong>SOS Trap:</strong> Το <code>diag(A)</code> επιστρέφει διάνυσμα· για διαγώνιο πίνακα απαιτείται <code>diag(diag(A))</code>!
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS 30M</span>
+                      <a href="topic7_matlab_guide.html#sos-commands" class="task-ref-link task-link">Topic 7 Οδηγός Εντολών &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day1-2" data-task-id="day1-task2">
+                  <div class="task-content">
+                    <label for="task-day1-2" class="task-label-text sprint-chk-label">
+                      <strong>Column-Major Indexing &amp; Εύρεση Μεγίστου</strong>
+                    </label>
+                    <div class="task-desc">
+                      Κατανόηση διάταξης στηλών (column-major) στη μνήμη του MATLAB. Εφαρμογή της εντολής <code>[m, p] = max(abs(y))</code> για άμεση εύρεση τιμής και γραμμικής θέσης του μεγίστου κατ' απόλυτη τιμή στοιχείου (Θέμα 3.1).
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS</span>
+                      <a href="topic7_matlab_guide.html#indexing" class="task-ref-link task-link">Topic 7 Indexing &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day1-3" data-task-id="day1-task3">
+                  <div class="task-content">
+                    <label for="task-day1-3" class="task-label-text sprint-chk-label">
+                      <strong>Διάσπαση Πίνακα &amp; Σύμβαση Εξετάσεων (CL, CU)</strong>
+                    </label>
+                    <div class="task-desc">
+                      Αυστηρή εκμάθηση της σύμβασης του μαθήματος: $D = \text{diag}(\text{diag}(A))$, $C_L = -\text{tril}(A, -1)$, $C_U = -\text{triu}(A, 1)$.
+                      <strong>SOS Trap:</strong> Το αρνητικό πρόσημο στα $C_L, C_U$ είναι υποχρεωτικό για να ισχύει $A = D - C_L - C_U$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS Trap</span>
+                      <a href="topic2_iterative_linear.html#matrix-splitting" class="task-ref-link task-link">Topic 2 Διάσπαση Πινάκων &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day1-4" data-task-id="day1-task4">
+                  <div class="task-content">
+                    <label for="task-day1-4" class="task-label-text sprint-chk-label">
+                      <strong>Συνάρτηση Επαναληπτικών Πινάκων &amp; Φασματική Ακτίνα</strong>
+                    </label>
+                    <div class="task-desc">
+                      Συγγραφή της έτοιμης συνάρτησης για υπολογισμό επαναληπτικού πίνακα: Jacobi $B = L + U$, Gauss-Seidel $\mathcal{L}_1 = (I - L)^{-1} U$, SOR $\mathcal{L}_\omega = (I - \omega L)^{-1} [(1-\omega)I + \omega U]$ και εύρεση φασματικής ακτίνας με <code>rho = max(abs(eig(L_iter)))</code> (Θέμα 3.4).
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS Script</span>
+                      <a href="exam_prep.html#recipe-type-h" class="task-ref-link task-link">Exam Prep Type H &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- MICRO-DRILL 1 -->
+            <div class="sprint-drill-card drill-card" id="drill-box-1">
+              <div class="drill-header">
+                <div class="drill-title-group drill-tag-wrap">
+                  <span class="drill-icon">⚡</span>
+                  <span class="drill-badge">MICRO-DRILL 1</span>
+                  <span class="drill-title drill-topic">Επαναληπτικοί Πίνακες &amp; Φασματική Ακτίνα</span>
+                </div>
+                <span class="drill-pts">12 Μονάδες</span>
+              </div>
+
+              <div class="drill-problem">
+                <p><strong>Εκφώνηση (Θέμα 3.4 / 1.2β):</strong></p>
+                <p>Δίνεται ο πίνακας:
+                  $$A = \begin{bmatrix} 4 & -1 \\ 2 & 4 \end{bmatrix}$$
+                </p>
+                <ol class="drill-subq">
+                  <li>Προσδιόρισε τους κανονικοποιημένους πίνακες $D, L, U$ κατά τη σύμβαση του μαθήματος.</li>
+                  <li>Υπολόγισε τον πίνακα επανάληψης Jacobi $B = L + U$ και τη φασματική ακτίνα $\rho(B)$.</li>
+                  <li>Υπολόγισε τον πίνακα Gauss-Seidel $\mathcal{L}_1 = (I - L)^{-1} U$ και τη φασματική ακτίνα $\rho(\mathcal{L}_1)$.</li>
+                  <li>Γράψε το 5-γραμμο script MATLAB που επιβεβαιώνει το $\rho(\mathcal{L}_1)$.</li>
+                </ol>
+              </div>
+
+              <div class="drill-hint drill-hint-box">
+                <span class="drill-hint-label hint-title">💡 Hint &amp; Mnemonic:</span>
+                <span class="hint-text">$D^{-1} = \text{diag}(1/a_{ii})$. Οι $L, U$ προκύπτουν από τα $C_L = -\text{tril}(A,-1)$ και $C_U = -\text{triu}(A,1)$ πολλαπλασιασμένα με $D^{-1}$. Για $2 \times 2$ πίνακα με μηδενική διαγώνιο $\begin{bmatrix} 0 & a \\ b & 0 \end{bmatrix}$, οι ιδιοτιμές είναι πάντα $\pm\sqrt{ab}$.</span>
+              </div>
+
+              <div class="drill-action-bar drill-actions">
+                <button type="button" class="drill-reveal-btn" data-drill-id="drill1">
+                  <span class="btn-icon">💡</span> <span class="drill-btn-text btn-text">Εμφάνιση Λύσης &amp; Επαλήθευση</span>
+                </button>
+              </div>
+
+              <!-- HIDDEN SOLUTION BLOCK -->
+              <div id="drill-sol-drill1" class="drill-solution drill-solution-block" style="display: none;">
+                <h5 class="solution-heading solution-header">✅ Επαληθευμένη Βήμα-προς-Βήμα Λύση (Micro-Drill 1)</h5>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 1</span>
+                  <p><strong>Διαγώνιος &amp; Τριγωνικοί Πίνακες:</strong></p>
+                  <p>
+                    $$D = \begin{bmatrix} 4 & 0 \\ 0 & 4 \end{bmatrix} \implies D^{-1} = \begin{bmatrix} 1/4 & 0 \\ 0 & 1/4 \end{bmatrix}$$
+                    $$C_L = -\text{tril}(A, -1) = \begin{bmatrix} 0 & 0 \\ -2 & 0 \end{bmatrix}, \quad C_U = -\text{triu}(A, 1) = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}$$
+                    $$L = D^{-1} C_L = \begin{bmatrix} 0 & 0 \\ -1/2 & 0 \end{bmatrix}, \quad U = D^{-1} C_U = \begin{bmatrix} 0 & 1/4 \\ 0 & 0 \end{bmatrix}$$
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 2</span>
+                  <p><strong>Πίνακας Jacobi $B$ και Φασματική Ακτίνα $\rho(B)$:</strong></p>
+                  <p>
+                    $$B = L + U = \begin{bmatrix} 0 & 1/4 \\ -1/2 & 0 \end{bmatrix}$$
+                    Χαρακτηριστικό πολυώνυμο: $\det(B - \lambda I) = \lambda^2 - (1/4)(-1/2) = \lambda^2 + \frac{1}{8} = 0 \implies \lambda_{1,2} = \pm i \frac{1}{\sqrt{8}} = \pm i \frac{\sqrt{2}}{4}$.<br>
+                    Μέτρο ιδιοτιμών: $|\lambda| = \sqrt{0^2 + (1/\sqrt{8})^2} = \frac{1}{\sqrt{8}} \approx 0.3536$.<br>
+                    Άρα: <strong>$\rho(B) = \frac{1}{\sqrt{8}} \approx 0.3536 < 1$</strong> (η μέθοδος Jacobi συγκλίνει!).
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 3</span>
+                  <p><strong>Πίνακας Gauss-Seidel $\mathcal{L}_1$ και Φασματική Ακτίνα $\rho(\mathcal{L}_1)$:</strong></p>
+                  <p>
+                    $$I - L = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} - \begin{bmatrix} 0 & 0 \\ -1/2 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 1/2 & 1 \end{bmatrix}$$
+                    Αντίστροφος: $(I - L)^{-1} = \begin{bmatrix} 1 & 0 \\ -1/2 & 1 \end{bmatrix}$.<br>
+                    Υπολογισμός γινομένου:
+                    $$\mathcal{L}_1 = (I - L)^{-1} U = \begin{bmatrix} 1 & 0 \\ -1/2 & 1 \end{bmatrix} \begin{bmatrix} 0 & 1/4 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 1/4 \\ 0 & -1/8 \end{bmatrix}$$
+                    Ο πίνακας είναι άνω τριγωνικός, οπότε οι ιδιοτιμές βρίσκονται στη διαγώνιο: $\lambda_1 = 0, \lambda_2 = -1/8 = -0.125$.<br>
+                    Άρα: <strong>$\rho(\mathcal{L}_1) = |-1/8| = 0.125 = \rho(B)^2 < 1$</strong>.
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 4</span>
+                  <p><strong>Script MATLAB Επαλήθευσης:</strong></p>
+                  <pre class="drill-code-block code-block"><code>A = [4 -1; 2 4];
+D = diag(diag(A));
+CL = -tril(A, -1);  CU = -triu(A, 1);
+L = D \ CL;          U = D \ CU;
+L1 = (eye(2) - L) \ U;
+rho_L1 = max(abs(eig(L1))) % Εμφανίζει 0.1250</code></pre>
+                </div>
+
+                <div class="drill-trap-alert">
+                  <strong>⚠️ SOS Παγίδα Εξετάσεων:</strong> Πρόσεξε τη σχέση $\rho(\mathcal{L}_1) = \rho(B)^2 = (0.3536)^2 = 0.125$.
+                  Η μέθοδος Gauss-Seidel χρειάζεται ακριβώς τις <em>μισές επαναλήψεις</em> από τη Jacobi για να φτάσει στην ίδια ακρίβεια!
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- ================================================================ -->
+          <!-- DAY 2: COMPLEXITY ALGEBRA & TRANSFORMATION (15 MARKS -> 45 CUMUL)-->
+          <!-- ================================================================ -->
+          <article class="sprint-day-card" data-day="2" id="sprint-day-2">
+            <div class="sprint-day-header day-card-header">
+              <div class="day-meta-bar day-header-left">
+                <div class="day-badges-left day-badges">
+                  <span class="day-num-badge day-pill">DAY 02</span>
+                  <span class="day-tier-badge badge badge-target">🎯 15 Μονάδες (Θέμα 1.3)</span>
+                  <span class="day-time-badge badge badge-time">⏱️ ~2.5 ώρες</span>
+                </div>
+                <div class="day-progress-pill">
+                  <span class="day-progress-text" data-day="2" id="day-2-progress-text">0% (0/4)</span>
+                </div>
+              </div>
+              <h3 class="sprint-day-title day-heading">Άλγεβρα Πολυπλοκότητας &amp; Μετασχηματισμοί (Θέμα 1.3)</h3>
+              <p class="sprint-day-desc day-intro">
+                Το Θέμα 1.3 είναι καθαρή άλγεβρα που μαθαίνεται σε μία ώρα: γράφεις τον πίνακα σταθερών κόστους στο περιθώριο,
+                μετράς τους όρους $n^3$ της αρχικής έκφρασης, πολλαπλασιάζεις από αριστερά με $A$ για να εξαφανιστεί ο $A^{-1}$,
+                και υπολογίζεις τις πράξεις που γλίτωσες. Χαρίζει 15 μονάδες με μηδενικό ρίσκο!
+              </p>
+            </div>
+
+            <div class="sprint-tasks-section">
+              <h4 class="tasks-title">📋 Καθημερινά Ορόσημα Μελέτης (Ημέρα 2)</h4>
+              <ul class="sprint-tasks-list">
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day2-1" data-task-id="day2-task1">
+                  <div class="task-content">
+                    <label for="task-day2-1" class="task-label-text sprint-chk-label">
+                      <strong>Αποστήθιση Πίνακα Σταθερών Κόστους Πράξεων</strong>
+                    </label>
+                    <div class="task-desc">
+                      Αποστήθιση των σταθερών κόστους: Επίλυση συστήματος (Jordan: $n^3/2$, Gauss: $n^3/3$), Αντίστροφος πίνακας (Jordan: $3n^3/2$, Gauss: $4n^3/3$), Πολλαπλασιασμός πινάκων $n \times n$: $n^3$, Πίνακας $\times$ Διάνυσμα: $n^2 \to$ <strong>αμελητέο</strong>.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS Κόστη</span>
+                      <a href="exam_prep.html#recipe-type-c" class="task-ref-link task-link">Exam Prep Type C &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day2-2" data-task-id="day2-task2">
+                  <div class="task-content">
+                    <label for="task-day2-2" class="task-label-text sprint-chk-label">
+                      <strong>Αναλυτική Καταγραφή Κόστους Αρχικής Μορφής</strong>
+                    </label>
+                    <div class="task-desc">
+                      Ανάλυση κάθε επιμέρους όρου στην έκφραση $(A^{-1}C + BD^{-1})x = A^{-1}b$. Άθροιση των όρων: $A^{-1}$ ($3n^3/2$), $A^{-1}C$ ($n^3$), $D^{-1}$ ($3n^3/2$), $BD^{-1}$ ($n^3$), τελική επίλυση ($n^3/2$) $\implies$ Σύνολο $11n^3/2 = 5.5n^3$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag core">Πολυπλοκότητα</span>
+                      <a href="topic1_direct_linear.html#complexity" class="task-ref-link task-link">Topic 1 Πολυπλοκότητα &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day2-3" data-task-id="day2-task3">
+                  <div class="task-content">
+                    <label for="task-day2-3" class="task-label-text sprint-chk-label">
+                      <strong>Αλγεβρικός Μετασχηματισμός από Αριστερά</strong>
+                    </label>
+                    <div class="task-desc">
+                      Εφαρμογή της χρυσής αρχής: πολλαπλασιάζουμε <em>και τα δύο μέλη</em> από <strong>ΑΡΙΣΤΕΡΑ</strong> με $A$. Ο $A^{-1}$ εξαφανίζεται πλήρως: $A(A^{-1}C + BD^{-1})x = A(A^{-1}b) \implies (C + ABD^{-1})x = b$.
+                      <strong>SOS Trap:</strong> Ο πολλαπλασιασμός πινάκων ΔΕΝ είναι αντιμεταθετικός ($AB \ne BA$), άρα απαγορεύεται ο πολλαπλασιασμός από δεξιά!
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS Trap</span>
+                      <a href="prerequisites.html#matrix-mult" class="task-ref-link task-link">Προαπαιτούμενα: Πολλ/σμός &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day2-4" data-task-id="day2-task4">
+                  <div class="task-content">
+                    <label for="task-day2-4" class="task-label-text sprint-chk-label">
+                      <strong>Υπολογισμός Νέου Κόστους, Εξοικονόμησης &amp; Συμπέρασμα</strong>
+                    </label>
+                    <div class="task-desc">
+                      Καταμέτρηση νέου κόστους: $AB$ ($n^3$), $D^{-1}$ ($3n^3/2$), $(AB)D^{-1}$ ($n^3$), επίλυση ($n^3/2$) $\implies$ Νέο Σύνολο $4n^3$.
+                      Διατύπωση συμπεράσματος: Εξοικονόμηση $\Delta = 5.5n^3 - 4n^3 = 1.5n^3 = \frac{3}{2}n^3$, δηλαδή εξοικονομήθηκε ακριβώς ένας πλήρης αντίστροφος Jordan!
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">15 Μονάδες</span>
+                      <a href="exam_prep.html#recipe-type-c" class="task-ref-link task-link">Exam Prep Type C Μοντέλο &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- MICRO-DRILL 2 -->
+            <div class="sprint-drill-card drill-card" id="drill-box-2">
+              <div class="drill-header">
+                <div class="drill-title-group drill-tag-wrap">
+                  <span class="drill-icon">⚡</span>
+                  <span class="drill-badge">MICRO-DRILL 2</span>
+                  <span class="drill-title drill-topic">Μετασχηματισμός Συστήματος &amp; Εξοικονόμηση Jordan</span>
+                </div>
+                <span class="drill-pts">15 Μονάδες</span>
+              </div>
+
+              <div class="drill-problem">
+                <p><strong>Εκφώνηση (Θέμα 1.3):</strong></p>
+                <p>Δίνονται οι μη ιδιάζοντες πίνακες $A, B, C, D \in \mathbb{R}^{n \times n}$ και το διάνυσμα $b \in \mathbb{R}^n$. Θεωρούμε το γραμμικό σύστημα:
+                  $$(A^{-1} C + B D^{-1}) x = A^{-1} b$$
+                </p>
+                <ol class="drill-subq">
+                  <li>Υπολόγισε την υπολογιστική πολυπλοκότητα επίλυσης του συστήματος όπως δίνεται, θεωρώντας ότι όλες οι πράξεις γίνονται με τη μέθοδο Gauss-Jordan.</li>
+                  <li>Μετασχημάτισε αλγεβρικά το σύστημα ώστε να ελαχιστοποιηθεί το υπολογιστικό κόστος.</li>
+                  <li>Υπολόγισε τη νέα πολυπλοκότητα και ανάφερε ακριβώς πόσες πράξεις εξοικονομήθηκαν.</li>
+                </ol>
+              </div>
+
+              <div class="drill-hint drill-hint-box">
+                <span class="drill-hint-label hint-title">💡 Hint &amp; Mnemonic:</span>
+                <span class="hint-text">Σταθερές Jordan: Επίλυση $n^3/2$, Αντίστροφος $3n^3/2$, Πολλαπλασιασμός $n^3$. Το $A^{-1}b$ κοστίζει μόνο $n^2$ (αμελητέο) επειδή ο $A^{-1}$ έχει ήδη υπολογιστεί. Πολλαπλασίασε και τα δύο μέλη από αριστερά με $A$.</span>
+              </div>
+
+              <div class="drill-action-bar drill-actions">
+                <button type="button" class="drill-reveal-btn" data-drill-id="drill2">
+                  <span class="btn-icon">💡</span> <span class="drill-btn-text btn-text">Εμφάνιση Λύσης &amp; Επαλήθευση</span>
+                </button>
+              </div>
+
+              <!-- HIDDEN SOLUTION BLOCK -->
+              <div id="drill-sol-drill2" class="drill-solution drill-solution-block" style="display: none;">
+                <h5 class="solution-heading solution-header">✅ Επαληθευμένη Βήμα-προς-Βήμα Λύση (Micro-Drill 2)</h5>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 1</span>
+                  <p><strong>Ανάλυση Κόστους Αρχικής Μορφής:</strong></p>
+                  <ul class="clean-list">
+                    <li>Υπολογισμός $A^{-1}$ με Jordan: $\frac{3}{2}n^3$</li>
+                    <li>Γινόμενο $A^{-1} C$: $n^3$</li>
+                    <li>Υπολογισμός $D^{-1}$ με Jordan: $\frac{3}{2}n^3$</li>
+                    <li>Γινόμενο $B D^{-1}$: $n^3$</li>
+                    <li>Πρόσθεση $(A^{-1}C + BD^{-1})$: $n^2$ (αμελητέο)</li>
+                    <li>Γινόμενο $A^{-1}b$: $n^2$ (αμελητέο, ο $A^{-1}$ είναι ήδη γνωστός)</li>
+                    <li>Επίλυση τελικού γραμμικού συστήματος $M x = d$ με Jordan: $\frac{1}{2}n^3$</li>
+                  </ul>
+                  <p><strong>Συνολικό Κόστος Αρχικής Μορφής:</strong>
+                    $$\text{Cost}_1 = \frac{3}{2}n^3 + n^3 + \frac{3}{2}n^3 + n^3 + \frac{1}{2}n^3 = \frac{11}{2}n^3 = 5.5 n^3$$
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 2</span>
+                  <p><strong>Αλγεβρικός Μετασχηματισμός:</strong></p>
+                  <p>
+                    Πολλαπλασιάζουμε και τα δύο μέλη από <strong>ΑΡΙΣΤΕΡΑ</strong> με τον πίνακα $A$:
+                    $$A(A^{-1} C + B D^{-1}) x = A(A^{-1} b)$$
+                    $$(A A^{-1} C + A B D^{-1}) x = (A A^{-1}) b$$
+                    $$(I C + A B D^{-1}) x = I b$$
+                    $$\mathbf{(C + A B D^{-1}) x = b}$$
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 3</span>
+                  <p><strong>Ανάλυση Νέου Κόστους &amp; Εξοικονόμηση:</strong></p>
+                  <ul class="clean-list">
+                    <li>Γινόμενο $A B$: $n^3$</li>
+                    <li>Υπολογισμός $D^{-1}$ με Jordan: $\frac{3}{2}n^3$</li>
+                    <li>Γινόμενο $(AB) D^{-1}$: $n^3$</li>
+                    <li>Πρόσθεση $C + (ABD^{-1})$: $n^2$ (αμελητέο)</li>
+                    <li>Δεξιό μέλος είναι το $b$: $0$ πράξεις</li>
+                    <li>Επίλυση συστήματος με Jordan: $\frac{1}{2}n^3$</li>
+                  </ul>
+                  <p><strong>Νέο Συνολικό Κόστος:</strong>
+                    $$\text{Cost}_2 = n^3 + \frac{3}{2}n^3 + n^3 + \frac{1}{2}n^3 = 4 n^3$$
+                  </p>
+                  <p><strong>Κέρδος / Εξοικονόμηση:</strong>
+                    $$\Delta = \text{Cost}_1 - \text{Cost}_2 = \frac{11}{2}n^3 - 4n^3 = \frac{3}{2}n^3 = 1.5 n^3$$
+                    <strong>Συμπέρασμα:</strong> Εξοικονομήθηκε ακριβώς ένας πλήρης υπολογισμός αντιστρόφου πίνακα ($\frac{3}{2}n^3$), μειώνοντας τον υπολογιστικό χρόνο κατά <strong>27.3%</strong>!
+                  </p>
+                </div>
+
+                <div class="drill-trap-alert">
+                  <strong>⚠️ SOS Παγίδα Εξετάσεων:</strong> Μην ξεχάσεις να αναφέρεις ρητά ότι ο πολλαπλασιασμός γίνεται από ΑΡΙΣΤΕΡΑ.
+                  Αν γράψεις $(A^{-1}C + BD^{-1})x A = A^{-1}b A$, χάνεις 4 μονάδες επειδή οι διαστάσεις διανύσματος $\times$ πίνακα είναι ασύμβατες!
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- ================================================================ -->
+          <!-- DAY 3: FIXED-POINT & NEWTON CONVERGENCE (15 MARKS -> 60 CUMUL)   -->
+          <!-- ================================================================ -->
+          <article class="sprint-day-card" data-day="3" id="sprint-day-3">
+            <div class="sprint-day-header day-card-header">
+              <div class="day-meta-bar day-header-left">
+                <div class="day-badges-left day-badges">
+                  <span class="day-num-badge day-pill">DAY 03</span>
+                  <span class="day-tier-badge badge badge-target">🎯 15 Μονάδες (Θέμα 1.1)</span>
+                  <span class="day-time-badge badge badge-time">⏱️ ~3.0 ώρες</span>
+                  <span class="badge badge-pass" style="color: var(--green); border-color: rgba(74,222,128,0.4);">🎓 PASS LOCKED (60/100)!</span>
+                </div>
+                <div class="day-progress-pill">
+                  <span class="day-progress-text" data-day="3" id="day-3-progress-text">0% (0/4)</span>
+                </div>
+              </div>
+              <h3 class="sprint-day-title day-heading">Σταθερό Σημείο &amp; Σύγκλιση Newton (Θέμα 1.1)</h3>
+              <p class="sprint-day-desc day-intro">
+                <strong>Συγχαρητήρια! Με την ολοκλήρωση της 3ης ημέρας κλειδώνεις 60/100 και εξασφαλίζεις το PASS.</strong>
+                Το Θέμα 1.1 απαιτεί μία απλή παραγώγιση $g'(x)$, επίλυση της διπλής ανισότητας $|g'(\xi)| < 1$ για το διάστημα του $\lambda$,
+                και μηδενισμό $g'(\xi) = 0$ για τετραγωνική σύγκλιση.
+              </p>
+            </div>
+
+            <div class="sprint-tasks-section">
+              <h4 class="tasks-title">📋 Καθημερινά Ορόσημα Μελέτης (Ημέρα 3)</h4>
+              <ul class="sprint-tasks-list">
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day3-1" data-task-id="day3-task1">
+                  <div class="task-content">
+                    <label for="task-day3-1" class="task-label-text sprint-chk-label">
+                      <strong>Παραγώγιση g'(x) &amp; Συνθήκη Τοπικής Σύγκλισης</strong>
+                    </label>
+                    <div class="task-desc">
+                      Ορισμός της επαναληπτικής συνάρτησης $g(x) = x - \lambda f(x)$, υπολογισμός παραγώγου $g'(x) = 1 - \lambda f'(x)$ και αντικατάσταση της ρίζας $\xi$: $g'(\xi) = 1 - \lambda f'(\xi)$. Συνθήκη σύγκλισης: $|g'(\xi)| < 1 \iff -1 < g'(\xi) < 1$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS Συνθήκη</span>
+                      <a href="topic3_nonlinear.html#fixed-point" class="task-ref-link task-link">Topic 3 Σταθερό Σημείο &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day3-2" data-task-id="day3-task2">
+                  <div class="task-content">
+                    <label for="task-day3-2" class="task-label-text sprint-chk-label">
+                      <strong>Επίλυση Διπλής Ανισότητας χωρίς Παγίδες Προσήμου</strong>
+                    </label>
+                    <div class="task-desc">
+                      Επίλυση της διπλής ανισότητας $-1 < 1 - c\lambda < 1 \implies -2 < -c\lambda < 0$.
+                      <strong>SOS Trap:</strong> Κατά τη διαίρεση με τον αρνητικό συντελεστή $-c < 0$, η φορά των ανισοτήτων <em>αντιστρέφεται υποχρεωτικά</em> ($<$ γίνεται $>$).
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">SOS Trap</span>
+                      <a href="prerequisites.html#abs-ineq" class="task-ref-link task-link">Προαπαιτούμενα: Ανισότητες &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day3-3" data-task-id="day3-task3">
+                  <div class="task-content">
+                    <label for="task-day3-3" class="task-label-text sprint-chk-label">
+                      <strong>Προσδιορισμός λ για Τετραγωνική Σύγκλιση (Order p=2)</strong>
+                    </label>
+                    <div class="task-desc">
+                      Εξίσωση $g'(\xi) = 0$ για εύρεση του βέλτιστου $\lambda^*$. Έλεγχος ότι $g''(\xi) \ne 0$ ώστε η τάξη να είναι ακριβώς $p=2$, και επαλήθευση ότι το $\lambda^*$ ανήκει στο εσωτερικό του διαστήματος σύγκλισης.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">Τάξη p=2</span>
+                      <a href="exam_prep.html#recipe-type-a" class="task-ref-link task-link">Exam Prep Type A &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day3-4" data-task-id="day3-task4">
+                  <div class="task-content">
+                    <label for="task-day3-4" class="task-label-text sprint-chk-label">
+                      <strong>Έλεγχος των 5 Συνθηκών Ολικής Σύγκλισης Newton-Raphson</strong>
+                    </label>
+                    <div class="task-desc">
+                      Εκμάθηση της λίστας ελέγχου των 5 συνθηκών για σύγκλιση από <em>οποιοδήποτε</em> $x_0 \in [a, b]$: (1) $f \in C^2[a,b]$, (2) $f(a)f(b) < 0$ (Bolzano), (3) $f'(x) \ne 0$ (μονοτονία), (4) $f''(x)$ σταθερό πρόσημο (κυρτότητα), (5) $|f(c)/f'(c)| \le b-a$ στο άκρο $c$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag core">5 Συνθήκες</span>
+                      <a href="exam_prep.html#recipe-type-f" class="task-ref-link task-link">Exam Prep Type F &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- MICRO-DRILL 3 -->
+            <div class="sprint-drill-card drill-card" id="drill-box-3">
+              <div class="drill-header">
+                <div class="drill-title-group drill-tag-wrap">
+                  <span class="drill-icon">⚡</span>
+                  <span class="drill-badge">MICRO-DRILL 3</span>
+                  <span class="drill-title drill-topic">Σταθερό Σημείο με Παράμετρο λ &amp; Τετραγωνική Σύγκλιση</span>
+                </div>
+                <span class="drill-pts">10 Μονάδες</span>
+              </div>
+
+              <div class="drill-problem">
+                <p><strong>Εκφώνηση (Θέμα 1.1):</strong></p>
+                <p>Για την εύρεση της θετικής ρίζας $\xi = \sqrt{5}$ της εξίσωσης $f(x) = x^2 - 5 = 0$, θεωρούμε την επαναληπτική μέθοδο:
+                  $$x_{n+1} = x_n - \lambda (x_n^2 - 5)$$
+                  όπου $\lambda \ne 0$ πραγματική παράμετρος.
+                </p>
+                <ol class="drill-subq">
+                  <li>Βρες όλες τις τιμές του $\lambda$ για τις οποίες η μέθοδος συγκλίνει τοπικά στη ρίζα $\xi = \sqrt{5}$.</li>
+                  <li>Βρες την τιμή του $\lambda$ που εξασφαλίζει τουλάχιστον τετραγωνική τάξη σύγκλισης ($p \ge 2$) και επιβεβαίωσε την τάξη.</li>
+                  <li>Ξεκινώντας από $x_0 = 2$, υπολόγισε το πρώτο βήμα $x_1$ με το βέλτιστο $\lambda$ και σύγκρινε το σφάλμα.</li>
+                </ol>
+              </div>
+
+              <div class="drill-hint drill-hint-box">
+                <span class="drill-hint-label hint-title">💡 Hint &amp; Mnemonic:</span>
+                <span class="hint-text">$g(x) = x - \lambda(x^2 - 5)$. Συνθήκη τοπικής σύγκλισης: $|g'(\sqrt{5})| < 1$. Συνθήκη τετραγωνικής σύγκλισης: $g'(\sqrt{5}) = 0$. Προσοχή: κατά τη διαίρεση με $-2\sqrt{5} < 0$, άλλαξε τη φορά των ανισοτήτων!</span>
+              </div>
+
+              <div class="drill-action-bar drill-actions">
+                <button type="button" class="drill-reveal-btn" data-drill-id="drill3">
+                  <span class="btn-icon">💡</span> <span class="drill-btn-text btn-text">Εμφάνιση Λύσης &amp; Επαλήθευση</span>
+                </button>
+              </div>
+
+              <!-- HIDDEN SOLUTION BLOCK -->
+              <div id="drill-sol-drill3" class="drill-solution drill-solution-block" style="display: none;">
+                <h5 class="solution-heading solution-header">✅ Επαληθευμένη Βήμα-προς-Βήμα Λύση (Micro-Drill 3)</h5>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 1</span>
+                  <p><strong>Υπολογισμός Παραγώγου &amp; Διάστημα Σύγκλισης:</strong></p>
+                  <p>
+                    Η επαναληπτική συνάρτηση είναι: $g(x) = x - \lambda(x^2 - 5)$.<br>
+                    Η παράγωγος είναι: $g'(x) = 1 - 2\lambda x$.<br>
+                    Στη ρίζα $\xi = \sqrt{5}$:
+                    $$g'(\sqrt{5}) = 1 - 2\sqrt{5}\lambda$$
+                    Συνθήκη τοπικής σύγκλισης:
+                    $$|g'(\sqrt{5})| < 1 \iff -1 < 1 - 2\sqrt{5}\lambda < 1$$
+                    Αφαιρούμε το $1$ από όλα τα μέλη:
+                    $$-2 < -2\sqrt{5}\lambda < 0$$
+                    Διαιρούμε με το $-2\sqrt{5} < 0$ (<strong>αναστροφή φοράς ανισότητας!</strong>):
+                    $$\frac{-2}{-2\sqrt{5}} > \lambda > \frac{0}{-2\sqrt{5}} \iff \frac{1}{\sqrt{5}} > \lambda > 0$$
+                    Άρα το διάστημα τοπικής σύγκλισης είναι:
+                    $$\mathbf{\lambda \in \left(0, \frac{1}{\sqrt{5}}\right) = \left(0, \frac{\sqrt{5}}{5}\right) \approx (0, 0.4472)}$$
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 2</span>
+                  <p><strong>Τετραγωνική Σύγκλιση:</strong></p>
+                  <p>
+                    Για να είναι η σύγκλιση τετραγωνική ($p \ge 2$), απαιτείται:
+                    $$g'(\sqrt{5}) = 0 \iff 1 - 2\sqrt{5}\lambda = 0 \implies \mathbf{\lambda^* = \frac{1}{2\sqrt{5}} = \frac{\sqrt{5}}{10} \approx 0.2236}$$
+                    Έλεγχος: Το $\lambda^* = \frac{\sqrt{5}}{10}$ ανήκει στο $(0, \frac{\sqrt{5}}{5})$ (ακριβώς στο μέσο του!).<br>
+                    Ελέγχουμε τη δεύτερη παράγωγο:
+                    $$g''(x) = -2\lambda \implies g''(\sqrt{5}) = -2\left(\frac{1}{2\sqrt{5}}\right) = -\frac{1}{\sqrt{5}} \ne 0$$
+                    Εφόσον $g'(\xi) = 0$ και $g''(\xi) \ne 0$, η τάξη σύγκλισης είναι <strong>ακριβώς τετραγωνική ($p = 2$)</strong>.
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 3</span>
+                  <p><strong>Υπολογισμός Επανάληψης $x_1$ από $x_0 = 2$:</strong></p>
+                  <p>
+                    $$x_1 = x_0 - \lambda^* (x_0^2 - 5) = 2 - \frac{\sqrt{5}}{10} (2^2 - 5) = 2 - \frac{\sqrt{5}}{10} (-1) = 2 + \frac{\sqrt{5}}{10} \approx 2.223607$$
+                    Ακριβής ρίζα: $\sqrt{5} \approx 2.236068$.<br>
+                    Αρχικό σφάλμα: $|x_0 - \sqrt{5}| = |2 - 2.236068| \approx 0.2361$.<br>
+                    Νέο σφάλμα: $|x_1 - \sqrt{5}| = |2.223607 - 2.236068| \approx \mathbf{0.0125}$.<br>
+                    Το σφάλμα μειώθηκε κατά <strong>19 φορές</strong> σε ένα μόλις βήμα!
+                  </p>
+                </div>
+
+                <div class="drill-trap-alert">
+                  <strong>⚠️ SOS Παγίδα Εξετάσεων:</strong> Αν η εκφώνηση ζητούσε την αρνητική ρίζα $\xi = -\sqrt{5}$, τότε $g'(-\sqrt{5}) = 1 + 2\sqrt{5}\lambda$.
+                  Η ανίσωση γίνεται $-2 < 2\sqrt{5}\lambda < 0 \implies -\frac{1}{\sqrt{5}} < \lambda < 0$. Να προσέχεις ΠΑΝΤΑ το πρόσημο της ρίζας!
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- ================================================================ -->
+          <!-- DAY 4: QUADRATURE WEIGHTS & SIMPSON RULES (15 MARKS -> 75 CUMUL)  -->
+          <!-- ================================================================ -->
+          <article class="sprint-day-card" data-day="4" id="sprint-day-4">
+            <div class="sprint-day-header day-card-header">
+              <div class="day-meta-bar day-header-left">
+                <div class="day-badges-left day-badges">
+                  <span class="day-num-badge day-pill">DAY 04</span>
+                  <span class="day-tier-badge badge badge-target">🎯 15 Μονάδες (Θέμα 2.2)</span>
+                  <span class="day-time-badge badge badge-time">⏱️ ~3.5 ώρες</span>
+                </div>
+                <div class="day-progress-pill">
+                  <span class="day-progress-text" data-day="4" id="day-4-progress-text">0% (0/4)</span>
+                </div>
+              </div>
+              <h3 class="sprint-day-title day-heading">Βάρη Ολοκλήρωσης &amp; Simpson (Θέμα 2.2 &amp; 2.1c)</h3>
+              <p class="sprint-day-desc day-intro">
+                Το Θέμα 2.2 είναι ένα απλό γραμμικό σύστημα 2x2 ή 3x3: εξισώνεις τον προσεγγιστικό τύπο με τα ακριβή ολοκληρώματα
+                των μονονύμων $1, x, x^2$, βρίσκεις τα βάρη $w_i$ και δοκιμάζεις τις επόμενες δυνάμεις για να βρεις τον βαθμό ακρίβειας.
+                Μαζί με τον σύνθετο Simpson 1/3, εκτοξεύεις τον βαθμό σου στο 75/100!
+              </p>
+            </div>
+
+            <div class="sprint-tasks-section">
+              <h4 class="tasks-title">📋 Καθημερινά Ορόσημα Μελέτης (Ημέρα 4)</h4>
+              <ul class="sprint-tasks-list">
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day4-1" data-task-id="day4-task1">
+                  <div class="task-content">
+                    <label for="task-day4-1" class="task-label-text sprint-chk-label">
+                      <strong>Κατασκευή Συστήματος Ροπών για Προσδιορισμό Βαρών</strong>
+                    </label>
+                    <div class="task-desc">
+                      Απαίτηση ακριβούς ισότητας $\int_a^b x^k dx = \sum_{i=0}^n w_i x_i^k$ για τα μονώνυμα $k = 0, 1, \dots$. Υπολογισμός των ακριβών ολοκληρωμάτων $\int_a^b x^k dx = \frac{b^{k+1} - a^{k+1}}{k+1}$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">Σύστημα Ροπών</span>
+                      <a href="topic5_integration.html#weights" class="task-ref-link task-link">Topic 5 Βάρη &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day4-2" data-task-id="day4-task2">
+                  <div class="task-content">
+                    <label for="task-day4-2" class="task-label-text sprint-chk-label">
+                      <strong>Επίλυση Γραμμικού Συστήματος &amp; Εύρεση Τύπου</strong>
+                    </label>
+                    <div class="task-desc">
+                      Επίλυση του προκύπτοντος γραμμικού συστήματος ως προς τα άγνωστα βάρη $w_i$.
+                      <strong>10-Second Sanity Check:</strong> Το άθροισμα των βαρών $\sum w_i$ πρέπει ΠΑΝΤΑ να ισούται με το μήκος του διαστήματος $b - a$ ($\int_a^b 1 dx = b - a$)!
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">10s Check</span>
+                      <a href="exam_prep.html#recipe-type-e" class="task-ref-link task-link">Exam Prep Type E &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day4-3" data-task-id="day4-task3">
+                  <div class="task-content">
+                    <label for="task-day4-3" class="task-label-text sprint-chk-label">
+                      <strong>Έλεγχος Ακριβούς Βαθμού Ακρίβειας (Degree of Precision)</strong>
+                    </label>
+                    <div class="task-desc">
+                      Δοκιμή των επόμενων δυνάμεων $x^{k+1}, x^{k+2}$ στον ευρεθέντα τύπο. Ο μέγιστος βαθμός $d$ για τον οποίο η ισότητα επαληθεύεται ακριβώς ονομάζεται <em>βαθμός ακρίβειας</em>.
+                      <strong>SOS Trap:</strong> Μην υποθέσεις τυφλά Gauss ακρίβεια $2n-1$ αν οι κόμβοι $x_i$ είναι προκαθορισμένοι στην εκφώνηση!
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">Βαθμός d</span>
+                      <a href="topic5_integration.html#precision" class="task-ref-link task-link">Topic 5 Ακρίβεια &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day4-4" data-task-id="day4-task4">
+                  <div class="task-content">
+                    <label for="task-day4-4" class="task-label-text sprint-chk-label">
+                      <strong>Σύνθετος Κανόνας Simpson 1/3 &amp; Αιτιολόγηση Σφάλματος</strong>
+                    </label>
+                    <div class="task-desc">
+                      Εφαρμογή του τύπου: $I \approx \frac{h}{3}[f_0 + 4\sum_{\text{odd}} f_i + 2\sum_{\text{even}} f_i + f_N]$ με $h = (b-a)/N$. Έλεγχος ότι τα υποδιαστήματα $N$ είναι <strong>άρτιος αριθμός</strong>.
+                      Αιτιολόγηση ότι για πολυώνυμα 3ου βαθμού το σφάλμα είναι <em>ακριβώς μηδέν</em> επειδή $E \propto f^{(4)}(\xi) \equiv 0$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag core">Simpson 1/3</span>
+                      <a href="topic5_integration.html#simpson" class="task-ref-link task-link">Topic 5 Simpson &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- MICRO-DRILL 4 -->
+            <div class="sprint-drill-card drill-card" id="drill-box-4">
+              <div class="drill-header">
+                <div class="drill-title-group drill-tag-wrap">
+                  <span class="drill-icon">⚡</span>
+                  <span class="drill-badge">MICRO-DRILL 4</span>
+                  <span class="drill-title drill-topic">Προσδιορισμός Βαρών Ολοκλήρωσης &amp; Βαθμός Ακρίβειας</span>
+                </div>
+                <span class="drill-pts">14 Μονάδες</span>
+              </div>
+
+              <div class="drill-problem">
+                <p><strong>Εκφώνηση (Θέμα 2.2):</strong></p>
+                <p>Θεωρούμε τον κανόνα αριθμητικής ολοκλήρωσης στο διάστημα $[0, 2]$:
+                  $$\int_0^2 f(x) dx \approx w_0 f(0) + w_1 f(4/3)$$
+                </p>
+                <ol class="drill-subq">
+                  <li>Προσδιόρισε τα βάρη $w_0, w_1$ ώστε ο τύπος να είναι ακριβής για πολυώνυμα όσο το δυνατόν μεγαλύτερου βαθμού.</li>
+                  <li>Προσδιόρισε τον ακριβή βαθμό ακρίβειας $d$ του τύπου.</li>
+                  <li>Υπολόγισε την προσέγγιση του ολοκληρώματος $\int_0^2 x^3 dx$ με τον παραπάνω τύπο και βρες το σφάλμα.</li>
+                </ol>
+              </div>
+
+              <div class="drill-hint drill-hint-box">
+                <span class="drill-hint-label hint-title">💡 Hint &amp; Mnemonic:</span>
+                <span class="hint-text">Υπολόγισε τα ακριβή ολοκληρώματα: $\int_0^2 1 dx = 2$ και $\int_0^2 x dx = 2$. Εξίσωσε με τον τύπο και λύσε το σύστημα $2 \times 2$ για τα $w_0, w_1$. Στη συνέχεια έλεγξε τις συναρτήσεις $f(x) = x^2$ και $f(x) = x^3$.</span>
+              </div>
+
+              <div class="drill-action-bar drill-actions">
+                <button type="button" class="drill-reveal-btn" data-drill-id="drill4">
+                  <span class="btn-icon">💡</span> <span class="drill-btn-text btn-text">Εμφάνιση Λύσης &amp; Επαλήθευση</span>
+                </button>
+              </div>
+
+              <!-- HIDDEN SOLUTION BLOCK -->
+              <div id="drill-sol-drill4" class="drill-solution drill-solution-block" style="display: none;">
+                <h5 class="solution-heading solution-header">✅ Επαληθευμένη Βήμα-προς-Βήμα Λύση (Micro-Drill 4)</h5>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 1</span>
+                  <p><strong>Προσδιορισμός Βαρών $w_0, w_1$:</strong></p>
+                  <p>
+                    Απαιτούμε ο τύπος να είναι ακριβής για $f(x) = 1$ και $f(x) = x$:
+                  </p>
+                  <ul class="clean-list">
+                    <li>Για $f(x) = 1$:
+                      $$\int_0^2 1 dx = [x]_0^2 = 2$$
+                      Εφαρμογή τύπου: $w_0(1) + w_1(1) = 2 \implies \mathbf{w_0 + w_1 = 2} \quad (1)$
+                    </li>
+                    <li>Για $f(x) = x$:
+                      $$\int_0^2 x dx = \left[\frac{x^2}{2}\right]_0^2 = \frac{4}{2} = 2$$
+                      Εφαρμογή τύπου: $w_0(0) + w_1(4/3) = 2 \implies \frac{4}{3}w_1 = 2 \implies \mathbf{w_1 = 2 \cdot \frac{3}{4} = \frac{3}{2}}$
+                    </li>
+                  </ul>
+                  <p>
+                    Από την εξίσωση (1):
+                    $$w_0 = 2 - w_1 = 2 - \frac{3}{2} = \mathbf{\frac{1}{2}}$$
+                    Ο προκύπτων κανόνας ολοκλήρωσης είναι:
+                    $$\mathbf{\int_0^2 f(x) dx \approx \frac{1}{2} f(0) + \frac{3}{2} f(4/3)}$$
+                    <em>10-Second Sanity Check:</em> $w_0 + w_1 = \frac{1}{2} + \frac{3}{2} = 2 = b - a$ ✅.
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 2</span>
+                  <p><strong>Έλεγχος Ακριβούς Βαθμού Ακρίβειας $d$:</strong></p>
+                  <p>
+                    Ελέγχουμε τη συνάρτηση $f(x) = x^2$:
+                    $$\text{Ακριβές: } \int_0^2 x^2 dx = \left[\frac{x^3}{3}\right]_0^2 = \frac{8}{3} \approx 2.6667$$
+                    $$\text{Τύπος: } \frac{1}{2}(0)^2 + \frac{3}{2}\left(\frac{4}{3}\right)^2 = \frac{3}{2} \cdot \frac{16}{9} = \frac{24}{9} = \frac{8}{3}$$
+                    Ο τύπος είναι <strong>ακριβής για $x^2$</strong>! (Αν και είχαμε μόνο 2 ελεύθερες παραμέτρους, ο κόμβος $4/3$ είναι κόμβος τύπου Gauss-Radau).
+                  </p>
+                  <p>
+                    Ελέγχουμε τη συνάρτηση $f(x) = x^3$:
+                    $$\text{Ακριβές: } \int_0^2 x^3 dx = \left[\frac{x^4}{4}\right]_0^2 = \frac{16}{4} = 4$$
+                    $$\text{Τύπος: } \frac{1}{2}(0)^3 + \frac{3}{2}\left(\frac{4}{3}\right)^3 = \frac{3}{2} \cdot \frac{64}{27} = \frac{32}{9} \approx 3.5556$$
+                    Επειδή $4 = \frac{36}{9} \ne \frac{32}{9}$, ο τύπος <em>αποτυγχάνει</em> στο $x^3$.<br>
+                    Άρα ο ακριβής βαθμός ακρίβειας είναι: <strong>$d = 2$</strong>.
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 3</span>
+                  <p><strong>Προσέγγιση $\int_0^2 x^3 dx$ &amp; Σφάλμα:</strong></p>
+                  <p>
+                    $$\text{Προσέγγιση} = \frac{32}{9} \approx 3.5556$$
+                    $$\text{Απόλυτο Σφάλμα} = |E| = \left| 4 - \frac{32}{9} \right| = \left| \frac{36}{9} - \frac{32}{9} \right| = \mathbf{\frac{4}{9} \approx 0.4444}$$
+                  </p>
+                </div>
+
+                <div class="drill-trap-alert">
+                  <strong>⚠️ SOS Παγίδα Εξετάσεων:</strong> Μην μπερδέψεις τον βαθμό ακρίβειας $d=2$ με τον βαθμό Gauss $2n-1 = 2(2)-1 = 3$.
+                  Στον Gauss ολοκληρωτή όλοι οι κόμβοι είναι ελεύθεροι. Εδώ ο κόμβος $x_0 = 0$ και ο κόμβος $x_1 = 4/3$ ήταν σταθεροί!
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- ================================================================ -->
+          <!-- DAY 5: GAUSS-JORDAN & NEWTON INTERPOLATION (25 MARKS -> 100 CUMUL)-->
+          <!-- ================================================================ -->
+          <article class="sprint-day-card" data-day="5" id="sprint-day-5">
+            <div class="sprint-day-header day-card-header">
+              <div class="day-meta-bar day-header-left">
+                <div class="day-badges-left day-badges">
+                  <span class="day-num-badge day-pill">DAY 05</span>
+                  <span class="day-tier-badge badge badge-target">🎯 25 Μονάδες (Θέματα 1.2 &amp; 2.1)</span>
+                  <span class="day-time-badge badge badge-time">⏱️ ~4.5 ώρες</span>
+                  <span class="badge badge-max" style="color: var(--purple); border-color: rgba(192,132,252,0.4);">🏆 100/100 ΑΡΙΣΤΑ!</span>
+                </div>
+                <div class="day-progress-pill">
+                  <span class="day-progress-text" data-day="5" id="day-5-progress-text">0% (0/5)</span>
+                </div>
+              </div>
+              <h3 class="sprint-day-title day-heading">Gauss-Jordan, Παρεμβολή Newton &amp; Mock Exam (Θέματα 1.2 &amp; 2.1)</h3>
+              <p class="sprint-day-desc day-intro">
+                Η τελευταία ημέρα ολοκληρώνει το 100%: εκτελείς μερική οδήγηση στον Gauss-Jordan (επαυξημένος $[A \mid I]$),
+                φτιάχνεις πίνακα διηρημένων διαφορών Newton και δικαιολογείς το σφάλμα.
+                Κλείνεις με ένα πλήρες mock exam 2.5 ωρών για να πας στην εξέταση με απόλυτη αυτοπεποίθηση!
+              </p>
+            </div>
+
+            <div class="sprint-tasks-section">
+              <h4 class="tasks-title">📋 Καθημερινά Ορόσημα Μελέτης (Ημέρα 5)</h4>
+              <ul class="sprint-tasks-list">
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day5-1" data-task-id="day5-task1">
+                  <div class="task-content">
+                    <label for="task-day5-1" class="task-label-text sprint-chk-label">
+                      <strong>Gauss-Jordan με Μερική Οδήγηση &amp; Επόμενος Οδηγός</strong>
+                    </label>
+                    <div class="task-desc">
+                      Κατασκευή επαυξημένου πίνακα $[A \mid I]$. Σε κάθε στήλη $k$, εύρεση $\max_{i \ge k} |a_{ik}|$ και αντιμετάθεση γραμμών $R_k \leftrightarrow R_p$ <strong>σε όλο το πλάτος</strong> (και στο τμήμα του $I$!). Μηδενισμός άνω και κάτω από τη διαγώνιο.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">Μερική Οδήγηση</span>
+                      <a href="exam_prep.html#recipe-type-b" class="task-ref-link task-link">Exam Prep Type B &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day5-2" data-task-id="day5-task2">
+                  <div class="task-content">
+                    <label for="task-day5-2" class="task-label-text sprint-chk-label">
+                      <strong>Έλεγχος Ισαπεχόντων Κόμβων &amp; Πίνακας Διηρημένων Διαφορών</strong>
+                    </label>
+                    <div class="task-desc">
+                      Έλεγχος αποστάσεων $\Delta x_i = x_{i+1} - x_i$. Αν δεν ισαπέχουν, απαγορεύονται οι εμπρός διαφορές $\Delta^k f_0$ και απαιτούνται <strong>Διηρημένες Διαφορές</strong> $f[x_i, \dots, x_{i+k}] = \frac{f[x_{i+1}, \dots] - f[x_i, \dots]}{x_{i+k} - x_i}$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">Διηρημένες Διαφορές</span>
+                      <a href="topic4_interpolation.html#divided-diff" class="task-ref-link task-link">Topic 4 Παρεμβολή &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day5-3" data-task-id="day5-task3">
+                  <div class="task-content">
+                    <label for="task-day5-3" class="task-label-text sprint-chk-label">
+                      <strong>Θεώρημα Σφάλματος Παρεμβολής &amp; Αιτιολόγηση E(x) = 0</strong>
+                    </label>
+                    <div class="task-desc">
+                      Εφαρμογή του τύπου σφάλματος: $E(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} \prod_{j=0}^n (x - x_j)$.
+                      Αιτιολόγηση ότι αν η συνάρτηση είναι πολυώνυμο βαθμού $m \le n$, τότε $f^{(n+1)} \equiv 0 \implies E(x) \equiv 0$ για κάθε $x \in \mathbb{R}$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">Σφάλμα E=0</span>
+                      <a href="exam_prep.html#recipe-type-d" class="task-ref-link task-link">Exam Prep Type D &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day5-4" data-task-id="day5-task4">
+                  <div class="task-content">
+                    <label for="task-day5-4" class="task-label-text sprint-chk-label">
+                      <strong>Μέθοδος Taylor 3 Όρων για ΣΔΕ (IVP)</strong>
+                    </label>
+                    <div class="task-desc">
+                      Εκτέλεση του αλγορίθμου: $h = (b-a)/N$, $y_{k+1} = y_k + h y'_k + \frac{h^2}{2} y''_k$.
+                      Υπολογισμός της πεπλεγμένης παραγώγου $y'' = \frac{d}{dx}f(x, y) = f_x + f_y \cdot y'$.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag core">Taylor 3 Όρων</span>
+                      <a href="exam_prep.html#recipe-type-g" class="task-ref-link task-link">Exam Prep Type G &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="sprint-task-item task-item">
+                  <input type="checkbox" class="sprint-chk" id="task-day5-5" data-task-id="day5-task5">
+                  <div class="task-content">
+                    <label for="task-day5-5" class="task-label-text sprint-chk-label">
+                      <strong>Προσομοίωση Πλήρους Γραπτού 2.5 Ωρών (Mock Exam)</strong>
+                    </label>
+                    <div class="task-desc">
+                      Επίλυση πλήρους θέματος εξετάσεων υπό πραγματικές συνθήκες χρόνου (2 ώρες και 30 λεπτά, κατανομή: 40m Θέμα 1, 30m Θέμα 2, 30m Θέμα 3). Αυτοβαθμολόγηση με τις λύσεις του Exam Prep.
+                    </div>
+                    <div class="task-meta">
+                      <span class="task-tag sos">Mock Exam</span>
+                      <a href="exam_prep.html" class="task-ref-link task-link">Πλήρες Exam Prep Hub &rarr;</a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- MICRO-DRILL 5 -->
+            <div class="sprint-drill-card drill-card" id="drill-box-5">
+              <div class="drill-header">
+                <div class="drill-title-group drill-tag-wrap">
+                  <span class="drill-icon">⚡</span>
+                  <span class="drill-badge">MICRO-DRILL 5</span>
+                  <span class="drill-title drill-topic">Παρεμβολή Newton με Μη-Ισαπέχοντες Κόμβους &amp; Μηδενικό Σφάλμα</span>
+                </div>
+                <span class="drill-pts">16 Μονάδες</span>
+              </div>
+
+              <div class="drill-problem">
+                <p><strong>Εκφώνηση (Θέμα 2.1):</strong></p>
+                <p>Δίνεται ο πίνακας δεδομένων:
+                  $$\begin{array}{c|cccc} i & 0 & 1 & 2 & 3 \\ \hline x_i & 0 & 1 & 2 & 4 \\ \hline f_i & 1 & 3 & 9 & 33 \end{array}$$
+                </p>
+                <ol class="drill-subq">
+                  <li>Εξέτασε αν οι κόμβοι ισαπέχουν και ανάφερε ποια μέθοδος παρεμβολής Newton είναι μαθηματικά κατάλληλη.</li>
+                  <li>Κατασκεύασε τον πλήρη πίνακα διηρημένων διαφορών.</li>
+                  <li>Γράψε το πολυώνυμο παρεμβολής $P_3(x)$ και υπολόγισε την τιμή $P_3(1.5)$.</li>
+                  <li>Αν γνωρίζεις ότι η πραγματική συνάρτηση είναι $f(x) = 2x^2 + 1$, αιτιολόγησε θεωρητικά γιατί το σφάλμα παρεμβολής $E(x)$ είναι μηδέν για κάθε $x$.</li>
+                </ol>
+              </div>
+
+              <div class="drill-hint drill-hint-box">
+                <span class="drill-hint-label hint-title">💡 Hint &amp; Mnemonic:</span>
+                <span class="hint-text">Υπολόγισε τα $x_{i+1} - x_i$: $1, 1, 2 \ne \text{σταθερό}$, άρα αποκλείονται οι εμπρός διαφορές! Στον παρονομαστή της διηρημένης διαφοράς τάξης $k$ μπαίνει πάντα: τελευταίος κόμβος μείον πρώτος ($x_{i+k} - x_i$). Για το σφάλμα, σκέψου την 4η παράγωγο του $2x^2 + 1$.</span>
+              </div>
+
+              <div class="drill-action-bar drill-actions">
+                <button type="button" class="drill-reveal-btn" data-drill-id="drill5">
+                  <span class="btn-icon">💡</span> <span class="drill-btn-text btn-text">Εμφάνιση Λύσης &amp; Επαλήθευση</span>
+                </button>
+              </div>
+
+              <!-- HIDDEN SOLUTION BLOCK -->
+              <div id="drill-sol-drill5" class="drill-solution drill-solution-block" style="display: none;">
+                <h5 class="solution-heading solution-header">✅ Επαληθευμένη Βήμα-προς-Βήμα Λύση (Micro-Drill 5)</h5>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 1</span>
+                  <p><strong>Έλεγχος Ισαπεχόντων Κόμβων:</strong></p>
+                  <p>
+                    $$\Delta x_0 = x_1 - x_0 = 1 - 0 = 1$$
+                    $$\Delta x_1 = x_2 - x_1 = 2 - 1 = 1$$
+                    $$\Delta x_2 = x_3 - x_2 = 4 - 2 = 2 \ne 1$$
+                    Επειδή $\Delta x_2 \ne \Delta x_0$, οι κόμβοι <strong>δεν ισαπέχουν</strong>.
+                    Συνεπώς, η μέθοδος Newton με εμπρός διαφορές $\Delta^k f_0$ δεν εφαρμόζεται·
+                    υποχρεούμαστε να χρησιμοποιήσουμε τη μέθοδο <strong>Newton με Διηρημένες Διαφορές</strong>.
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 2</span>
+                  <p><strong>Πίνακας Διηρημένων Διαφορών:</strong></p>
+                  <ul class="clean-list">
+                    <li><strong>1ης Τάξης:</strong>
+                      $$f[x_0, x_1] = \frac{3 - 1}{1 - 0} = \frac{2}{1} = 2$$
+                      $$f[x_1, x_2] = \frac{9 - 3}{2 - 1} = \frac{6}{1} = 6$$
+                      $$f[x_2, x_3] = \frac{33 - 9}{4 - 2} = \frac{24}{2} = 12$$
+                    </li>
+                    <li><strong>2ης Τάξης:</strong>
+                      $$f[x_0, x_1, x_2] = \frac{f[x_1, x_2] - f[x_0, x_1]}{x_2 - x_0} = \frac{6 - 2}{2 - 0} = \frac{4}{2} = 2$$
+                      $$f[x_1, x_2, x_3] = \frac{f[x_2, x_3] - f[x_1, x_2]}{x_3 - x_1} = \frac{12 - 6}{4 - 1} = \frac{6}{3} = 2$$
+                    </li>
+                    <li><strong>3ης Τάξης:</strong>
+                      $$f[x_0, x_1, x_2, x_3] = \frac{f[x_1, x_2, x_3] - f[x_0, x_1, x_2]}{x_3 - x_0} = \frac{2 - 2}{4 - 0} = \frac{0}{4} = 0$$
+                    </li>
+                  </ul>
+                  <p><strong>Συγκεντρωτικός Πίνακας:</strong></p>
+                  <pre class="drill-code-block code-block"><code>x_i | f[.] | 1η Διηρημένη | 2η Διηρημένη | 3η Διηρημένη
+----+------+--------------+--------------+-------------
+ 0  |  1   |              |              |
+    |      |      2       |              |
+ 1  |  3   |              |      2       |
+    |      |      6       |              |      0
+ 2  |  9   |              |      2       |
+    |      |     12       |              |
+ 4  | 33   |              |              |</code></pre>
+                  <p>Οι συντελεστές της κορυφής είναι: $c_0 = 1$, $c_1 = 2$, $c_2 = 2$, $c_3 = 0$.</p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 3</span>
+                  <p><strong>Πολυώνυμο Παρεμβολής $P_3(x)$ &amp; Υπολογισμός $P_3(1.5)$:</strong></p>
+                  <p>
+                    $$P_3(x) = c_0 + c_1(x - x_0) + c_2(x - x_0)(x - x_1) + c_3(x - x_0)(x - x_1)(x - x_2)$$
+                    $$P_3(x) = 1 + 2(x - 0) + 2(x - 0)(x - 1) + 0$$
+                    $$P_3(x) = 1 + 2x + 2x(x - 1) = 1 + 2x + 2x^2 - 2x = \mathbf{2x^2 + 1}$$
+                  </p>
+                  <p>Στο σημείο $x = 1.5$:
+                    $$P_3(1.5) = 2(1.5)^2 + 1 = 2(2.25) + 1 = 4.5 + 1 = \mathbf{5.5}$$
+                  </p>
+                </div>
+
+                <div class="solution-step">
+                  <span class="step-num">Βήμα 4</span>
+                  <p><strong>Θεωρητική Αιτιολόγηση Μηδενικού Σφάλματος:</strong></p>
+                  <p>
+                    Ο τύπος του θεωρητικού σφάλματος για $n=3$ σημεία είναι:
+                    $$E(x) = f(x) - P_3(x) = \frac{f^{(4)}(\xi)}{4!} (x - 0)(x - 1)(x - 2)(x - 4)$$
+                    όπου $\xi \in (0, 4)$.<br>
+                    Για τη συνάρτηση $f(x) = 2x^2 + 1$:
+                    $$f'(x) = 4x, \quad f''(x) = 4, \quad f'''(x) = 0, \quad f^{(4)}(x) \equiv 0$$
+                    Επειδή η 4η παράγωγος κάθε δευτεροβάθμιου πολυωνύμου μηδενίζεται ταυτοτικά σε όλο το $\mathbb{R}$,
+                    έχουμε $f^{(4)}(\xi) = 0$, συνεπώς:
+                    $$\mathbf{E(x) \equiv 0 \quad \forall x \in \mathbb{R}}$$
+                    Το πολυώνυμο παρεμβολής ταυτίζεται επακριβώς με την αρχική συνάρτηση $f(x)$!
+                  </p>
+                </div>
+
+                <div class="drill-trap-alert">
+                  <strong>⚠️ SOS Παγίδα Εξετάσεων:</strong> Στον παρανομαστή της 2ης διηρημένης διαφοράς μπαίνει $x_2 - x_0 = 2 - 0 = 2$
+                  (όχι $x_2 - x_1$!). Ομοίως για το $f[x_1, x_2, x_3]$ μπαίνει $x_3 - x_1 = 4 - 1 = 3$.
+                  Αν ξεχάσεις να αφαιρέσεις τον πρώτο κόμβο του υποσυνόλου, όλος ο πίνακας καταστρέφεται!
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="topics-grid">
+
+        <!-- 🎯 FULL-WIDTH HERO CARD FOR PASS MODE -->
+        <a href="exam_prep.html" class="topic-card" style="grid-column:1/-1; border-color: var(--green); background: linear-gradient(135deg, var(--surf), rgba(74,222,128,0.12)); flex-direction: row; align-items: center; gap: 24px; flex-wrap: wrap;">
+            <div style="font-size:3.5rem; line-height:1;">🎯</div>
+            <div style="flex:1; min-width:260px;">
+                <div class="topic-num" style="color: var(--green);">ΞΕΚΙΝΑ ΑΠΟ ΕΔΩ · PASS PLAN & SOS PATTERNS</div>
+                <h3 style="margin:4px 0; font-size: 1.7rem;">Exam Prep, SOS Θέματα & Πρότυπες Απαντήσεις</h3>
+                <p style="margin:0;">Οκτώ οικογένειες θεμάτων καλύπτουν πάνω από 90 από τις 100 μονάδες. Κάθε μία με έτοιμη συνταγή <strong>και πλήρως λυμένο παράδειγμα</strong>: Gauss/Jordan, πολυπλοκότητα, σταθερό σημείο, Newton-Raphson, παρεμβολή, Simpson, ΣΔΕ &amp; MATLAB.</p>
+            </div>
+            <div class="topic-tags" style="margin:0;">
+                <span class="tag" style="border-color:rgba(74,222,128,0.5); color:var(--green); font-weight:bold;">MODEL ANSWERS</span>
+                <span class="tag">SOS PATTERNS</span>
+                <span class="tag">MATLAB DRILLS</span>
+                <span class="tag">8 ΛΥΜΕΝΟΙ ΤΥΠΟΙ</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 00: PREREQUISITES -->
+        <a href="prerequisites.html" class="topic-card" style="border-color: var(--blue); background: linear-gradient(135deg, var(--surf), rgba(88, 166, 255, 0.08));">
+            <div class="topic-num" style="color: var(--blue);">TOPIC 00 · FOUNDATIONS</div>
+            <h3>0. Προαπαιτούμενα Μαθηματικά 📖</h3>
+            <p>Ανατομία πινάκων ($m \times n$, γραμμές, δείκτες $a_{ij}$), πολλαπλασιασμός &amp; πρόσθεση, πράξεις γραμμών χωρίς παγίδες προσήμων, μοναδιαίος &amp; αντίστροφος $A^{-1}$, βασικές παράγωγοι, ανισότητες απολύτων $|g'(x)| < 1$ και σφάλμα επανάληψης.</p>
+            <div class="topic-tags">
+                <span class="tag" style="border-color: rgba(88, 166, 255, 0.4); color: var(--blue); font-weight: bold;">STEP 0</span>
+                <span class="tag">Πίνακες</span>
+                <span class="tag">Γραμμοπράξεις</span>
+                <span class="tag">Παράγωγοι</span>
+                <span class="tag">Απόλυτα</span>
+                <span class="tag">Σφάλμα</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 01 -->
+        <a href="topic1_direct_linear.html" class="topic-card">
+            <div class="topic-num">TOPIC 01 · TIER 1 SOS</div>
+            <h3>Άμεσες Μέθοδοι & Gauss-Jordan</h3>
+            <p>Απαλοιφή Gauss, Gauss-Jordan, Μερική Οδήγηση (Partial Pivoting), Υπολογισμός $A^{-1}$, Πολυπλοκότητα $O(n^3)$ & Μετασχηματισμοί Βελτιστοποίησης (Θέμα 1.2 & 1.3).</p>
+            <div class="topic-tags">
+                <span class="tag">Gauss</span><span class="tag">Jordan</span><span class="tag">Pivoting</span><span class="tag">Complexity</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 02 -->
+        <a href="topic2_iterative_linear.html" class="topic-card">
+            <div class="topic-num">TOPIC 02 · TIER 1 SOS</div>
+            <h3>Επαναληπτικές Μέθοδοι (Jacobi / GS / SOR)</h3>
+            <p>Επαναληπτικοί πίνακες $\mathcal{L}_{GS}, \mathcal{L}_{SOR}$, Φασματική Ακτίνα $\rho(\mathcal{L})$, συνθήκες σύγκλισης & συνάρτηση MATLAB για φασματική ακτίνα (Θέμα 1.2β & 3.4).</p>
+            <div class="topic-tags">
+                <span class="tag">Jacobi</span><span class="tag">Gauss-Seidel</span><span class="tag">SOR</span><span class="tag">Spectral Radius</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 03 -->
+        <a href="topic3_nonlinear.html" class="topic-card">
+            <div class="topic-num">TOPIC 03 · TIER 1 SOS</div>
+            <h3>Μη Γραμμικές Εξισώσεις</h3>
+            <p>Επαναληπτική μέθοδος Σταθερού Σημείου $x_{n+1} = g(x_n)$, διάστημα σύγκλισης $\lambda$, τετραγωνική σύγκλιση & μέθοδος Newton-Raphson (Θέμα 1.1).</p>
+            <div class="topic-tags">
+                <span class="tag">Fixed Point</span><span class="tag">Newton-Raphson</span><span class="tag">Convergence</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 04 -->
+        <a href="topic4_interpolation.html" class="topic-card">
+            <div class="topic-num">TOPIC 04 · TIER 1 SOS</div>
+            <h3>Παρεμβολή Newton & Διηρημένες Διαφορές</h3>
+            <p>Πίνακας διηρημένων διαφορών, υπολογισμός τιμών $f(x)$, θεώρημα & αιτιολόγηση σφάλματος παρεμβολής (Θέμα 2.1a-b).</p>
+            <div class="topic-tags">
+                <span class="tag">Newton</span><span class="tag">Divided Diff</span><span class="tag">Error Bound</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 05 -->
+        <a href="topic5_integration.html" class="topic-card">
+            <div class="topic-num">TOPIC 05 · TIER 1 SOS</div>
+            <h3>Αριθμητική Ολοκλήρωση & Simpson</h3>
+            <p>Σύνθετος κανόνας Simpson, προσδιορισμός συντελεστών $w_i$ για μέγιστη ακρίβεια & βαθμός ακρίβειας πολυωνύμου (Θέμα 2.1c & 2.2).</p>
+            <div class="topic-tags">
+                <span class="tag">Simpson</span><span class="tag">Weights</span><span class="tag">Degree of Precision</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 06 -->
+        <a href="topic6_odes.html" class="topic-card">
+            <div class="topic-num">TOPIC 06 · TIER 2</div>
+            <h3>Αριθμητική Επίλυση ΣΔΕ</h3>
+            <p>Προβλήματα Αρχικών Τιμών (IVP), μέθοδος Euler και ανάπτυγμα Taylor 3 όρων για υπολογισμό $y(x_k)$ (Θέμα 2.3).</p>
+            <div class="topic-tags">
+                <span class="tag">Euler</span><span class="tag">Taylor 3-term</span><span class="tag">IVP</span>
+            </div>
+        </a>
+
+        <!-- TOPIC 07 -->
+        <a href="topic7_matlab_guide.html" class="topic-card">
+            <div class="topic-num">TOPIC 07 · TIER 1 SOS</div>
+            <h3>MATLAB Scripting & Δείκτες Πινάκων</h3>
+            <p>Γραμμική αριθμοδεικτοδότηση (indexing), διανυσματικές νόρμες, `cond(A)`, `eig(A)`, `roots(p)`, `polyfit` (Θέμα 3.1 & 3.2).</p>
+            <div class="topic-tags">
+                <span class="tag">MATLAB</span><span class="tag">Indexing</span><span class="tag">Norms</span><span class="tag">eig & cond</span>
+            </div>
+        </a>
+
+        <!-- EXAM PREP CARD -->
+        <a href="exam_prep.html" class="topic-card" style="border-color: var(--orange); background: linear-gradient(135deg, var(--surf), rgba(251, 146, 60, 0.06));">
+            <div class="topic-num" style="color: var(--orange);">EXAM PREP</div>
+            <h3>Exam Prep & Model Answers 🎯</h3>
+            <p>Πρότυπες λύσεις για όλα τα επαναλαμβανόμενα θέματα (Gauss-Jordan, Μετασχηματισμοί, Σταθερό Σημείο, Simpson, MATLAB).</p>
+            <div class="topic-tags">
+                <span class="tag">solved</span><span class="tag">patterns</span><span class="tag">model answers</span>
+            </div>
+        </a>
+
+        <!-- FLASHCARDS CARD -->
+        <a href="flashcards.html" class="topic-card" style="border-color: var(--purple); background: linear-gradient(135deg, var(--surf), rgba(192, 132, 252, 0.05));">
+            <div class="topic-num" style="color: var(--purple);">FLASHCARDS</div>
+            <h3>Flashcards Θεωρίας 🗂️</h3>
+            <p>Κάρτες θεωρίας & τύπων (Gauss, Pivoting, Newton, Simpson, MATLAB) για ταχεία επανάληψη.</p>
+            <div class="topic-tags">
+                <span class="tag">theory</span><span class="tag">flashcards</span><span class="tag">self-test</span>
+            </div>
+        </a>
+
+        <!-- INTERACTIVE QUIZ CARD -->
+        <a href="interactive_quiz.html" class="topic-card" style="border-color: var(--purple); background: linear-gradient(135deg, var(--surf), rgba(192, 132, 252, 0.05));">
+            <div class="topic-num" style="color: var(--purple);">PRACTICE</div>
+            <h3>Interactive Quiz</h3>
+            <p>Διαδραστικό τεστ πολλαπλών επιλογών & υπολογισμών για όλα τα SOS θέματα της εξέτασης.</p>
+            <div class="topic-tags">
+                <span class="tag">interactive</span><span class="tag">quiz</span><span class="tag">practice</span>
+            </div>
+        </a>
+
+    </div>
+
+    <div class="footer" style="text-align:center; padding: 40px; color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 60px;">
+        ΕΚΠΑ · Τμήμα Πληροφορικής & Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes
+    </div>
+</body>
+</html>

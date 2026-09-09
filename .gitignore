@@ -1,0 +1,13 @@
+# University course PDFs & past exam materials
+Θεματα/
+Εργασιες/
+Σημειωσεις/
+
+# Builder / extension files
+webnotes-builder/
+
+# Environment and OS files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log

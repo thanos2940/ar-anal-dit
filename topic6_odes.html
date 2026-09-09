@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 6 · Αριθμητική Επίλυση ΣΔΕ (Euler &amp; Taylor - Οδηγός Αρχαρίων)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--odim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'y\'=f(x,y)';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(240,136,62,.08);
+  pointer-events:none;font-weight:700;
+}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 8px;margin-left:6px}
+.step-box{background:var(--surf2);border-left:4px solid var(--orange);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--orange);margin-bottom:6px;font-size:0.95rem}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script src="data/flashcards.js" defer></script>
+<script src="js/flashcards.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · TOPIC 06</div>
+  <h1>Αριθμητική Επίλυση ΣΔΕ <em>(Euler &amp; Taylor)</em></h1>
+  <p>Πλήρης οδηγός για αρχάριους: Προβλήματα Αρχικών Τιμών (IVP), Μέθοδος Euler βήμα-βήμα, Ανάπτυγμα Taylor 3 Όρων &amp; Υπολογισμός Βήματος $h$.</p>
+  <div class="chips">
+    <span class="chip">Euler Method</span>
+    <span class="chip">Taylor 3-Term</span>
+    <span class="chip">IVP</span>
+    <span class="chip">Runge-Kutta</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#essence">🎯 Η Ουσία</a>
+  <a href="#euler">1. Μέθοδος Euler</a>
+  <a href="#stepbystep">2. Βήμα-βήμα Λύση Θέματος 2.3</a>
+  <a href="#taylor">3. Μέθοδος Taylor 3 Όρων</a>
+  <a href="#flashcards">🗂️ Flashcards</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ΠΡΟΑΠΑΙΤΟΥΜΕΝΟ ΥΠΟΒΑΘΡΟ · STEP 0</div>
+      <div class="prereq-title">Προαπαιτούμενα για Αριθμητική Επίλυση ΣΔΕ (Euler &amp; Taylor)</div>
+      <p class="prereq-text">
+        Η μέθοδος Taylor 3 όρων απαιτεί υπολογισμό της 2ης παραγώγου $y''(x) = f_x(x,y) + f_y(x,y)f(x,y)$ μέσω κανόνα αλυσίδας (chain rule). Αν χρειάζεσαι επανάληψη στις παραγώγους και στο ανάπτυγμα Taylor, δες την ειδική ενότητα.
+      </p>
+      <a href="prerequisites.html#sec-derivatives" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν: Παράγωγοι &amp; Ανάπτυγμα Taylor &rarr;</a>
+    </div>
+  </div>
+
+<!-- 🎯 ESSENCE SECTION -->
+<section id="essence">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🎯</div>
+    <h2>Η Ουσία σε 60 δευτερόλεπτα</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΤΙ ΚΑΝΕΙ</div>
+    Υπολογίζει προσεγγιστικά τις τιμές της άγνωστης συνάρτησης $y(x)$ που ικανοποιεί τη Συνήθη Διαφορική Εξίσωση $y' = f(x,y)$ με δοσμένη αρχική συνθήκη $y(x_0) = y_0$, προχωρώντας βήμα-βήμα με πλάτος $h$.
+  </div>
+
+  <p style="margin-bottom:14px">
+    <strong>💡 Διαίσθηση για Αρχάριους:</strong> Ξεκινάς από ένα γνωστό σημείο $(x_0, y_0)$ και ακολουθείς την κατεύθυνση της κλίσης $y' = f(x_0, y_0)$ για απόσταση $h$ μέχρι το επόμενο σημείο!
+  </p>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">✅ Δουλεύει καλά όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Το βήμα $h$ είναι αρκούντως μικρό ($h \ll 1$).</li>
+        <li>Η μέθοδος Taylor 3 όρων χρησιμοποιείται για υψηλότερη ακρίβεια ($O(h^2)$ τοπικό σφάλμα).</li>
+      </ul>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">❌ Αποτυγχάνει όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Η μέθοδος Euler έχει μεγάλη συσσώρευση σφάλματος (τοπικό σφάλμα $O(h)$, ολικό $O(h)$).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic6" data-section="essence"></div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="euler">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--odim)">1️⃣</div>
+    <h2>1. Μέθοδος Euler <span class="exam-badge">Θέμα 2.3</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Η μέθοδος Euler είναι η απλούστερη άμεση μέθοδος επίλυσης IVP:
+    $$y_{k+1} = y_k + h f(x_k, y_k), \quad x_{k+1} = x_k + h$$
+  </p>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Πρόβλημα Αρχικών Τιμών (IVP) &amp; Μέθοδος Euler</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Ένα Πρόβλημα Αρχικών Τιμών (Initial Value Problem - IVP) αποτελείται από μία διαφορική εξίσωση $y' = f(x, y)$ (που περιγράφει την κλίση/ταχύτητα σε κάθε σημείο) και μία γνωστή αφετηρία $y(x_0) = y_0$. Η μέθοδος Euler ξεκινά από το $(x_0, y_0)$ και κάνει ένα γραμμικό άλμα μήκους $h$ κατά μήκος της εφαπτομένης: $y_1 = y_0 + h \cdot f(x_0, y_0)$.</p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις (Θέμα 2.3 - 8 μόρια):</strong> Είναι η πιο γρήγορη άσκηση του γραπτού! Υπολογίζεις πρώτα το βήμα $h = \frac{b-a}{n}$, σημειώνεις τα σημεία $x_k = x_0 + k \cdot h$, και εκτελείς $n$ διαδοχικές αντικαταστάσεις. <strong>Προσοχή:</strong> Μην μπερδεύεις το $n$ (πλήθος διαστημάτων) με το $h$ (πλάτος διαστήματος).</p>
+    </div>
+  </details>
+
+  <div class="section-quiz" data-topic="topic6" data-section="euler"></div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="stepbystep">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--bdim)">🔍</div>
+    <h2>2. Βήμα-βήμα Λύση Θέματος 2.3 (Ιούνιος 2025)</h2>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Εκφώνηση (Ιούνιος 2025):</div>
+    <p style="margin:4px 0">
+      Δίνεται το πρόβλημα αρχικών τιμών $y' = \frac{x-y}{2}$, $0 \le x \le 2$, $y(0) = 1$. Αν $n=2$, να υπολογιστεί η $y(2.0)$ με τη μέθοδο του Euler.
+    </p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Βήματα Επίλυσης:</div>
+    <ol style="margin:4px 0 0 18px;padding:0;line-height:1.7">
+      <li><strong>Υπολογισμός Βήματος $h$:</strong>
+        $$h = \frac{b - a}{n} = \frac{2 - 0}{2} = 1$$
+        Τα σημεία $x$ είναι: $x_0 = 0, x_1 = 1, x_2 = 2$.
+      </li>
+      <li><strong>1ο Βήμα ($k=0$):</strong>
+        <ul>
+          <li>$x_0 = 0, y_0 = 1$.</li>
+          <li>$f(x_0, y_0) = f(0, 1) = \frac{0 - 1}{2} = -0.5$.</li>
+          <li>$y_1 = y_0 + h f(x_0, y_0) = 1 + 1(-0.5) = 0.5$.</li>
+        </ul>
+      </li>
+      <li><strong>2ο Βήμα ($k=1$):</strong>
+        <ul>
+          <li>$x_1 = 1, y_1 = 0.5$.</li>
+          <li>$f(x_1, y_1) = f(1, 0.5) = \frac{1 - 0.5}{2} = \frac{0.5}{2} = 0.25$.</li>
+          <li>$y_2 = y_1 + h f(x_1, y_1) = 0.5 + 1(0.25) = 0.75$.</li>
+        </ul>
+      </li>
+      <li><strong>Τελικό Αποτέλεσμα:</strong> $y(2.0) \approx 0.75$! ✅</li>
+    </ol>
+  </div>
+
+  <div class="section-quiz" data-topic="topic6" data-section="stepbystep"></div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="taylor">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">2️⃣</div>
+    <h2>3. Μέθοδος Taylor 3 Όρων <span class="exam-badge">Θέμα 2.3 (Φεβ 2024)</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Για μεγαλύτερη ακρίβεια, κρατάμε τους τρεις πρώτους όρους του αναπτύγματος Taylor:
+    $$y_{k+1} = y_k + h y'_k + \frac{h^2}{2} y''_k$$
+  </p>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Έμμεση Παράγωγος ΣΔΕ ($y''$) &amp; Τοπικό vs Ολικό Σφάλμα</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong>
+        <br>• <strong>Έμμεση Παράγωγος $y''$:</strong> Επειδή το $y$ είναι άγνωστη συνάρτηση του $x$, όταν παραγωγίζουμε την εξίσωση $y' = f(x, y)$ ως προς $x$, εφαρμόζουμε τον κανόνα της αλυσίδας: $\frac{d}{dx}[y] = y'$. Π.χ. αν $y' = y - x^2 + 1$, τότε $y'' = y' - 2x = (y - x^2 + 1) - 2x$.
+        <br>• <strong>Τοπικό vs Ολικό Σφάλμα:</strong> Το τοπικό σφάλμα αποκοπής συμβαίνει σε ένα μεμονωμένο βήμα $h$ (για Taylor είναι $O(h^3)$, για Euler $O(h^2)$). Το ολικό σφάλμα είναι η συνολική απόκλιση στο τέλος του διαστήματος $x=b$ (για Taylor είναι $O(h^2)$, για Euler $O(h)$).
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> Στη μέθοδο Taylor 3 όρων, το 90% των λαθών γίνεται στην παραγώγιση του $y$. Θυμήσου: όπου βλέπεις σκέτο $y$, η παράγωγός του ως προς $x$ είναι το $y'$, το οποίο αντικαθιστάς αμέσως με την αρχική έκφραση της ΣΔΕ!</p>
+    </div>
+  <div class="recognition-formula">
+    <div class="recognition-header">
+      <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+      <span class="recognition-topic">ΘΕΜΑ 2.3 · ΣΔΕ TAYLOR 3 ΟΡΩΝ</span>
+    </div>
+    <div class="recognition-title">Μηχανική Επίλυση IVP με Μέθοδο Taylor 3 Όρων</div>
+    <div class="recognition-trigger">
+      <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+      <p>Δίνεται $y' = f(x, y)$, αρχική συνθήκη $y(x_0) = y_0$, διάστημα $[a, b]$, και ζητείται η $y(b)$ με μέθοδο Taylor 3 όρων.</p>
+    </div>
+    <div class="recognition-recipe">
+      <div class="recognition-lbl">📋 Τα 4 Βήματα</div>
+      <ol class="recognition-steps">
+        <li><strong>Βήμα $h$:</strong> Υπολόγισε $h = \frac{b - a}{n}$ και όρισε τα σημεία $x_k = x_0 + k\cdot h$.</li>
+        <li><strong>Έμμεση παράγωγος $y''$:</strong> Παραγώγισε την $y' = f(x, y)$ ως προς $x$ με κανόνα αλυσίδας: $\frac{d}{dx}[y] = y'$. Αντικατάστησε το $y'$.</li>
+        <li><strong>Αποτίμηση:</strong> Υπολόγισε $y'_k = f(x_k, y_k)$ και $y''_k$ στο τρέχον σημείο $(x_k, y_k)$.</li>
+        <li><strong>Τύπος Taylor:</strong> Υπολόγισε $y_{k+1} = y_k + h y'_k + \frac{h^2}{2} y''_k$. (Προσοχή στο $\frac{1}{2}$!).</li>
+      </ol>
+    </div>
+    <div class="key-formula-box">
+      <div class="key-formula-lbl">🔑 ΤΥΠΟΣ TAYLOR 3 ΟΡΩΝ &amp; ΑΛΥΣΙΔΑ</div>
+      <div class="key-formula-math">
+        $$y_{k+1} = y_k + h y'_k + \frac{h^2}{2} y''_k \quad \text{όπου} \quad \frac{d}{dx}[y] = y'$$
+      </div>
+    </div>
+  </div>
+
+  <div class="student-trap">
+    <div class="student-trap-header">
+      <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ ΕΞΕΤΑΣΕΩΝ</span>
+      <span class="student-trap-scope">ΘΕΜΑ 2.3 · ΕΜΜΕΣΗ ΠΑΡΑΓΩΓΟΣ</span>
+    </div>
+    <div class="student-trap-title">Το $y$ είναι συνάρτηση — όχι σταθερά!</div>
+    <div class="student-trap-body">
+      <div class="student-trap-comparison">
+        <div class="student-trap-wrong">
+          <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+          <p>Όταν παραγωγίζει $y' = y - x^2 + 1$, γράφει $y'' = -2x$ θεωρώντας ότι η παράγωγος του $y$ είναι 0!</p>
+        </div>
+        <div class="student-trap-right">
+          <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+          <p>Το $y = y(x)$, άρα $\frac{d}{dx}[y] = y'$. Συνεπώς $y'' = y' - 2x = (y - x^2 + 1) - 2x$. Στο σημείο $(1, 2)$ έχουμε $y''_0 = 2 - 1^2 - 2(1) + 1 = 0$!</p>
+        </div>
+      </div>
+      <div class="student-trap-takeaway">
+        <strong>💡 Κανόνας:</strong> Μην ξεχνάς ποτέ το διαιρέτη 2 στον τετραγωνικό όρο: $\frac{h^2}{2}y''_k$!
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="color:var(--purple);margin-top:0">Παράδειγμα Εξέτασης (Φεβ 2024 - Θέμα 2.3):</h4>
+    <p>Δίνεται $y' = y - x^2 + 1$, $1 \le x \le 2$, $y(1) = 2$, $n=1 \implies h=1$ ($x_0=1, x_1=2.0$):</p>
+    <ul>
+      <li>$y'_0 = f(1, 2) = 2 - 1^2 + 1 = 2$.</li>
+      <li>Παραγωγίζουμε τη ΣΔΕ ως προς $x$: $y'' = \frac{d}{dx}(y - x^2 + 1) = y' - 2x$.</li>
+      <li>Στο σημείο $(1, 2)$: $y''_0 = y'_0 - 2(1) = 2 - 2 = 0$.</li>
+      <li>Υπολογισμός: $y(2.0) \approx y_1 = y_0 + h y'_0 + \frac{h^2}{2} y''_0 = 2 + 1(2) + \frac{1^2}{2}(0) = 4$!</li>
+    </ul>
+  </div>
+
+  <div class="section-quiz" data-topic="topic6" data-section="taylor"></div>
+</section>
+
+
+<section id="flashcards">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">🗂️</div>
+    <h2>Flashcards — Αριθμητική Επίλυση ΣΔΕ</h2>
+  </div>
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάρτες θεωρίας για γρήγορη επανάληψη. Κάνε κλικ σε μια κάρτα για να τη γυρίσεις,
+    ή πάτησε «Υπόδειξη» αν κολλήσεις. Για τεστ σε όλα τα κεφάλαια δες τη
+    <a href="flashcards.html">σελίδα Flashcards</a>.
+  </p>
+  <div data-fc-deck="topic6"></div>
+</section>
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>

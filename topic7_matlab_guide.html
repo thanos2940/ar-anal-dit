@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 7 · MATLAB Scripting &amp; Δείκτες Πινάκων (Οδηγός Αρχαρίων)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--bdim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'MATLAB';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(88,166,255,.08);
+  pointer-events:none;font-weight:700;
+}
+.cb{background:#060a10;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;margin:12px 0;overflow-x:auto}
+.kw{color:var(--blue);font-weight:600}
+.fn{color:var(--yellow);font-weight:600}
+.st{color:var(--orange)}
+.cm{color:var(--dim);font-style:italic}
+.nm{color:var(--purple)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 8px;margin-left:6px}
+.step-box{background:var(--surf2);border-left:4px solid var(--blue);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue);margin-bottom:6px;font-size:0.95rem}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script src="data/flashcards.js" defer></script>
+<script src="js/flashcards.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · TOPIC 07</div>
+  <h1>MATLAB Scripting &amp; <em>Δείκτες Πινάκων</em></h1>
+  <p>Πλήρης οδηγός για αρχάριους: Εντολές MATLAB για Γραμμική Άλγεβρα (Θέμα 3.1 &amp; 3.2), Logical Indexing, Νόρμες `norm`, Δείκτης Συνθήκης `cond`, Ιδιοτιμές `eig` &amp; Συναρτήσεις.</p>
+  <div class="chips">
+    <span class="chip">Logical Indexing</span>
+    <span class="chip">norm &amp; cond</span>
+    <span class="chip">eig &amp; roots</span>
+    <span class="chip">polyfit &amp; polyval</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#essence">🎯 Η Ουσία</a>
+  <a href="#commands">1. Βασικές Εντολές Εξετάσεων</a>
+  <a href="#indexing">2. Indexing &amp; Φιλτράρισμα</a>
+  <a href="#functions">3. Συναρτήσεις MATLAB</a>
+  <a href="#flashcards">🗂️ Flashcards</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ΠΡΟΑΠΑΙΤΟΥΜΕΝΟ ΥΠΟΒΑΘΡΟ · STEP 0</div>
+      <div class="prereq-title">Προαπαιτούμενα για το MATLAB Guide &amp; Πράξεις Πινάκων</div>
+      <p class="prereq-text">
+        Οι εντολές `size(A)`, `eye(n)`, `inv(A)`, `det(A)` και η γραμμική δεικτοδότηση (linear indexing) προϋποθέτουν πλήρη σαφήνεια για τις διαστάσεις $m \times n$, τα διανύσματα γραμμής/στήλης και τον μοναδιαίο πίνακα.
+      </p>
+      <a href="prerequisites.html#sec-matrices" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν: Ανατομία Πινάκων &amp; Αντίστροφοι &rarr;</a>
+    </div>
+  </div>
+
+<!-- 🎯 ESSENCE SECTION -->
+<section id="essence">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🎯</div>
+    <h2>Η Ουσία σε 60 δευτερόλεπτα</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΤΙ ΚΑΝΕΙ</div>
+    Το Θέμα 3 των εξετάσεων (30 μονάδες!) εξετάζει τη γνώση βασικών εντολών MATLAB για διανύσματα, πίνακες, νόρμες, ιδιοτιμές, δείκτες συνθήκης και τη συγγραφή αυτόνομων συναρτήσεων.
+  </div>
+
+  <p style="margin-bottom:14px">
+    <strong>💡 Διαίσθηση για Αρχάριους:</strong> Στο MATLAB, τα πάντα είναι διανύσματα ή πίνακες (Matrix Laboratory). Αποφεύγουμε τα `for` loops και χρησιμοποιούμε διανυσματικές πράξεις (vectorization)!
+  </p>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">✅ Δουλεύει καλά όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Χρησιμοποιείς ενσωματωμένες εντολές (`norm`, `cond`, `eig`, `find`, `ones`).</li>
+        <li>Εφαρμόζεις logical indexing: `idx = find(A > 3)`.</li>
+      </ul>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">❌ Αποτυγχάνει όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Ξεχνάς το ελληνικό ή αγγλικό συντακτικό (π.χ. `det(A)` αντί για ορίζουσα, `trace(A)` αντί για ίχνος).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic7" data-section="essence"></div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="commands">
+  <div id="sos-commands"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--bdim)">1️⃣</div>
+    <h2>1. Βασικές Εντολές MATLAB <span class="exam-badge">Θέμα 3.1 &amp; 3.2 - SOS</span></h2>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">💡 Πώς διαβάζεται κάθε εντολή στις εξετάσεις:</div>
+    <ol style="margin:4px 0 0 18px;padding:0;line-height:1.7">
+      <li><strong>Σχετικό Σφάλμα $\| \delta x \|_2 / \|x\|_2$:</strong> `norm(x - x_hat, 2) / norm(x, 2)`. (Η παράμετρος `2` δηλώνει Ευκλείδεια νόρμα).</li>
+      <li><strong>Σχετικό Σφάλμα Υπολοίπου $\|\delta r\|_\infty$:</strong> `norm(b - A*x_hat, inf)`. (Η παράμετρος `inf` δηλώνει νόρμα απείρου).</li>
+      <li><strong>Δείκτης Συνθήκης:</strong> `cond(A)`. Μετράει πόσο ευαίσθητο είναι το σύστημα $Ax=b$ σε διαταραχές.</li>
+      <li><strong>Ορίζουσα &amp; Ίχνος:</strong> `det(A)` &amp; `trace(A)`.</li>
+      <li><strong>Ιδιοτιμές &amp; Ιδιοδιανύσματα:</strong> `eig(A)` (επιστρέφει διάνυσμα ιδιοτιμών) ή `[V, D] = eig(A)` (επιστρέφει διαγώνιο πίνακα ιδιοτιμών $D$ και διανύσματα $V$).</li>
+    </ol>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Δείκτης Συνθήκης ($\text{cond}(A)$) &amp; Νόρμες (`norm`)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong>
+        <br>• <strong>Νόρμα ($\|x\|$):</strong> Είναι το γενικευμένο «μήκος» ενός διανύσματος ή το μέγεθος μεγέθυνσης ενός πίνακα. Στο MATLAB, <code>norm(x, 2)</code> είναι η Ευκλείδεια νόρμα ($\sqrt{\sum x_i^2}$) και <code>norm(x, inf)</code> είναι η μέγιστη απόλυτη τιμή ($\max |x_i|$).
+        <br>• <strong>Δείκτης Συνθήκης $\text{cond}(A) = \|A\| \cdot \|A^{-1}\|$:</strong> Μετράει πόσο «ευαίσθητο» είναι το σύστημα $Ax = b$ σε μικρές διαταραχές των δεδομένων. Αν $\text{cond}(A) \approx 1$, το σύστημα είναι καλά ορισμένο. Αν $\text{cond}(A) \gg 1$ (π.χ. $10^6$), το σύστημα είναι κακορυθμισμένο (ill-conditioned) και οι αριθμητικές λύσεις είναι επισφαλείς.
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις (Θέμα 3.1 & 3.2):</strong> Στο MATLAB γράφεις απλά <code>cond(A)</code>. Για σχετικό σφάλμα διανύσματος γράφεις <code>norm(x - x_approx, 2) / norm(x, 2)</code>. Για νόρμα απείρου υπολοίπου γράφεις <code>norm(b - A*x_approx, inf)</code>. Αυτές οι 3 γραμμές δίνουν 10 μονάδες σε 30 δευτερόλεπτα!</p>
+    </div>
+  </details>
+
+  <table class="vtbl" style="width:100%;margin:16px 0;border-collapse:collapse">
+    <thead>
+      <tr style="background:var(--surf2);color:var(--txt)">
+        <th style="padding:10px">Ζητούμενο Εξέτασης</th>
+        <th style="padding:10px">Εντολή MATLAB</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Σχετικό σφάλμα $\frac{\|\delta x\|_2}{\|x\|_2}$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--green)"><code>norm(x - x_hat, 2) / norm(x, 2)</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Νόρμα απείρου υπολοίπου $\|\delta r\|_\infty$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--green)"><code>norm(b - A*x_hat, inf)</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Ορίζουσα πίνακα $A$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--yellow)"><code>det(A)</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Εσωτερικό γινόμενο διανυσμάτων $x, y$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--cyan)"><code>dot(x, y)</code> ή <code>x' * y</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Δείκτης συνθήκης $\text{cond}(A)$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--purple)"><code>cond(A)</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Μέση τιμή διανύσματος/πίνακα</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border);color:var(--blue)"><code>mean(x)</code> ή <code>mean(A(:))</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Δημιουργία πίνακα $3 \times 2$ με μονάδες</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border)"><code>B = ones(3, 2)</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid var(--border)">Ίχνος πίνακα $A$</td>
+        <td style="padding:10px;border-bottom:1px solid var(--border)"><code>trace(A)</code></td>
+      </tr>
+      <tr>
+        <td style="padding:10px">Ρίζες πολυωνύμου $p(x)$</td>
+        <td style="padding:10px"><code>roots(p)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-quiz" data-topic="topic7" data-section="commands"></div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="indexing">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--ydim)">2️⃣</div>
+    <h2>2. Indexing &amp; Φιλτράρισμα Πινάκων <span class="exam-badge">Θέμα 3.1</span></h2>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Column-Major Διάταξη &amp; Logical Indexing (`find`)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong>
+        <br>• <strong>Column-Major Order:</strong> Το MATLAB αποθηκεύει και διαβάζει τα στοιχεία των πινάκων <strong>κατά στήλες</strong> και όχι κατά γραμμές. Σε έναν πίνακα $3 \times 3$, ο γραμμικός δείκτης <code>1, 2, 3</code> είναι η 1η στήλη από πάνω προς τα κάτω, το <code>4, 5, 6</code> είναι η 2η στήλη, και το <code>7, 8, 9</code> είναι η 3η στήλη!
+        <br>• <strong>Logical Indexing / `find`:</strong> Η εντολή <code>find(A > 3)</code> επιστρέφει τους γραμμικούς δείκτες των στοιχείων που ικανοποιούν τη συνθήκη, σαρώνοντας πάντα στήλη-στήλη.
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις (Θέμα 3.1):</strong> Όταν η εκφώνηση ζητά «βρείτε τις θέσεις των δύο πρώτων στοιχείων με τιμή $>3$», αν σαρώσεις κατά γραμμές θα βρεις λάθος δείκτες! Θυμήσου: σαρώνεις την 1η στήλη προς τα κάτω, μετά τη 2η στήλη προς τα κάτω κ.ο.κ.</p>
+    </div>
+  </details>
+
+  <div class="cb">
+<span class="cm">% Εύρεση θέσεων των 2 πρώτων μη μηδενικών στοιχείων με τιμή > 3</span>
+idx = <span class="fn">find</span>(A > <span class="nm">3</span>);
+pos_first_two = idx(<span class="nm">1</span>:<span class="nm">2</span>);
+
+<span class="cm">% Εύρεση θέσης 1ου μηδενικού στοιχείου</span>
+idx_zero = <span class="fn">find</span>(A == <span class="nm">0</span>, <span class="nm">1</span>, <span class="st">'first'</span>);
+
+<span class="cm">% Εμφάνιση των στοιχείων του A στις θέσεις αυτές</span>
+elements_val = A([pos_first_two; idx_zero]);
+  </div>
+
+  <div class="student-trap">
+    <div class="student-trap-header">
+      <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ ΕΞΕΤΑΣΕΩΝ</span>
+      <span class="student-trap-scope">ΘΕΜΑ 3.1 · COLUMN-MAJOR INDEXING</span>
+    </div>
+    <div class="student-trap-title">Η MATLAB μετράει ΚΑΤΑ ΣΤΗΛΕΣ — όχι κατά γραμμές!</div>
+    <div class="student-trap-body">
+      <div class="student-trap-comparison">
+        <div class="student-trap-wrong">
+          <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+          <p>Στον πίνακα $A = \begin{bmatrix}10 & 3 & -7 \\ 0 & -6 & 0 \\ 1 & 0 & 4\end{bmatrix}$, ο φοιτητής αριθμεί κατά γραμμές: $1 \to 10$, $2 \to 3$, $3 \to -7$, $4 \to 0$, $5 \to -6$... και γράφει λάθος δείκτες στη <code>find</code>.</p>
+        </div>
+        <div class="student-trap-right">
+          <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+          <p>Η αρίθμηση στη μνήμη είναι <strong>column-major</strong> (πρώτα όλη η 1η στήλη προς τα κάτω, μετά η 2η, μετά η 3η):<br>
+          • 1η στήλη: $1 \to 10,\; 2 \to 0,\; 3 \to 1$<br>
+          • 2η στήλη: $4 \to 3,\; 5 \to -6,\; 6 \to 0$<br>
+          • 3η στήλη: $7 \to -7,\; 8 \to 0,\; 9 \to 4$<br>
+          Άρα <code>find(A > 1) = [1; 4; 9]</code> (δηλαδή τα στοιχεία $10, 3, 4$).</p>
+        </div>
+      </div>
+      <div class="student-trap-takeaway">
+        <strong>💡 Κανόνας:</strong> Σχεδίασε αμέσως στο πρόχειρο το πλέγμα των δεικτών $1..9$ ανά στήλη πριν απαντήσεις στο Θέμα 3.1!
+      </div>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic7" data-section="indexing"></div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="functions">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">💻</div>
+    <h2>3. Συναρτήσεις MATLAB (Functions) <span class="exam-badge">Θέμα 3.4 - SOS</span></h2>
+  </div>
+
+  <div class="recognition-formula">
+    <div class="recognition-header">
+      <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+      <span class="recognition-topic">ΘΕΜΑ 3.4 · MATLAB TEMPLATE</span>
+    </div>
+    <div class="recognition-title">Μηχανικό Template Συνάρτησης Επαναληπτικού Πίνακα</div>
+    <div class="recognition-trigger">
+      <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+      <p>Ζητείται συνάρτηση MATLAB που δέχεται πίνακα $A$ (και παραμέτρους $\omega, \tau$) και επιστρέφει τον επαναληπτικό πίνακα $Z$ και τη φασματική του ακτίνα $\rho$.</p>
+    </div>
+    <div class="recognition-recipe">
+      <div class="recognition-lbl">📋 Τα 5 Βήματα του Script</div>
+      <ol class="recognition-steps">
+        <li><code>n = size(A, 1); I = eye(n);</code> (Διαστάσεις και ταυτοτικός).</li>
+        <li><code>D = diag(diag(A));</code> (<strong>Προσοχή:</strong> διπλό <code>diag</code> για να προκύψει διαγώνιος πίνακας και όχι διάνυσμα!).</li>
+        <li><code>CL = -tril(A, -1); CU = -triu(A, 1);</code> (Μείον πρόσημο λόγω $A = D - C_L - C_U$).</li>
+        <li><code>Z = ...</code> (Μετάφραση δοσμένου αλγεβρικού τύπου, π.χ. <code>inv(D - w*CL) * ((1-w)*D + w*CU)</code>).</li>
+        <li><code>rho = max(abs(eig(Z)));</code> (Φασματική ακτίνα).</li>
+      </ol>
+    </div>
+    <div class="key-formula-box">
+      <div class="key-formula-lbl">🔑 ΣΥΝΤΑΞΗ ΦΑΣΜΑΤΙΚΗΣ ΑΚΤΙΝΑΣ</div>
+      <div class="key-formula-math">
+        $$\text{rho} = \max(\text{abs}(\text{eig}(Z))) \quad \text{και} \quad D = \text{diag}(\text{diag}(A))$$
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="color:var(--cyan);margin-top:0">🔍 Πλήρης Σύνταξη Συνάρτησης GS &amp; Φασματικής Ακτίνας</h4>
+    <div class="cb">
+<span class="kw">function</span> [L_mat, rho] = <span class="fn">gauss_seidel_solver</span>(A)
+    <span class="cm">% A: nxn συντελεστές</span>
+    n = <span class="fn">size</span>(A, <span class="nm">1</span>);
+    
+    <span class="cm">% Διαγώνιος D, Αυστηρά Κάτω L, Αυστηρά Άνω U</span>
+    D = <span class="fn">diag</span>(<span class="fn">diag</span>(A));
+    L = -<span class="fn">tril</span>(A, -<span class="nm">1</span>);
+    U = -<span class="fn">triu</span>(A, <span class="nm">1</span>);
+    
+    <span class="cm">% Επαναληπτικός πίνακας L_mat = (D - L)^(-1) * U</span>
+    L_mat = (D - L) \ U;
+    
+    <span class="cm">% Υπολογισμός Φασματικής Ακτίνας ρ(L)</span>
+    eig_vals = <span class="fn">eig</span>(L_mat);
+    rho = <span class="fn">max</span>(<span class="fn">abs</span>(eig_vals));
+<span class="kw">end</span>
+    </div>
+  </div>
+
+    <div class="card">
+    <div class="card-title" style="color:var(--orange)">Πολυώνυμα — το πλήρες σετ εντολών</div>
+    <div style="overflow-x:auto">
+    <table class="vtbl">
+      <thead><tr><th>Ζητούμενο</th><th>Εντολή</th><th>Παγίδα</th></tr></thead>
+      <tbody>
+        <tr><td>Ρίζες πολυωνύμου</td><td><code>roots(p)</code></td><td>—</td></tr>
+        <tr><td>Πολυώνυμο <strong>από ρίζες</strong></td><td><code>poly(r)</code></td><td>Αντίστροφη της <code>roots</code></td></tr>
+        <tr><td>Τιμή πολυωνύμου</td><td><code>polyval(p, x)</code></td><td>Δέχεται και ολόκληρο διάνυσμα $x$</td></tr>
+        <tr><td><strong>Παράγωγος</strong> πολυωνύμου (χωρίς symbolic)</td><td><code>polyder(p)</code></td><td style="color:var(--red)">ΟΧΙ <code>diff</code> — αυτή δίνει διαφορές στοιχείων!</td></tr>
+        <tr><td><strong>Γινόμενο</strong> πολυωνύμων</td><td><code>conv(p1, p2)</code></td><td>Ο πολ/σμός πολυωνύμων είναι συνέλιξη</td></tr>
+        <tr><td><strong>Πηλίκο</strong> πολυωνύμων</td><td><code>deconv(p1, p2)</code></td><td>Επιστρέφει <code>[πηλίκο, υπόλοιπο]</code></td></tr>
+        <tr><td>Ελάχιστα τετράγωνα βαθμού $k$</td><td><code>polyfit(x, y, k)</code></td><td>Προσέγγιση, όχι παρεμβολή</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Λυμένο: πολυώνυμο από ρίζες $r_1=-4,\ r_2=5$, τιμές στα $x_i = -10 + ih$ και γραφική</div>
+<div class="cb"><code>p = <span class="fn">poly</span>([-<span class="nm">4</span> <span class="nm">5</span>]);              <span class="cm">% → [1 -1 -20], δηλ. x² - x - 20</span>
+h = <span class="nm">0.01</span>;
+x = -<span class="nm">10</span> : h : (-<span class="nm">10</span> + <span class="nm">2000</span>*h);  <span class="cm">% i = 0..2000 ⟹ 2001 σημεία</span>
+y = <span class="fn">polyval</span>(p, x);
+<span class="fn">plot</span>(x, y);</code></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--purple)">Συμβολικές μεταβλητές — μόνο όταν το ζητά ρητά</div>
+<div class="cb"><code><span class="kw">syms</span> x
+f  = x^<span class="nm">2</span> - <span class="nm">5</span>*x + <span class="nm">6</span>;
+df = <span class="fn">diff</span>(f, x);        <span class="cm">% df = 2*x - 5</span>
+<span class="fn">subs</span>(df, x, <span class="nm">3</span>)          <span class="cm">% → 1   (η τιμή της παραγώγου στο x = 3)</span></code></div>
+    <div class="wbox">
+      <div class="lbl" style="color:var(--yellow)">⚠️ «Με» ή «χωρίς» συμβολικές — δύο διαφορετικές απαντήσεις</div>
+      <strong>Με συμβολικές:</strong> <code>syms</code> + <code>diff</code> + <code>subs</code>.<br>
+      <strong>Χωρίς συμβολικές:</strong> <code>polyder(p)</code> και <code>polyval(polyder(p), 3)</code>.<br>
+      Οι εκφωνήσεις ζητούν συχνά και τα δύο στην ίδια άσκηση — διάβασε ποιο θέλει το κάθε υποερώτημα.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--green)">Πίνακες &amp; νόρμες — οι υπόλοιπες εντολές που έχουν ζητηθεί</div>
+    <div style="overflow-x:auto">
+    <table class="vtbl">
+      <thead><tr><th>Ζητούμενο</th><th>Εντολή</th></tr></thead>
+      <tbody>
+        <tr><td>Ορίζουσα · ίχνος · βαθμός</td><td><code>det(A)</code> · <code>trace(A)</code> · <code>rank(A)</code></td></tr>
+        <tr><td>Ανάστροφος</td><td><code>transpose(A)</code> ή <code>A.'</code></td></tr>
+        <tr><td><strong>Συζυγής</strong> ανάστροφος</td><td><code>A'</code> <span style="color:var(--muted)">(η σκέτη απόστροφος κάνει conjugate)</span></td></tr>
+        <tr><td>Ιδιοτιμές · και ιδιοδιανύσματα</td><td><code>eig(A)</code> · <code>[V,D] = eig(A)</code></td></tr>
+        <tr><td>Ιδιοτιμές μέσω <strong>χαρακτηριστικού πολυωνύμου</strong></td><td><code>cp = charpoly(A); roots(cp)</code></td></tr>
+        <tr><td>Εσωτερικό γινόμενο <em>διανυσμάτων</em></td><td><code>dot(x, y)</code></td></tr>
+        <tr><td><strong>Κατά γραμμές</strong> εσωτερικό γινόμενο <em>πινάκων</em></td><td><code>sum(A.*B, 2)</code></td></tr>
+        <tr><td>Μέγιστο <strong>κάθε στήλης</strong> · όλου του πίνακα</td><td><code>max(A)</code> · <code>max(A(:))</code></td></tr>
+        <tr><td><strong>Θέση</strong> μεγαλύτερου κατά μέτρο</td><td><code>[m, p] = max(abs(y))</code></td></tr>
+        <tr><td>Πίνακας $3\times2$ με όλα τα στοιχεία 20</td><td><code>20*ones(3,2)</code></td></tr>
+        <tr><td>$\|\delta x\|_2/\|x\|_2$, με $\delta x = x - \hat{x}$</td><td><code>norm(x - xhat)/norm(x)</code></td></tr>
+        <tr><td>$\|\delta r\|_\infty$, με $\delta r = b - A\hat{x}$</td><td><code>norm(b - A*xhat, inf)</code></td></tr>
+        <tr><td>Ολοκλήρωμα συνάρτησης</td><td><code>integral(f, a, b)</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="ibox">
+      <div class="lbl" style="color:var(--blue)">Δύο λεπτά σημεία που ξεχνιούνται</div>
+      <ul style="padding-left:1.5rem;line-height:1.8;margin:0">
+        <li>Η <code>max</code> σε πίνακα δουλεύει <strong>κατά στήλες από μόνη της</strong> — για το
+            συνολικό μέγιστο χρειάζεσαι <code>A(:)</code>.</li>
+        <li>Η <code>norm</code> <strong>χωρίς</strong> δεύτερο όρισμα δίνει τη 2-νόρμα. Για την άπειρη
+            νόρμα γράφεις ρητά <code>inf</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic7" data-section="functions"></div>
+</section>
+
+
+<section id="flashcards">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">🗂️</div>
+    <h2>Flashcards — MATLAB</h2>
+  </div>
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάρτες θεωρίας για γρήγορη επανάληψη. Κάνε κλικ σε μια κάρτα για να τη γυρίσεις,
+    ή πάτησε «Υπόδειξη» αν κολλήσεις. Για τεστ σε όλα τα κεφάλαια δες τη
+    <a href="flashcards.html">σελίδα Flashcards</a>.
+  </p>
+  <div data-fc-deck="topic7"></div>
+</section>
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>

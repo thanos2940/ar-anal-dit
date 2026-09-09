@@ -1,0 +1,831 @@
+/* ==========================================================================
+   5-DAY HIGH-ROI STUDY SPRINT & PROGRESS BAR STYLES
+   Numerical Analysis (ΕΚΠΑ DIT) Webnotes — Dark Theme
+   ========================================================================== */
+
+:root {
+  --sprint-bg: #0c0f16;
+  --sprint-surf: #141822;
+  --sprint-border: #1e2433;
+  --sprint-green: #4ade80;
+  --sprint-green-rgb: 74, 222, 128;
+  --sprint-blue: #60a5fa;
+  --sprint-cyan: #39d4c8;
+  --sprint-yellow: #e3b341;
+  --sprint-purple: #c084fc;
+  --sprint-orange: #fb923c;
+  --sprint-red: #f85149;
+  --sprint-txt: #f1f5f9;
+  --sprint-muted: #94a3b8;
+  --sprint-dim: #475569;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1. SPRINT SECTION CONTAINER
+   ───────────────────────────────────────────────────────────── */
+.sprint-section {
+  max-width: 1240px;
+  margin: 0 auto 50px auto;
+  padding: 0 40px;
+}
+
+.sprint-container {
+  background: linear-gradient(180deg, rgba(20, 24, 34, 0.75) 0%, rgba(12, 15, 22, 0.95) 100%);
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+
+.sprint-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle at 100% 0%, rgba(74, 222, 128, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. SPRINT HEADER & HERO
+   ───────────────────────────────────────────────────────────── */
+.sprint-header {
+  margin-bottom: 32px;
+}
+
+.sprint-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sprint-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sprint-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--green, #4ade80);
+  background: rgba(74, 222, 128, 0.1);
+  padding: 6px 16px;
+  border-radius: 50px;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  letter-spacing: 1px;
+}
+
+.sprint-marks-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--yellow, #e3b341);
+  background: rgba(227, 179, 65, 0.1);
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: 1px solid rgba(227, 179, 65, 0.3);
+  transition: all 0.3s ease;
+}
+
+.sprint-marks-badge.pass-secured {
+  color: #fff;
+  background: rgba(74, 222, 128, 0.25);
+  border-color: var(--green, #4ade80);
+  box-shadow: 0 0 16px rgba(74, 222, 128, 0.35);
+}
+
+.sprint-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 8px;
+  color: var(--muted, #94a3b8);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sprint-reset-btn:hover {
+  color: var(--red, #f85149);
+  border-color: rgba(248, 81, 73, 0.4);
+  background: rgba(248, 81, 73, 0.08);
+}
+
+.sprint-title {
+  font-family: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--txt, #f1f5f9);
+  margin-bottom: 12px;
+  line-height: 1.25;
+}
+
+.sprint-title .sprint-marks-track {
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--green, #4ade80);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+
+.sprint-subtitle {
+  font-size: 1.05rem;
+  color: var(--muted, #94a3b8);
+  max-width: 820px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. PROGRESS METER & DASHBOARD
+   ───────────────────────────────────────────────────────────── */
+.sprint-progress-wrapper {
+  background: var(--surf2, #141822);
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin: 24px 0 36px 0;
+  position: relative;
+}
+
+.sprint-progress-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.progress-status-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--txt, #f1f5f9);
+  letter-spacing: 0.5px;
+}
+
+.progress-percent {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--green, #4ade80);
+}
+
+.sprint-progress-track {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.sprint-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #60a5fa 0%, #39d4c8 50%, #4ade80 100%);
+  border-radius: 50px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 16px rgba(74, 222, 128, 0.35);
+}
+
+.sprint-milestones-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  color: var(--dim, #6e7681);
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sprint-milestones-legend .legend-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sprint-progress-status-msg {
+  margin-top: 14px;
+  font-size: 0.9rem;
+  color: var(--muted, #94a3b8);
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. SPRINT DAYS STACK & DAY CARDS
+   ───────────────────────────────────────────────────────────── */
+.sprint-days-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sprint-day-card {
+  background: var(--surf, #0c0f16);
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 18px;
+  padding: 30px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.sprint-day-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Day-specific left border accents */
+.sprint-day-card[data-day="1"] { border-left: 5px solid var(--blue, #60a5fa); }
+.sprint-day-card[data-day="2"] { border-left: 5px solid var(--cyan, #39d4c8); }
+.sprint-day-card[data-day="3"] {
+  border-left: 5px solid var(--green, #4ade80);
+  background: linear-gradient(180deg, rgba(74, 222, 128, 0.03) 0%, var(--surf, #0c0f16) 100%);
+}
+.sprint-day-card[data-day="4"] { border-left: 5px solid var(--yellow, #e3b341); }
+.sprint-day-card[data-day="5"] { border-left: 5px solid var(--purple, #c084fc); }
+
+/* Completed Day State */
+.sprint-day-card.day-completed {
+  border-color: rgba(74, 222, 128, 0.4);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.12);
+}
+
+/* Day Header */
+.sprint-day-header {
+  margin-bottom: 20px;
+}
+
+.day-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.day-badges-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.day-num-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.sprint-day-card[data-day="1"] .day-num-badge { color: var(--blue, #60a5fa); background: rgba(96, 165, 250, 0.12); border: 1px solid rgba(96, 165, 250, 0.3); }
+.sprint-day-card[data-day="2"] .day-num-badge { color: var(--cyan, #39d4c8); background: rgba(57, 212, 200, 0.12); border: 1px solid rgba(57, 212, 200, 0.3); }
+.sprint-day-card[data-day="3"] .day-num-badge { color: var(--green, #4ade80); background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.4); }
+.sprint-day-card[data-day="4"] .day-num-badge { color: var(--yellow, #e3b341); background: rgba(227, 179, 65, 0.12); border: 1px solid rgba(227, 179, 65, 0.3); }
+.sprint-day-card[data-day="5"] .day-num-badge { color: var(--purple, #c084fc); background: rgba(192, 132, 252, 0.12); border: 1px solid rgba(192, 132, 252, 0.3); }
+
+.day-tier-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--txt, #f1f5f9);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border, #1e2433);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.day-time-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--muted, #94a3b8);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.day-progress-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  color: var(--muted, #94a3b8);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 4px 10px;
+  border-radius: 50px;
+  border: 1px solid var(--border, #1e2433);
+}
+
+.sprint-day-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--txt, #f1f5f9);
+  margin-bottom: 8px;
+}
+
+.sprint-day-desc {
+  color: var(--muted, #94a3b8);
+  font-size: 0.96rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. TASKS CHECKLIST
+   ───────────────────────────────────────────────────────────── */
+.sprint-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.sprint-task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.sprint-task-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+.sprint-task-item.task-completed {
+  background: rgba(74, 222, 128, 0.03);
+  border-color: rgba(74, 222, 128, 0.18);
+}
+
+.sprint-task-item.task-completed .task-label-text {
+  color: var(--muted, #94a3b8);
+  text-decoration: line-through;
+  text-decoration-color: rgba(148, 163, 184, 0.5);
+}
+
+.sprint-chk {
+  margin-top: 3px;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--green, #4ade80);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.task-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.task-label-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--txt, #f1f5f9);
+  transition: color 0.2s ease;
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.task-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.task-tag.sos {
+  color: var(--green, #4ade80);
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.task-tag.core {
+  color: var(--blue, #60a5fa);
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.25);
+}
+
+.task-ref-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--blue, #60a5fa);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease;
+}
+
+.task-ref-link:hover {
+  color: var(--cyan, #39d4c8);
+  text-decoration: underline;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. INSTANT-REVEAL MICRO-DRILLS
+   ───────────────────────────────────────────────────────────── */
+.sprint-drill-card {
+  background: var(--surf2, #141822);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 24px;
+  margin-top: 18px;
+}
+
+.drill-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 12px;
+}
+
+.drill-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drill-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.drill-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--txt, #f1f5f9);
+}
+
+.drill-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cyan, #39d4c8);
+  background: rgba(57, 212, 200, 0.1);
+  border: 1px solid rgba(57, 212, 200, 0.25);
+  padding: 3px 10px;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.drill-problem {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--txt, #f1f5f9);
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
+
+.drill-hint {
+  background: rgba(96, 165, 250, 0.05);
+  border-left: 3px solid var(--blue, #60a5fa);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  color: var(--muted, #94a3b8);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.drill-hint-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--blue, #60a5fa);
+  margin-right: 6px;
+}
+
+.drill-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.drill-reveal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: var(--green, #4ade80);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drill-reveal-btn:hover {
+  background: rgba(74, 222, 128, 0.22);
+  border-color: var(--green, #4ade80);
+  box-shadow: 0 0 14px rgba(74, 222, 128, 0.25);
+}
+
+.drill-reveal-btn.is-revealed {
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.3);
+  color: var(--muted, #94a3b8);
+}
+
+.drill-reveal-btn.is-revealed:hover {
+  background: rgba(148, 163, 184, 0.18);
+  border-color: var(--muted, #94a3b8);
+  box-shadow: none;
+}
+
+.drill-solution {
+  background: #060a10;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  border-left: 4px solid var(--green, #4ade80);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-top: 18px;
+  font-size: 0.94rem;
+  line-height: 1.75;
+  color: var(--txt, #f1f5f9);
+  overflow-x: auto;
+  animation: sprintFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes sprintFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.solution-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--green, #4ade80);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.solution-step {
+  margin-bottom: 12px;
+}
+
+.solution-step-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--cyan, #39d4c8);
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+.drill-code-block {
+  background: #090d14;
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 10px 0;
+  overflow-x: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. RECIPROCAL JUMP CARD (For exam_prep.html)
+   ───────────────────────────────────────────────────────────── */
+.sprint-jump-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: linear-gradient(135deg, var(--surf, #161b22), rgba(74, 222, 128, 0.08));
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-left: 4px solid var(--green, #3fb950);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 20px 0 28px;
+  flex-wrap: wrap;
+  transition: all 0.2s ease;
+}
+
+.sprint-jump-card:hover {
+  border-color: rgba(74, 222, 128, 0.55);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.sprint-jump-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 280px;
+}
+
+.sprint-jump-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sprint-jump-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--green, #3fb950);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.sprint-jump-title {
+  font-family: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--txt, #e6edf3);
+  margin-bottom: 4px;
+}
+
+.sprint-jump-text {
+  font-size: 0.92rem;
+  color: var(--muted, #8b949e);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.sprint-jump-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  border-radius: 8px;
+  padding: 10px 18px;
+  color: var(--green, #3fb950);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sprint-jump-btn:hover {
+  background: rgba(74, 222, 128, 0.25);
+  border-color: var(--green, #3fb950);
+  color: #fff;
+  transform: translateX(3px);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   8. MOBILE RESPONSIVENESS & BREAKPOINTS
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sprint-section {
+    padding: 0 16px;
+    margin-bottom: 36px;
+  }
+
+  .sprint-container {
+    padding: 24px 18px;
+    border-radius: 18px;
+  }
+
+  .sprint-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sprint-title {
+    font-size: 1.6rem;
+  }
+
+  .sprint-title .sprint-marks-track {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.65em;
+  }
+
+  .sprint-progress-wrapper {
+    padding: 16px 18px;
+  }
+
+  .sprint-day-card {
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+
+  .day-meta-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .sprint-task-item {
+    padding: 10px 12px;
+  }
+
+  .task-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .sprint-drill-card {
+    padding: 18px 14px;
+  }
+
+  .drill-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .sprint-jump-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .sprint-jump-left {
+    min-width: 100%;
+  }
+
+  .sprint-jump-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .sprint-container {
+    padding: 20px 14px;
+  }
+
+  .sprint-milestones-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .drill-reveal-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

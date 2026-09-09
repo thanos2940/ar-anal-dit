@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 5 · Αριθμητική Ολοκλήρωση &amp; Simpson (Οδηγός Αρχαρίων)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--pdim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'∫f(x)dx';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(188,140,255,.08);
+  pointer-events:none;font-weight:700;
+}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 8px;margin-left:6px}
+.step-box{background:var(--surf2);border-left:4px solid var(--purple);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--purple);margin-bottom:6px;font-size:0.95rem}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script src="data/flashcards.js" defer></script>
+<script src="js/flashcards.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · TOPIC 05</div>
+  <h1>Αριθμητική Ολοκλήρωση &amp; <em>Simpson</em></h1>
+  <p>Πλήρης οδηγός για αρχάριους: Σύνθετος Κανόνας Simpson, Προσδιορισμός Συντελεστών $w_i$ &amp; Υπολογισμός Βαθμού Ακρίβειας.</p>
+  <div class="chips">
+    <span class="chip">Simpson Rule</span>
+    <span class="chip">Trapezoidal</span>
+    <span class="chip">Degree of Precision</span>
+    <span class="chip">Quadrature Weights</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#essence">🎯 Η Ουσία</a>
+  <a href="#simpson">1. Κανόνας Simpson</a>
+  <a href="#stepbystep">2. Βήμα-βήμα Λύση Θέματος 2.2</a>
+  <a href="#degree">3. Βαθμός Ακρίβειας</a>
+  <a href="#flashcards">🗂️ Flashcards</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ΠΡΟΑΠΑΙΤΟΥΜΕΝΟ ΥΠΟΒΑΘΡΟ · STEP 0</div>
+      <div class="prereq-title">Προαπαιτούμενα για Αριθμητική Ολοκλήρωση &amp; Βάρη Simpson</div>
+      <p class="prereq-text">
+        Ο προσδιορισμός συντελεστών ολοκλήρωσης ($w_i$) και ο έλεγχος βαθμού ακρίβειας απαιτούν υπολογισμό ολοκληρωμάτων πολυωνύμων $\int x^k dx$ και επίλυση απλού γραμμικού συστήματος εξισώσεων.
+      </p>
+      <a href="prerequisites.html#sec-derivatives" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν: Ολοκληρώματα &amp; Γραμμικά Συστήματα &rarr;</a>
+    </div>
+  </div>
+
+<!-- 🎯 ESSENCE SECTION -->
+<section id="essence">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🎯</div>
+    <h2>Η Ουσία σε 60 δευτερόλεπτα</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΤΙ ΚΑΝΕΙ</div>
+    Υπολογίζει προσεγγιστικά το ορισμένο ολοκλήρωμα $I = \int_a^b f(x) dx$ αντικαθιστώντας τη συνάρτηση $f(x)$ με πολυώνυμο παρεμβολής. Ο κανόνας του Τραπεζίου χρησιμοποιεί ευθείες ($n=1$), ενώ ο κανόνας του Simpson παραβολές ($n=2$).
+  </div>
+
+  <p style="margin-bottom:14px">
+    <strong>💡 Διαίσθηση για Αρχάριους:</strong> Υπολογίζεις το εμβαδόν κάτω από την καμπύλη χωρίζοντας το διάστημα σε μικρότερα τμήματα και αθροίζοντας τα εμβαδά παραβολικών τραπεζίων!
+  </p>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">✅ Δουλεύει καλά όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Ο κανόνας Simpson απαιτεί άρτιο πλήθος υποδιαστημάτων ($N = 2m$ διαιρέσεις / περιττό πλήθος σημείων).</li>
+        <li>Η συνάρτηση είναι ομαλή ($C^4[a,b]$).</li>
+      </ul>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">❌ Αποτυγχάνει όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Η συνάρτηση έχει αlinearities, ασυνέχειες ή απότομες μεταβολές στο διάστημα ολοκλήρωσης.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic5" data-section="essence"></div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="simpson">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">📐</div>
+    <h2>1. Σύνθετος Κανόνας Simpson <span class="exam-badge">Θέμα 2.1γ - SOS</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Για $N=2m$ υποδιαστήματα πλάτους $h = \frac{b-a}{N}$, ο τύπος Simpson είναι:
+    $$I_{Simp} = \frac{h}{3} \left[ f(x_0) + 4 \sum_{i=1}^m f(x_{2i-1}) + 2 \sum_{i=1}^{m-1} f(x_{2i}) + f(x_{2m}) \right]$$
+  </p>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Αριθμητική Ολοκλήρωση (Quadrature) &amp; Κανόνας Simpson</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Αριθμητική ολοκλήρωση (ή Quadrature) είναι ο υπολογισμός ενός ορισμένου ολοκληρώματος $\int_a^b f(x) dx$ ως σταθμισμένο άθροισμα τιμών της συνάρτησης σε επιλεγμένα σημεία: $\sum_{i=0}^n w_i f(x_i)$. Ο κανόνας Simpson προσεγγίζει τη συνάρτηση ανά τριάδες σημείων χρησιμοποιώντας παραβολές (πολυώνυμα 2ου βαθμού).</p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> <strong>Η Μεγάλη Παγίδα Σημείων vs Διαστημάτων:</strong> Με $k$ σημεία έχουμε πάντα $n = k - 1$ <strong>διαστήματα</strong>! Ο απλός Simpson 1/3 εφαρμόζεται για 3 σημεία ($n=2$ διαστήματα). Ο σύνθετος Simpson απαιτεί <strong>άρτιο πλήθος διαστημάτων</strong> (άρα <em>περιττό</em> πλήθος σημείων: 3, 5, 7, 9...). Αν σου δώσουν 4 σημεία ($n=3$ διαστήματα), εφαρμόζεται ο Simpson 3/8!</p>
+    </div>
+  </details>
+
+  <div class="step-box">
+    <div class="step-title">🔍 Αναλυτικό Παράδειγμα Simpson στις Εξετάσεις:</div>
+    <p style="margin:4px 0">Υπολογισμός του $I = \int_{-2}^2 (x^3+1) dx$ με Simpson για τα 5 σημεία $x_0=-2, x_1=-1, x_2=0, x_3=1, x_4=2$ ($h = 1$):</p>
+    <ul>
+      <li>$f(-2) = -7$ (άκρο, συντελεστής 1)</li>
+      <li>$f(-1) = 0$ (περιττός δείκτης, συντελεστής 4)</li>
+      <li>$f(0) = 1$ (άρτιος δείκτης, συντελεστής 2)</li>
+      <li>$f(1) = 2$ (περιττός δείκτης, συντελεστής 4)</li>
+      <li>$f(2) = 9$ (άκρο, συντελεστής 1)</li>
+    </ul>
+    $$I_{Simp} = \frac{1}{3} \left[ 1(-7) + 4(0) + 2(1) + 4(2) + 1(9) \right] = \frac{1}{3} [-7 + 0 + 2 + 8 + 9] = \frac{12}{3} = 4$$
+    <p>Πραγματικό ολοκλήρωμα: $\int_{-2}^2 (x^3+1)dx = \left[\frac{x^4}{4} + x\right]_{-2}^2 = (4+2) - (4-2) = 6 - 2 = 4$ (Ακριβές!) ✅</p>
+  </div>
+
+    <div class="rbox">
+    <div class="lbl" style="color:var(--red)">🚨 Διάλεξε κανόνα από το πλήθος ΔΙΑΣΤΗΜΑΤΩΝ, όχι σημείων</div>
+    Με $k$ σημεία έχεις $n = k-1$ <strong>διαστήματα</strong>. Ο κανόνας καθορίζεται από το $n$:
+    <div style="overflow-x:auto">
+    <table class="vtbl" style="margin:10px 0">
+      <thead><tr><th>Διαστήματα $n$</th><th>Σημεία</th><th>Κανόνας</th><th>Τύπος</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td><td>2</td><td>Τραπεζίου</td>
+          <td>$\dfrac{h}{2}(f_0 + f_1)$</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td><td>3</td><td style="color:var(--green)"><strong>Simpson 1/3</strong></td>
+          <td>$\dfrac{h}{3}(f_0 + 4f_1 + f_2)$</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td><td>4</td><td style="color:var(--yellow)"><strong>Simpson 3/8</strong></td>
+          <td>$\dfrac{3h}{8}(f_0 + 3f_1 + 3f_2 + f_3)$</td>
+        </tr>
+        <tr>
+          <td><strong>άρτιο &gt; 2</strong></td><td>περιττό</td><td style="color:var(--cyan)"><strong>Σύνθετος Simpson 1/3</strong></td>
+          <td>$\dfrac{h}{3}(f_0 + 4f_1 + 2f_2 + 4f_3 + \dots + 4f_{n-1} + f_n)$</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    Πάντα $h = \dfrac{b-a}{n}$.
+    <strong>Ο σύνθετος 1/3 απαιτεί ΑΡΤΙΟ $n$</strong> — αν το $n$ είναι περιττό δεν εφαρμόζεται,
+    και πας σε 3/8 (για $n=3$) ή σε συνδυασμό.
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--cyan)">Το μοτίβο συντελεστών του σύνθετου κανόνα</div>
+    <div class="thread-diagram" style="text-align:left;line-height:2.2;font-family:'JetBrains Mono',monospace;font-size:0.9rem">
+      <span style="color:var(--green);font-weight:700">1</span> ,
+      <span style="color:var(--yellow);font-weight:700">4</span> ,
+      <span style="color:var(--blue);font-weight:700">2</span> ,
+      <span style="color:var(--yellow);font-weight:700">4</span> ,
+      <span style="color:var(--blue);font-weight:700">2</span> ,
+      … ,
+      <span style="color:var(--yellow);font-weight:700">4</span> ,
+      <span style="color:var(--green);font-weight:700">1</span>
+    </div>
+    <ul style="padding-left:1.5rem;line-height:1.8">
+      <li><span style="color:var(--green);font-weight:700">Άκρα</span> ($f_0$, $f_n$) → συντελεστής <strong>1</strong></li>
+      <li><span style="color:var(--yellow);font-weight:700">Περιττοί</span> δείκτες → συντελεστής <strong>4</strong></li>
+      <li><span style="color:var(--blue);font-weight:700">Άρτιοι</span> εσωτερικοί δείκτες → συντελεστής <strong>2</strong></li>
+    </ul>
+    <div class="step-box">
+      <div class="step-title">Παράδειγμα: $f(x)=x^3+1$ στο $[-2,2]$, 5 σημεία ⟹ $n=4$, $h=1$</div>
+      $$I \approx \frac{1}{3}\big(\underbrace{-7}_{\times 1} + \underbrace{4(0)}_{\times 4} + \underbrace{2(1)}_{\times 2} + \underbrace{4(2)}_{\times 4} + \underbrace{9}_{\times 1}\big) = \frac{1}{3}(12) = 4$$
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--red)">Το σφάλμα του Simpson — και το «σχολιάστε με βάση τη θεωρία»</div>
+    $$E = -\frac{h^4 (b-a)}{180}\, f^{(4)}(\xi), \qquad \xi \in [a,b]$$
+    <div class="gbox">
+      <div class="lbl" style="color:var(--green)">✅ Η φράση που παίρνει τις μονάδες</div>
+      Ο όρος σφάλματος περιέχει την <strong>4η παράγωγο</strong>. Επομένως ο κανόνας Simpson είναι
+      <strong>ακριβής για κάθε πολυώνυμο βαθμού ≤ 3</strong>, αφού τότε $f^{(4)} \equiv 0$ και $E = 0$.
+      Αν και ο τύπος κατασκευάζεται από <em>παραβολή</em> (2ου βαθμού), «τζάμπα» ολοκληρώνει σωστά
+      και τα κυβικά — ο βαθμός ακρίβειάς του είναι <strong>3</strong>, όχι 2.
+    </div>
+    <div class="step-box">
+      <div class="step-title">Επαλήθευση: $f(x)=4x^3-1$ στο $[0,2]$, 3 σημεία, $h=1$</div>
+      $$I \approx \frac{1}{3}\big(f(0) + 4f(1) + f(2)\big) = \frac{1}{3}(-1 + 12 + 31) = \frac{42}{3} = 14$$
+      $$\int_0^2 (4x^3-1)\,dx = \big[x^4 - x\big]_0^2 = 16-2 = 14 \quad\Longrightarrow\quad \varepsilon = 0$$
+      <p style="margin:8px 0 0;font-size:0.9rem">
+        Και η δικαιολόγηση: $f'=12x^2$, $f''=24x$, $f'''=24$, $f^{(4)}=0$, άρα
+        $E = -\frac{1\cdot 2}{180}\cdot 0 = 0$. ✅
+      </p>
+    </div>
+    <div class="ibox">
+      <div class="lbl" style="color:var(--blue)">Σύγκριση με τον κανόνα τραπεζίου</div>
+      Το τραπέζιο έχει σφάλμα $E = -\dfrac{h^2(b-a)}{12}f''(\xi)$ — περιέχει τη <strong>2η</strong>
+      παράγωγο, άρα είναι ακριβές μόνο για πολυώνυμα βαθμού ≤ 1 (ευθείες). Μην μπερδέψεις τους δύο τύπους.
+    </div>
+  <div class="student-trap">
+    <div class="student-trap-header">
+      <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ ΕΞΕΤΑΣΕΩΝ</span>
+      <span class="student-trap-scope">ΘΕΜΑ 2.1 · ΣΗΜΕΙΑ vs ΔΙΑΣΤΗΜΑΤΑ</span>
+    </div>
+    <div class="student-trap-title">Άρτια Διαστήματα $\ne$ Άρτια Σημεία στον Simpson!</div>
+    <div class="student-trap-body">
+      <div class="student-trap-comparison">
+        <div class="student-trap-wrong">
+          <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+          <p>Βλέπει 4 σημεία, νομίζει ότι επειδή το 4 είναι άρτιος αριθμός εφαρμόζεται ο σύνθετος κανόνας Simpson 1/3, και εφαρμόζει λάθος τύπο.</p>
+        </div>
+        <div class="student-trap-right">
+          <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+          <p>Τα διαστήματα είναι $N = \text{σημεία} - 1 = 4 - 1 = 3$ (περιττό!). Ο σύνθετος Simpson 1/3 <strong>απαιτεί άρτια διαστήματα</strong> $N=2m$, δηλαδή <strong>περιττά σημεία</strong> (3, 5, 7, ...). Για 4 σημεία (3 διαστήματα) εφαρμόζεται ο Simpson 3/8!</p>
+        </div>
+      </div>
+      <div class="student-trap-takeaway">
+        <strong>💡 Κανόνας:</strong> Πρώτα μετράς $N = k - 1$ διαστήματα και μετά επιλέγεις κανόνα!
+      </div>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic5" data-section="simpson"></div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="stepbystep">
+  <div id="weights"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--ydim)">⚖️</div>
+    <h2>2. Βήμα-βήμα Προσδιορισμός Συντελεστών $w_i$ <span class="exam-badge">Θέμα 2.2 - SOS</span></h2>
+  </div>
+
+  <div class="recognition-formula">
+    <div class="recognition-header">
+      <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+      <span class="recognition-topic">ΘΕΜΑ 2.2 · ΥΠΟΛΟΓΙΣΜΟΣ ΒΑΡΩΝ $w_i$</span>
+    </div>
+    <div class="recognition-title">Μηχανικός Προσδιορισμός Βαρών &amp; Βαθμού Ακρίβειας</div>
+    <div class="recognition-trigger">
+      <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+      <p>Δίνεται τύπος $\int_a^b f(x)dx \approx \sum w_i f(x_i)$ με αγνώστους. Ζητείται να προσδιοριστούν οι παράμετροι και ο μέγιστος βαθμός ακρίβειας.</p>
+    </div>
+    <div class="recognition-recipe">
+      <div class="recognition-lbl">📋 Τα 4 Βήματα</div>
+      <ol class="recognition-steps">
+        <li><strong>Μέτρημα αγνώστων:</strong> Έστω $K$ άγνωστα βάρη/κόμβοι. Στήνεις $K$ εξισώσεις για $f(x) = 1, x, x^2, \dots, x^{K-1}$.</li>
+        <li><strong>Αναλυτικά ολοκληρώματα:</strong> Υπολογίζεις $\int_a^b x^k dx = \frac{b^{k+1}-a^{k+1}}{k+1}$.</li>
+        <li><strong>Επίλυση:</strong> Λύνεις το γραμμικό/αλγεβρικό σύστημα. <em>Έλεγχος 10s:</em> Πάντα $\sum w_i = b - a$!</li>
+        <li><strong>Έλεγχος βαθμού:</strong> Δοκιμάζεις την επόμενη δύναμη $f(x) = x^K$. Αν το αναλυτικό ολοκλήρωμα διαφέρει από τον τύπο $\implies d = K - 1$.</li>
+      </ol>
+    </div>
+    <div class="key-formula-box">
+      <div class="key-formula-lbl">🔑 ΣΥΣΤΗΜΑ ΡΟΠΩΝ &amp; ΒΑΘΜΟΣ ΑΚΡΙΒΕΙΑΣ</div>
+      <div class="key-formula-math">
+        $$\sum_{i=0}^n w_i x_i^k = \int_a^b x^k dx \quad (k=0,\dots,K-1) \quad \text{και} \quad \sum w_i = b - a$$
+      </div>
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Εκφώνηση (Θέμα 2.2):</div>
+    <p style="margin:4px 0">
+      Να προσδιοριστούν οι συντελεστές $w_0, w_1, w_2$ στον τύπο $\int_{-1}^1 f(x) dx \approx w_0 f(-1) + w_1 f(0) + w_2 f(1)$ ώστε να έχει τη μέγιστη δυνατή ακρίβεια.
+    </p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Βήματα Επίλυσης:</div>
+    <ol style="margin:4px 0 0 18px;padding:0;line-height:1.7">
+      <li><strong>Εφαρμογή για $f(x) = 1$:</strong>
+        $$\int_{-1}^1 1 dx = [x]_{-1}^1 = 2$$
+        Τύπος: $w_0(1) + w_1(1) + w_2(1) = w_0 + w_1 + w_2$. Άρα: <strong>(1) $w_0 + w_1 + w_2 = 2$</strong>.
+      </li>
+      <li><strong>Εφαρμογή για $f(x) = x$:</strong>
+        $$\int_{-1}^1 x dx = \left[\frac{x^2}{2}\right]_{-1}^1 = 0$$
+        Τύπος: $w_0(-1) + w_1(0) + w_2(1) = -w_0 + w_2$. Άρα: <strong>(2) $-w_0 + w_2 = 0 \implies w_0 = w_2$</strong>.
+      </li>
+      <li><strong>Εφαρμογή για $f(x) = x^2$:</strong>
+        $$\int_{-1}^1 x^2 dx = \left[\frac{x^3}{3}\right]_{-1}^1 = \frac{1}{3} - \left(-\frac{1}{3}\right) = \frac{2}{3}$$
+        Τύπος: $w_0(-1)^2 + w_1(0)^2 + w_2(1)^2 = w_0 + w_2$. Άρα: <strong>(3) $w_0 + w_2 = \frac{2}{3}$</strong>.
+      </li>
+      <li><strong>Επίλυση Συστήματος:</strong>
+        <ul>
+          <li>Από (2) και (3): $2 w_0 = \frac{2}{3} \implies w_0 = \frac{1}{3}$ και $w_2 = \frac{1}{3}$.</li>
+          <li>Από (1): $\frac{1}{3} + w_1 + \frac{1}{3} = 2 \implies w_1 = 2 - \frac{2}{3} = \frac{4}{3}$.</li>
+        </ul>
+      </li>
+      <li><strong>Τελικοί Συντελεστές:</strong> $w_0 = 1/3, w_1 = 4/3, w_2 = 1/3$ (Αυτοί είναι ακριβώς οι συντελεστές του κανόνα Simpson!) 🎉</li>
+    </ol>
+  </div>
+
+  <div class="section-quiz" data-topic="topic5" data-section="weights"></div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="degree">
+  <div id="precision"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">🎓</div>
+    <h2>3. Βαθμός Ακρίβειας (Degree of Precision)</h2>
+  </div>
+
+  <div class="wbox">
+    <strong style="color:var(--cyan)">Ορισμός:</strong><br>
+    Ένας τύπος αριθμητικής ολοκλήρωσης έχει <strong>βαθμό ακρίβειας $k$</strong> αν υπολογίζει με ακρίβεια το ολοκλήρωμα κάθε πολυωνύμου βαθμού $p \le k$, αλλά δίνει σφάλμα για τουλάχιστον ένα πολυώνυμο βαθμού $k+1$.
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Βαθμός Ακρίβειας ($d$) (Degree of Precision)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Είναι ο μέγιστος ακέραιος $d$ για τον οποίο ο κανόνας ολοκλήρωσης υπολογίζει <strong>με μηδενικό σφάλμα</strong> το ολοκλήρωμα κάθε πολυωνύμου βαθμού $\le d$, αλλά αποτυγχάνει (βγάζει έστω και ελάχιστο σφάλμα) για τουλάχιστον ένα πολυώνυμο βαθμού $d+1$.</p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις (Θέμα 2.2 - 12-14 μόρια):</strong>
+        <br>• <strong>Το Παράδοξο του Simpson:</strong> Αν και κατασκευάζεται από παραβολή ($d=2$), λόγω γεωμετρικής συμμετρίας εξουδετερώνει τα σφάλματα περιττής τάξης και ολοκληρώνει ακριβώς και τα κυβικά πολυώνυμα ($x^3$), άρα έχει βαθμό ακρίβειας <strong>$d = 3$</strong>!
+        <br>• <strong>Υπολογισμός αγνώστων βαρών $w_i$:</strong> Δοκιμάζεις διαδοχικά $f(x) = 1, x, x^2, \dots$, εξισώνεις το θεωρητικό ολοκλήρωμα με τον τύπο, λύνεις το γραμμικό σύστημα για τα $w_i$, και μετά ελέγχεις την επόμενη δύναμη για να εντοπίσεις πού σταματάει η ισότητα.
+      </p>
+    </div>
+  </details>
+
+  <div class="section-quiz" data-topic="topic5" data-section="degree"></div>
+</section>
+
+
+<section id="flashcards">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">🗂️</div>
+    <h2>Flashcards — Αριθμητική Ολοκλήρωση</h2>
+  </div>
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάρτες θεωρίας για γρήγορη επανάληψη. Κάνε κλικ σε μια κάρτα για να τη γυρίσεις,
+    ή πάτησε «Υπόδειξη» αν κολλήσεις. Για τεστ σε όλα τα κεφάλαια δες τη
+    <a href="flashcards.html">σελίδα Flashcards</a>.
+  </p>
+  <div data-fc-deck="topic5"></div>
+</section>
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>

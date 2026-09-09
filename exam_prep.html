@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Prep · Αριθμητική Ανάλυση PASS Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--gdim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'$ pass --exam';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(63,185,80,.06);
+  pointer-events:none;font-weight:700;
+}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media (max-width:760px){.compare{grid-template-columns:1fr}}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.qa-card{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:0;margin:18px 0;overflow:hidden}
+.qa-q{background:var(--surf2);padding:16px 20px;font-weight:700;color:var(--txt);font-size:1.05rem;border-left:4px solid var(--green);display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.qa-q .qno{color:var(--green);font-family:'JetBrains Mono',monospace;font-weight:700;flex-shrink:0}
+.qa-a{padding:18px 22px}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 9px;margin-left:6px;vertical-align:middle}
+.keyfact{background:linear-gradient(135deg,rgba(63,185,80,.08),rgba(63,185,80,.03));border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:14px 18px;margin:14px 0}
+.qa-layout{display:grid;grid-template-columns:1fr;gap:24px;min-width:0;max-width:100%}
+@media (min-width:1320px){.qa-layout{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}}
+.qa-main-ans{display:flex;flex-direction:column;justify-content:flex-start;min-width:0;max-width:100%}
+.qa-side-notes{background:rgba(88,166,255,0.04);border:1px dashed rgba(88,166,255,0.2);border-radius:10px;padding:18px;font-size:0.88rem;line-height:1.6;color:var(--muted);align-self:start;min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:break-word;word-break:break-word}
+.side-notes-header{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue);font-size:0.78rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid rgba(88,166,255,0.15);padding-bottom:4px}
+.cb{background:#060a10;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;margin:12px 0;overflow-x:auto;font-size:0.84rem;line-height:1.8}
+.kw{color:var(--blue);font-weight:600}
+.fn{color:var(--yellow);font-weight:600}
+.nm{color:var(--purple)}
+.cm{color:var(--dim);font-style:italic}
+.st{color:var(--orange)}
+.step-box{background:var(--surf2);border-left:4px solid var(--cyan);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--cyan);margin-bottom:6px;font-size:0.95rem}
+.vtbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.9rem}
+.vtbl th{background:var(--surf2);color:var(--txt);padding:10px;text-align:left;border-bottom:2px solid var(--border)}
+.vtbl td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl-scroll{overflow-x:auto;margin:16px 0}
+.mtx{display:inline-grid;gap:2px 14px;font-family:'JetBrains Mono',monospace;font-size:0.86rem;
+     border-left:2px solid var(--muted);border-right:2px solid var(--muted);padding:8px 12px;margin:6px 10px 6px 0;
+     justify-items:end;vertical-align:middle}
+.mtx.c3{grid-template-columns:repeat(3,auto)}
+.mtx.c4{grid-template-columns:repeat(4,auto)}
+.mtx.c6{grid-template-columns:repeat(6,auto)}
+.mtx .bar{border-left:1px dashed var(--dim);padding-left:14px}
+.mrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:10px 0}
+.mop{font-family:'JetBrains Mono',monospace;color:var(--yellow);font-size:0.86rem}
+ul,ol{padding-left:1.5rem}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΕΚΠΑ · ΤΜΗΜΑ ΠΛΗΡΟΦΟΡΙΚΗΣ &amp; ΤΗΛΕΠΙΚΟΙΝΩΝΙΩΝ</div>
+  <h1>🎯 <em>Exam Prep &amp; Model Answers</em></h1>
+  <p>Οδηγός επιτυχίας (PASS Plan) χτισμένος πάνω σε <strong>έξι πλήρη γραπτά με λύσεις</strong>. Κάθε οικογένεια θεμάτων παρουσιάζεται ως έτοιμη συνταγή + πλήρως λυμένο παράδειγμα.</p>
+  <div class="chips">
+    <span class="chip">model answers</span>
+    <span class="chip">Gauss-Jordan</span>
+    <span class="chip">Complexity Algebra</span>
+    <span class="chip">MATLAB drills</span>
+    <span class="chip">6 λυμένα γραπτά</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#strategy">🧭 Στρατηγική</a>
+  <a href="index.html#sprint-plan" style="color: var(--green); font-weight: 700;">⚡ 5-Day Sprint</a>
+  <a href="#core-facts">📊 Ο Πίνακας SOS</a>
+  <a href="#howto">🛠️ Συνταγές</a>
+  <a href="#answers">✍️ Λυμένες Ασκήσεις</a>
+  <a href="#proofs">📐 Θεωρία &amp; Αποδείξεις</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout" style="border-color: rgba(88, 166, 255, 0.4); background: linear-gradient(135deg, var(--surf), rgba(88, 166, 255, 0.08));">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ZERO-TO-HERO FOUNDATION · STEP 0</div>
+      <div class="prereq-title">Ξεκινάς τώρα την προετοιμασία για τις εξετάσεις και νιώθεις κενά;</div>
+      <p class="prereq-text">
+        Όλες οι πρότυπες λύσεις των 8 τύπων θεμάτων βασίζονται σε θεμελιώδεις κανόνες: πράξεις πινάκων, ασφαλείς γραμμοπράξεις χωρίς λάθη προσήμων, παραγώγους και ανισότητες απολύτων. Αν κολλήσεις σε οποιοδήποτε ενδιάμεσο βήμα, ανάτρεξε αμέσως στον οδηγό θεμελίων.
+      </p>
+      <a href="prerequisites.html" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν (Οδηγός Προαπαιτουμένων) &rarr;</a>
+    </div>
+  </div>
+
+  <!-- ⚡ RECIPROCAL SPRINT JUMP CARD -->
+  <div class="sprint-jump-card">
+    <div class="sprint-jump-left">
+      <div class="sprint-jump-icon">⚡</div>
+      <div>
+        <div class="sprint-jump-badge">HIGH-ROI EXAM STRATEGY · 5 DAYS TO PASS</div>
+        <div class="sprint-jump-title">Ακολουθείς το 5-Day Study Sprint;</div>
+        <p class="sprint-jump-text">
+          Κλείδωσε 60/100 μόρια στις πρώτες 3 ημέρες (MATLAB, Πολυπλοκότητα, Σταθερό Σημείο) και δοκίμασε τα 5 Instant-Reveal Micro-Drills στην αρχική σελίδα.
+        </p>
+      </div>
+    </div>
+    <a href="index.html#sprint-plan" class="sprint-jump-btn">
+      <span>Μετάβαση στο Sprint Plan</span>
+      <span>&rarr;</span>
+    </a>
+  </div>
+
+<!-- ============ SECTION 1: STRATEGY ============ -->
+<section id="strategy">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🧭</div>
+    <h2>1. Στρατηγική: πώς κατανέμεις χρόνο και μονάδες</h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Η δομή του γραπτού είναι <strong>εξαιρετικά προβλέψιμη</strong>: 3 Θέματα, 100 μονάδες.
+    Η πιο πρόσφατη μορφή είναι <strong>2 ώρες και 30 λεπτά</strong> με κατανομή
+    <strong>40 / 30 / 30</strong>. Παλαιότερα γραπτά είχαν 35 / 35 / 30 σε 2 ώρες — οι
+    <em>οικογένειες</em> των ερωτήσεων όμως παραμένουν οι ίδιες.
+  </p>
+
+  <div class="keyfact">
+    <strong>💡 Το χρυσό εύρημα:</strong><br>
+    Οκτώ οικογένειες θεμάτων (Gauss/Jordan + οδήγηση, μετασχηματισμός πολυπλοκότητας,
+    σταθερό σημείο, Newton-Raphson, παρεμβολή Newton, Simpson + βάρη, ΣΔΕ, MATLAB)
+    καλύπτουν <strong>πάνω από 90 από τις 100 μονάδες</strong> σε κάθε γραπτό που εξετάστηκε.
+    Κανένα γραπτό δεν περιείχε splines, Chebyshev, Hermite ή Romberg.
+  </div>
+
+  <div class="tbl-scroll">
+  <table class="vtbl">
+    <thead>
+      <tr>
+        <th>Θέμα</th><th>Τι ζητάει</th><th>Μονάδες</th><th>Δυσκολία</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>1.1</strong></td><td>Σταθερό σημείο με παράμετρο λ <em>ή</em> σύγκλιση Newton-Raphson</td><td>10–12</td><td style="color:var(--green)">Εύκολο</td></tr>
+      <tr><td><strong>1.2</strong></td><td>Jordan/Gauss με μερική οδήγηση (αντίστροφος ή 1ο βήμα)</td><td>12–14</td><td style="color:var(--yellow)">Μεσαίο — χρονοβόρο</td></tr>
+      <tr><td><strong>1.3</strong></td><td>Πολυπλοκότητα + αλγεβρικός μετασχηματισμός</td><td>11–16</td><td style="color:var(--yellow)">Μεσαίο</td></tr>
+      <tr><td><strong>2.1</strong></td><td>Παρεμβολή Newton + σφάλμα + Simpson</td><td>15–16</td><td style="color:var(--yellow)">Μεσαίο — χρονοβόρο</td></tr>
+      <tr><td><strong>2.2</strong></td><td>Προσδιορισμός βαρών wᵢ + βαθμός ακρίβειας</td><td>12–14</td><td style="color:var(--green)">Εύκολο</td></tr>
+      <tr><td><strong>2.3</strong></td><td>ΣΔΕ με Euler ή Taylor 3 όρων <span style="color:var(--dim)">(δεν εμφανίζεται πάντα)</span></td><td>8</td><td style="color:var(--green)">Πολύ εύκολο</td></tr>
+      <tr><td><strong>3.1–3.3</strong></td><td>Εντολές MATLAB, indexing, πολυώνυμα, γραφικές</td><td>8–18</td><td style="color:var(--green)">Εύκολο — αποστήθιση</td></tr>
+      <tr><td><strong>3.4</strong></td><td>Συνάρτηση επαναληπτικού πίνακα + φασματική ακτίνα</td><td>12–20</td><td style="color:var(--green)">Εύκολο αν το ξέρεις</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">🎯 Σειρά που συμφέρει</div>
+      <ol style="font-size:0.86rem;line-height:1.75;margin:0">
+        <li><strong>Θέμα 3.4</strong> — μεταφράζεις τον δοσμένο τύπο, 12–20 μον σχεδόν δωρεάν.</li>
+        <li><strong>Θέμα 3.1–3.3</strong> — εντολές· δεν σκέφτεσαι, θυμάσαι.</li>
+        <li><strong>Θέμα 2.2</strong> — γράφεις 3 εξισώσεις, λύνεις σύστημα 3×3.</li>
+        <li><strong>Θέμα 1.1</strong> — μία παραγώγιση και μία ανίσωση.</li>
+        <li><strong>Θέμα 1.3</strong> — μετράς κόστη από τον πίνακα SOS.</li>
+        <li><strong>Θέμα 2.1 &amp; 1.2</strong> — τελευταία: σωστά αλλά αργά.</li>
+      </ol>
+      <p style="font-size:0.82rem;margin:8px 0 0;color:var(--muted)">Με 1, 2 και 3 μόνο είσαι ήδη σε <strong>περιοχή βάσης</strong>.</p>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">⚠️ Παγίδες που κοστίζουν μονάδες</div>
+      <ul style="font-size:0.86rem;line-height:1.75;margin:0">
+        <li>Αν ζητείται <strong>πολυπλοκότητα</strong>, μην υπολογίσεις κανέναν αντίστροφο αριθμητικά — μέτρα κόστη.</li>
+        <li>Στον Simpson, διάλεξε κανόνα από το πλήθος <strong>διαστημάτων</strong>, όχι σημείων.</li>
+        <li>Αν τα σημεία <strong>ισαπέχουν</strong>, πήγαινε σε εμπρός διαφορές — όχι διηρημένες.</li>
+        <li>Στη φασματική ακτίνα, πέρνα τον <strong>επαναληπτικό</strong> πίνακα στην <code>eig</code>, όχι τον A.</li>
+        <li>Η μερική οδήγηση ψάχνει <strong>μόνο στη στήλη k</strong>, από τη γραμμή k και κάτω.</li>
+        <li>Το «γιατί» των ερωτήσεων «δικαιολογήστε» παίρνει τις μισές μονάδες — μην το παραλείπεις.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="examprep" data-section="strategy"></div>
+</section>
+
+<!-- ============ SECTION 2: CORE FACTS ============ -->
+<section id="core-facts">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--ydim)">📊</div>
+    <h2>2. Ο πίνακας SOS <span class="exam-badge">αποστήθιση</span></h2>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Άλγεβρα Κόστους Πράξεων &amp; Πολυπλοκότητα $O(n^3)$</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Στις εξετάσεις μετράμε το ασυμπτωτικό υπολογιστικό κόστος διατηρώντας μόνο τους κυρίαρχους όρους $n^3$:
+        <br>• Επίλυση συστήματος $Ax = b$: Gauss $= \frac{1}{3}n^3$, Jordan $= \frac{1}{2}n^3$.
+        <br>• Υπολογισμός αντιστρόφου $A^{-1}$: Gauss $= \frac{4}{3}n^3$, Jordan $= \frac{3}{2}n^3$.
+        <br>• Πολλαπλασιασμός δύο $n \times n$ πινάκων: $n^3$.
+        <br>• Πίνακας επί διάνυσμα ($M \cdot v$): είναι τάξης $n^2$, άρα <strong>θεωρείται αμελητέο (0)</strong> μπροστά στο $n^3$!
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις (Θέμα 1.3 - 11-16 μόρια):</strong> Αν σου ζητείται να λύσεις $(A^{-1} + BC^{-1})x = A^{-1}b$, το γινόμενο $A^{-1}b$ στο δεξί μέλος <strong>ΔΕΝ</strong> ξαναχρεώνεται με νέο αντίστροφο αν έχεις ήδη υπολογίσει το $A^{-1}$ αριστερά! Είναι απλό $n^2 \approx 0$. Στο γραπτό σου κατασκευάζεις πίνακα όπου χρεώνεις κάθε όρο ξεχωριστά, ακριβώς όπως στις υποδειγματικές λύσεις.</p>
+    </div>
+  </details>
+
+  <div class="rbox">
+    <div class="lbl" style="color:var(--red)">🚨 Το πιο κερδοφόρο πράγμα σε όλη τη σελίδα</div>
+    Οι <strong>σταθερές κόστους</strong> παρακάτω είναι η σύμβαση του μαθήματος και τις χρησιμοποιούν
+    οι επίσημες λύσεις. Χωρίς αυτές, το Θέμα 1.3 (11–16 μονάδες) δεν βγαίνει.
+  </div>
+
+  <div class="tbl-scroll">
+  <table class="vtbl">
+    <thead>
+      <tr><th>Πράξη</th><th style="color:var(--cyan)">με Jordan</th><th style="color:var(--orange)">με Gauss</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Επίλυση συστήματος</strong> $Ax=b$</td><td>$n^3/2$</td><td>$n^3/3$</td></tr>
+      <tr><td><strong>Υπολογισμός αντιστρόφου</strong> $A^{-1}$</td><td>$3n^3/2$</td><td>$4n^3/3$</td></tr>
+      <tr><td><strong>Πολλαπλασιασμός</strong> δύο $n\times n$ πινάκων</td><td colspan="2">$n^3$ (ίδιο και στις δύο)</td></tr>
+      <tr><td>Πίνακας × <strong>διάνυσμα</strong> (ο αντίστροφος ήδη γνωστός)</td><td colspan="2">$n^2 \Rightarrow$ <strong>αμελητέο</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tbl-scroll">
+  <table class="vtbl">
+    <thead>
+      <tr><th>Μέθοδος / Έννοια</th><th>Βασικός τύπος</th><th>Συνθήκη / Ακρίβεια</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--yellow);font-weight:bold">Σταθερό σημείο</td>
+        <td>$x_{n+1} = g(x_n)$</td>
+        <td>$|g'(\xi)| \lt 1$ · τετραγωνική αν $g'(\xi)=0,\ g''(\xi)\neq 0$</td>
+      </tr>
+      <tr>
+        <td style="color:var(--purple);font-weight:bold">Newton-Raphson</td>
+        <td>$x_{n+1} = x_n - \dfrac{f(x_n)}{f'(x_n)}$</td>
+        <td>Τετραγωνική ($p=2$) σε απλή ρίζα</td>
+      </tr>
+      <tr>
+        <td style="color:var(--green);font-weight:bold">Jacobi</td>
+        <td>$B = L + U$</td>
+        <td rowspan="3" style="vertical-align:middle">Συγκλίνει $\iff \rho(\mathcal{L}) \lt 1$<br><span style="color:var(--muted);font-size:0.85rem">$\rho$ = μέγιστη κατ' απόλυτη τιμή ιδιοτιμή</span></td>
+      </tr>
+      <tr>
+        <td style="color:var(--green);font-weight:bold">Gauss-Seidel</td>
+        <td>$\mathcal{L}_1 = (I - L)^{-1} U$</td>
+      </tr>
+      <tr>
+        <td style="color:var(--green);font-weight:bold">SOR</td>
+        <td>$\mathcal{L}_\omega = I - \omega(I-\omega L)^{-1} D^{-1} A$</td>
+      </tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:bold">Newton — εμπρός διαφορές</td>
+        <td>$P_n(x) = f_0 + \binom{\theta}{1}\Delta f_0 + \binom{\theta}{2}\Delta^2 f_0 + \dots$<br><span style="color:var(--muted);font-size:0.85rem">$\theta = (x-x_0)/h$</span></td>
+        <td>Μόνο για <strong>ισαπέχοντα</strong> σημεία</td>
+      </tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:bold">Newton — διηρημένες διαφορές</td>
+        <td>$f[x_i,\dots,x_{i+k}] = \dfrac{f[x_{i+1},..,x_{i+k}] - f[x_i,..,x_{i+k-1}]}{x_{i+k} - x_i}$</td>
+        <td>Για <strong>οποιαδήποτε</strong> σημεία</td>
+      </tr>
+      <tr>
+        <td style="color:var(--blue);font-weight:bold">Simpson 1/3 (απλός)</td>
+        <td>$\dfrac{h}{3}(f_0 + 4f_1 + f_2)$</td>
+        <td>$n = 2$ διαστήματα</td>
+      </tr>
+      <tr>
+        <td style="color:var(--blue);font-weight:bold">Simpson 3/8</td>
+        <td>$\dfrac{3h}{8}(f_0 + 3f_1 + 3f_2 + f_3)$</td>
+        <td>$n = 3$ διαστήματα</td>
+      </tr>
+      <tr>
+        <td style="color:var(--blue);font-weight:bold">Simpson σύνθετος</td>
+        <td>$\dfrac{h}{3}(f_0 + 4f_1 + 2f_2 + 4f_3 + \dots + f_n)$</td>
+        <td>$n$ <strong>άρτιο</strong></td>
+      </tr>
+      <tr>
+        <td style="color:var(--red);font-weight:bold">Σφάλμα Simpson</td>
+        <td>$E = -\dfrac{h^4(b-a)}{180} f^{(4)}(\xi)$</td>
+        <td>Ακριβής έως και <strong>3ου</strong> βαθμού</td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange);font-weight:bold">Euler</td>
+        <td>$y_{i+1} = y_i + h\,y'_i$</td>
+        <td>$h = (b-a)/n$</td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange);font-weight:bold">Taylor 3 όρων</td>
+        <td>$y_{i+1} = y_i + h\,y'_i + \dfrac{h^2}{2} y''_i$</td>
+        <td>$y''$ από <strong>παραγώγιση της ΣΔΕ</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="wbox">
+    <div class="lbl" style="color:var(--yellow)">⚠️ Βαθμός ακρίβειας — η πιο συχνή παγίδα</div>
+    <strong>Gauss</strong> (ελεύθερα και τα βάρη και οι θέσεις): ακριβής έως <strong>2n − 1</strong>.<br>
+    <strong>Newton-Cotes</strong> (θέσεις προκαθορισμένες, ισαπέχουσες): ακριβής έως <strong>n − 1</strong>.<br>
+    Αν κάποιες θέσεις είναι <em>καρφωμένες</em> από την εκφώνηση, μέτρα τις <strong>ελεύθερες παραμέτρους</strong>
+    και μη γράψεις μηχανικά «2n − 1».
+  </div>
+
+  <div class="section-quiz" data-topic="examprep" data-section="core-facts"></div>
+</section>
+
+<!-- ============ SECTION 3: HOWTO ============ -->
+<section id="howto">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">🛠️</div>
+    <h2>3. Συνταγές επίλυσης</h2>
+  </div>
+
+  <!-- ΣΥΝΤΑΓΗ 1 -->
+  <div class="card">
+    <div class="card-title" style="color:var(--cyan)">Συνταγή 1 — Μετασχηματισμός &amp; πολυπλοκότητα γραμμικού συστήματος</div>
+    <p style="color:var(--muted);font-size:0.9rem">
+      Δίνεται σύστημα γεμάτο αντίστροφους. Ζητούνται: (α) το κόστος ως έχει, (β) βελτιωμένη μορφή + κόστος, (γ) συμπέρασμα.
+    </p>
+    <ol style="line-height:1.9">
+      <li><strong>Χρέωσε κάθε όρο ξεχωριστά</strong> με τον πίνακα SOS. Κάθε $X^{-1}$ κοστίζει $3n^3/2$ (Jordan)
+          και κάθε γινόμενο πινάκων $n^3$.</li>
+      <li><strong>Μη διπλοχρεώνεις.</strong> Αν ο $A^{-1}$ υπολογίστηκε ήδη για κάποιον όρο, τότε το $A^{-1}b$
+          είναι απλός πολλαπλασιασμός πίνακα × διάνυσμα, δηλαδή $n^2$ — <em>αμελητέο</em>.</li>
+      <li><strong>Πρόσθεσε το κόστος της τελικής επίλυσης</strong> ($n^3/2$ για Jordan, $n^3/3$ για Gauss).</li>
+      <li><strong>Ο μετασχηματισμός:</strong> πολλαπλασίασε <em>και τα δύο μέλη από αριστερά</em> με τον πίνακα
+          που ακυρώνει τον «ακριβό» αντίστροφο. Στόχος: δεξιά να μείνει σκέτο $b$.</li>
+      <li><strong>Ξαναχρέωσε</strong> τη νέα μορφή και <strong>σύγκρινε</strong>.</li>
+    </ol>
+    <div class="gbox">
+      <div class="lbl" style="color:var(--green)">✅ Ο κανόνας σε μία γραμμή</div>
+      Κάθε αντίστροφος που εξαφανίζεται γλιτώνει $3n^3/2$. Ψάξε τον πολλαπλασιαστή που σβήνει τους περισσότερους.
+    </div>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Μη-Μεταθετικότητα Πινάκων ($AB \ne BA$) &amp; Απαγόρευση «Διαίρεσης»</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Στη γραμμική άλγεβρα <strong>δεν υπάρχει διαίρεση με πίνακα</strong> και το γινόμενο πινάκων <strong>δεν είναι μεταθετικό</strong> ($AB \neq BA$).
+        <br>• Για να απλοποιήσεις έναν αντίστροφο $A^{-1}$ μπροστά από μία παρένθεση, πρέπει υποχρεωτικά να πολλαπλασιάσεις <strong>από τα αριστερά</strong> με $A$ (αφού $A \cdot A^{-1} = I$).
+        <br>• Αν πολλαπλασιάσεις από τα δεξιά, το $A^{-1} \dots A$ δεν απλοποιείται επειδή απαγορεύεται να αλλάξεις τη σειρά των όρων!
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις (SOS Μετασχηματισμοί):</strong> Όταν μετασχηματίζεις την $(A^{-1}C + BD^{-1})x = A^{-1}b$, πολλαπλασιάζεις και τα δύο μέλη <strong>από τα αριστερά</strong> με $A$:
+        $$A(A^{-1}C + BD^{-1})x = A(A^{-1}b) \implies (C + ABD^{-1})x = b$$
+        Ο αντίστροφος $A^{-1}$ εξαφανίζεται εντελώς, εξοικονομώντας αυτόματα $\frac{3}{2}n^3$ πράξεις (για Jordan) ή $\frac{4}{3}n^3$ (για Gauss)!
+      </p>
+    </div>
+  </details>
+
+  <!-- ΣΥΝΤΑΓΗ 2 -->
+  <div class="card">
+    <div class="card-title" style="color:var(--yellow)">Συνταγή 2 — Σταθερό σημείο με παράμετρο λ</div>
+    <ol style="line-height:1.9">
+      <li>Διάβασε τη <strong>g</strong> κατευθείαν από την αναδρομή: αν $x_{n+1} = x_n + \lambda\,\phi(x_n)$, τότε $g(x) = x + \lambda\phi(x)$.</li>
+      <li>Παραγώγισε: $g'(x) = 1 + \lambda\phi'(x)$.</li>
+      <li><strong>Σύγκλιση:</strong> λύσε την ανίσωση $|g'(\xi)| \lt 1$ ως προς λ — αυτό είναι το ζητούμενο διάστημα.</li>
+      <li><strong>Τετραγωνική σύγκλιση:</strong> λύσε την εξίσωση $g'(\xi) = 0$ ως προς λ.</li>
+      <li>Επιβεβαίωσε ότι $g''(\xi) \neq 0$ (αλλιώς η τάξη είναι ακόμη μεγαλύτερη) και ανάφερε ότι οι
+          παράγωγοι της g μέχρι τάξης 2 είναι συνεχείς.</li>
+    </ol>
+  </div>
+
+  <!-- ΣΥΝΤΑΓΗ 3 -->
+  <div class="card">
+    <div class="card-title" style="color:var(--purple)">Συνταγή 3 — Παρεμβολή «στα k πρώτα σημεία» και μετά «σε όλα»</div>
+    <ol style="line-height:1.9">
+      <li><strong>Έλεγξε πρώτα αν τα $x_i$ ισαπέχουν.</strong> Αν ναι → Newton με <strong>εμπρός διαφορές</strong>
+          (αυτό εννοεί το «πλέον αποτελεσματική μέθοδος»). Αν όχι → διηρημένες διαφορές.</li>
+      <li>Φτιάξε <strong>έναν</strong> πίνακα διαφορών για όλα τα σημεία. Η <strong>πάνω διαγώνιος</strong>
+          δίνει τα $f_0, \Delta f_0, \Delta^2 f_0, \dots$</li>
+      <li>Θέσε $\theta = (x - x_0)/h$ και γράψε τους όρους έναν-έναν.</li>
+      <li><strong>Για το «σε όλα τα σημεία» ΜΗΝ ξαναρχίσεις:</strong> $P_3 = P_2 + \binom{\theta}{3}\Delta^3 f_0$.
+          Αυτό ακριβώς είναι το πλεονέκτημα της Newton έναντι της Lagrange.</li>
+      <li>Απλοποίησε και αντικατέστησε την τιμή που ζητείται.</li>
+    </ol>
+  </div>
+
+  <!-- ΣΥΝΤΑΓΗ 4 -->
+  <div class="card">
+    <div class="card-title" style="color:var(--blue)">Συνταγή 4 — Προσδιορισμός βαρών $w_i$</div>
+    <ol style="line-height:1.9">
+      <li><strong>Μέτρα τους αγνώστους.</strong> Τόσες εξισώσεις θα γράψεις.</li>
+      <li>Απαίτησε ο τύπος να είναι ακριβής για $f = 1,\ x,\ x^2,\ \dots$ διαδοχικά.</li>
+      <li>Το δεξί μέλος κάθε φορά είναι $\displaystyle\int_a^b x^k dx = \frac{b^{k+1}-a^{k+1}}{k+1}$.</li>
+      <li>Λύσε το σύστημα. Ψάξε για <strong>συμμετρίες</strong> — συνήθως δύο βάρη βγαίνουν ίσα και το σύστημα καταρρέει αμέσως.</li>
+      <li><strong>Βαθμός ακρίβειας:</strong> δοκίμασε την επόμενη δύναμη. Αν $f = x^{m}$ δεν επαληθεύεται, ο βαθμός είναι $m-1$.</li>
+    </ol>
+  </div>
+
+  <!-- ΣΥΝΤΑΓΗ 5 -->
+  <div class="card">
+    <div class="card-title" style="color:var(--green)">Συνταγή 5 — Συνάρτηση MATLAB για επαναληπτικό πίνακα</div>
+    <p style="color:var(--muted);font-size:0.9rem">
+      Η εκφώνηση <strong>σου δίνει τον τύπο</strong>. Δεν χρειάζεται να τον θυμάσαι — χρειάζεται να ξέρεις το
+      μπλοκ προετοιμασίας και ότι $X^{-1}Y$ γράφεται <code>inv(X)*Y</code>.
+    </p>
+<div class="cb"><code><span class="kw">function</span> [Z, r] = <span class="fn">iterMatrix</span>(A, w, t)
+    n  = <span class="fn">length</span>(A);
+    I  = <span class="fn">eye</span>(n);
+    D  = <span class="fn">diag</span>(<span class="fn">diag</span>(A));      <span class="cm">% diag(diag(A)) — το μονό diag δίνει διάνυσμα!</span>
+    CL = -<span class="fn">tril</span>(A,-<span class="nm">1</span>);        <span class="cm">% αυστηρά κάτω, με ΑΝΤΙΘΕΤΟ πρόσημο</span>
+    CU = -<span class="fn">triu</span>(A, <span class="nm">1</span>);        <span class="cm">% αυστηρά άνω,  με ΑΝΤΙΘΕΤΟ πρόσημο</span>
+    L  = <span class="fn">inv</span>(D)*CL;
+    U  = <span class="fn">inv</span>(D)*CU;
+
+    <span class="cm">% ---- εδώ μεταφράζεις τον ΔΟΣΜΕΝΟ τύπο, σύμβολο προς σύμβολο ----</span>
+    Z = I - w*<span class="fn">inv</span>(I - w*L)*<span class="fn">inv</span>(D)*A;   <span class="cm">% π.χ. SOR</span>
+
+    x = <span class="fn">eig</span>(Z);
+    r = <span class="fn">max</span>(<span class="fn">abs</span>(x));            <span class="cm">% φασματική ακτίνα</span>
+<span class="kw">end</span></code></div>
+    <div class="ibox">
+      <div class="lbl" style="color:var(--blue)">Το λεξικό μετάφρασης</div>
+      <table class="vtbl" style="margin:6px 0">
+        <tbody>
+          <tr><td>$B = L+U$ (Jacobi)</td><td><code>B = L + U;</code></td></tr>
+          <tr><td>$\mathcal{L}_1 = (I-L)^{-1}U$ (Gauss-Seidel)</td><td><code>L1 = inv(I-L)*U;</code></td></tr>
+          <tr><td>$\mathcal{L}_t = (1-t)I + t(I-L)^{-1}U$ (EGS)</td><td><code>Lt = (1-t)*I + t*inv(I-L)*U;</code></td></tr>
+          <tr><td>$\mathcal{L}_\omega = I - \omega(I-\omega L)^{-1}D^{-1}A$ (SOR)</td><td><code>Lw = I - w*inv(I-w*L)*inv(D)*A;</code></td></tr>
+          <tr><td>$\mathcal{L}_{t,\omega} = I - t(I-\omega L)^{-1}D^{-1}A$ (ESOR)</td><td><code>Ltw = I - t*inv(I-w*L)*inv(D)*A;</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🧠</div>
+      <div>
+        <div class="tip-title">Αν σου δώσουν επαναληπτικό ΣΧΗΜΑ αντί για τύπο</div>
+        <div class="tip-text">
+          Από το $u^{(k+1)} = u^{(k)} + \tau R^{-1}\!\left(b - A u^{(k)}\right)$ μάζεψε τους όρους του $u^{(k)}$:
+          $u^{(k+1)} = \left(I - \tau R^{-1}A\right)u^{(k)} + \tau R^{-1}b$, άρα ο επαναληπτικός πίνακας είναι
+          $\;I - \tau R^{-1}A$. Με $R = D - \omega C_L$ γράφεις <code>R = D - w*CL; Z = I - t*inv(R)*A;</code>
+          — <strong>ισοδύναμο</strong> με τον τύπο της ESOR, γιατί $(D-\omega C_L)^{-1} = (I-\omega L)^{-1}D^{-1}$.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="examprep" data-section="howto"></div>
+</section>
+
+<!-- ============ SECTION 4: MODEL ANSWERS ============ -->
+<section id="answers">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">✍️</div>
+    <h2>4. Λυμένες ασκήσεις ανά τύπο</h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάθε άσκηση παρακάτω είναι <strong>πλήρως λυμένη</strong>, με τη δομή απάντησης που περιμένει ο βαθμολογητής.
+    Οι τύποι είναι επαναλαμβανόμενοι — αν τους κάνεις αυτούς, έχεις καλύψει το γραπτό.
+  </p>
+
+  <!-- 🎯 QUICK-JUMP CHIPS FOR THE 8 QUESTION TYPES -->
+  <div class="chips" style="margin-bottom:24px;display:flex;flex-wrap:wrap;gap:8px;">
+    <a href="#recipe-type-a" class="chip" style="text-decoration:none;border-color:var(--cyan);">Α. Σταθερό Σημείο $\lambda$</a>
+    <a href="#recipe-type-b" class="chip" style="text-decoration:none;border-color:var(--blue);">Β. Jordan &amp; Οδήγηση</a>
+    <a href="#recipe-type-c" class="chip" style="text-decoration:none;border-color:var(--purple);">Γ. Πολυπλοκότητα $O(n^3)$</a>
+    <a href="#recipe-type-d" class="chip" style="text-decoration:none;border-color:var(--green);">Δ. Newton &amp; Simpson</a>
+    <a href="#recipe-type-e" class="chip" style="text-decoration:none;border-color:var(--yellow);">Ε. Βάρη &amp; Ακρίβεια</a>
+    <a href="#recipe-type-f" class="chip" style="text-decoration:none;border-color:var(--orange);">ΣΤ. N-R 5 Συνθήκες</a>
+    <a href="#recipe-type-g" class="chip" style="text-decoration:none;border-color:var(--cyan);">Ζ. ΣΔΕ Taylor 3 Όρων</a>
+    <a href="#recipe-type-h" class="chip" style="text-decoration:none;border-color:var(--red);">Η. MATLAB (30 Μόρια)</a>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ Α ===== -->
+  <div class="qa-card" id="recipe-type-a">
+    <div class="qa-q">
+      <span class="qno">Α.</span>
+      <span>Σταθερό σημείο με παράμετρο: εύρος σύγκλισης και τετραγωνική σύγκλιση <span class="exam-badge">Θέμα 1.1 · 10–12 Μόρια</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 1.1 · ΣΤΑΘΕΡΟ ΣΗΜΕΙΟ</span>
+        </div>
+        <div class="recognition-title">Όταν η εκφώνηση λέει: «Βρείτε εύρος τιμών του λ ώστε να συγκλίνει στη ρίζα ξ και λ για τετραγωνική σύγκλιση»</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Σου δίνουν αναδρομικό σχήμα $x_{n+1} = x_n + \lambda \cdot \phi(x_n)$ για ρίζα $\xi$ και ζητούν (α) εύρος σύγκλισης, (β) τιμή του $\lambda$ για τετραγωνική σύγκλιση ($p \ge 2$).</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή</div>
+          <ol class="recognition-steps">
+            <li><strong>Βήμα 1 (Η συνάρτηση $g$):</strong> Ορίζεις $g(x) = x + \lambda\phi(x)$ και παραγωγίζεις $g'(x) = 1 + \lambda\phi'(x)$.</li>
+            <li><strong>Βήμα 2 (Σύγκλιση):</strong> Θέτεις $x = \xi$ και λύνεις την αυστηρή ανίσωση $|g'(\xi)| < 1 \iff -1 < g'(\xi) < 1$ ως προς $\lambda$ με προσοχή στα πρόσημα.</li>
+            <li><strong>Βήμα 3 (Τετραγωνική):</strong> Μηδενίζεις την πρώτη παράγωγο στη ρίζα: $g'(\xi) = 0 \iff \lambda^*$. Ελέγχεις $g''(\xi) \ne 0$ και ότι $\lambda^*$ ανήκει στο διάστημα του Βήματος 2.</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΟΙ ΤΥΠΟΙ-ΚΛΕΙΔΙΑ</div>
+          <div class="key-formula-math">
+            $$|g'(\xi)| < 1 \iff -1 < g'(\xi) < 1 \quad \text{και} \quad g'(\xi) = 0 \iff \text{Τετραγωνική Σύγκλιση } (p \ge 2)$$
+          </div>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:16px;">
+        <em><strong>Πρότυπη Εκφώνηση Εξετάσεων:</strong> Δίνεται η επαναληπτική μέθοδος $x_{n+1} = x_n + \lambda(x_n^2 - 3)$ για τον υπολογισμό της θετικής ρίζας $\xi = \sqrt{3}$ της $f(x) = x^2 - 3 = 0$.
+        <br>(α) Βρείτε το διάστημα τιμών της παραμέτρου $\lambda \in \mathbb{R}$ ώστε η μέθοδος να συγκλίνει τοπικά στη ρίζα.
+        <br>(β) Βρείτε την τιμή του $\lambda$ για την οποία η μέθοδος συγκλίνει τουλάχιστον τετραγωνικά.</em>
+      </p>
+
+      <div class="qa-layout">
+        <div class="qa-main-ans">
+
+          <!-- STEP 1 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 1 — Ταυτοποίηση της $g(x)$ &amp; Παραγώγιση</div>
+            <p style="margin:0 0 8px;font-size:0.9rem;">
+              Η αναδρομική σχέση είναι της μορφής $x_{n+1} = g(x_n)$. Επομένως η συνάρτηση επανάληψης σταθερού σημείου είναι:
+            </p>
+            $$g(x) = x + \lambda(x^2 - 3)$$
+            <p style="margin:8px 0 0;font-size:0.9rem;">
+              Παραγωγίζουμε ως προς $x$ εφαρμόζοντας τον κανόνα παραγώγισης αθροίσματος και δύναμης:
+            </p>
+            $$g'(x) = \frac{d}{dx}\big[x + \lambda(x^2 - 3)\big] = 1 + \lambda(2x) = 1 + 2\lambda x$$
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 2 (α) — Συνθήκη Τοπικής Σύγκλισης $|g'(\xi)| < 1$</div>
+            <p style="margin:0 0 8px;font-size:0.9rem;">
+              Αντικαθιστούμε τη θετική ρίζα $\xi = \sqrt{3}$ στην παράγωγο $g'(x)$:
+            </p>
+            $$g'(\sqrt{3}) = 1 + 2\lambda\sqrt{3}$$
+            <p style="margin:8px 0 4px;font-size:0.9rem;">
+              Για να συγκλίνει τοπικά η μέθοδος σταθερού σημείου, απαιτούμε:
+            </p>
+            $$|g'(\xi)| < 1 \iff |1 + 2\sqrt{3}\lambda| < 1$$
+            <p style="margin:8px 0 4px;font-size:0.9rem;">
+              Αναπτύσσουμε πλήρως τη διπλή ανίσωση απολύτου τιμής:
+            </p>
+            $$-1 < 1 + 2\sqrt{3}\lambda < 1$$
+            <p style="margin:6px 0 0;font-size:0.9rem;color:var(--muted);">
+              • Αφαιρούμε το $1$ από όλα τα μέλη:
+            </p>
+            $$-1 - 1 < 2\sqrt{3}\lambda < 1 - 1 \implies -2 < 2\sqrt{3}\lambda < 0$$
+            <p style="margin:6px 0 0;font-size:0.9rem;color:var(--muted);">
+              • Διαιρούμε με το $2\sqrt{3} > 0$ (το πρόσημο είναι θετικό, άρα η φορά της ανίσωσης παραμένει αναλλοίωτη):
+            </p>
+            $$\frac{-2}{2\sqrt{3}} < \lambda < \frac{0}{2\sqrt{3}} \implies -\frac{1}{\sqrt{3}} < \lambda < 0$$
+            <p style="margin:6px 0 4px;font-size:0.9rem;">
+              Ρητοποιώντας τον παρονομαστή (πολλαπλασιασμός με $\sqrt{3}/\sqrt{3}$):
+            </p>
+            $$\boxed{-\frac{\sqrt{3}}{3} < \lambda < 0 \quad \text{ή} \quad \lambda \in \left(-\frac{1}{\sqrt{3}}, 0\right)}$$
+            <div class="gbox" style="margin-top:10px;font-size:0.88rem;">
+              <div class="lbl" style="color:var(--green)">✅ Τυπική Θεωρητική Αιτιολόγηση για πλήρη μόρια</div>
+              Σύμφωνα με το <em>Θεώρημα Τοπικής Σύγκλισης Σταθερού Σημείου</em>, επειδή η $g \in C^1$ και $|g'(\xi)| < 1$, υπάρχει περιοχή $I_\delta = [\xi - \delta, \xi + \delta]$ ($\delta > 0$) τέτοια ώστε για κάθε αρχική τιμή $x_0 \in I_\delta$, η επαναληπτική ακολουθία συγκλίνει στη ρίζα $\xi = \sqrt{3}$.
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 3 (β) — Συνθήκη Τετραγωνικής Σύγκλισης ($g'(\xi) = 0$)</div>
+            <p style="margin:0 0 8px;font-size:0.9rem;">
+              Για να είναι η σύγκλιση τουλάχιστον τετραγωνική ($p \ge 2$), πρέπει ο γραμμικός συντελεστής σφάλματος να μηδενίζεται: $g'(\xi) = 0$.
+            </p>
+            $$g'(\sqrt{3}) = 0 \iff 1 + 2\sqrt{3}\lambda = 0 \iff 2\sqrt{3}\lambda = -1 \implies \boxed{\lambda^* = -\frac{1}{2\sqrt{3}} = -\frac{\sqrt{3}}{6}}$$
+            <p style="margin:10px 0 4px;font-size:0.9rem;font-weight:700;color:var(--cyan);">
+              Υποχρεωτικοί Έλεγχοι Επαλήθευσης:
+            </p>
+            <ul style="margin:0;padding-left:1.3rem;font-size:0.88rem;line-height:1.75;">
+              <li><strong>Έλεγχος διαστήματος:</strong> Το $\lambda^* = -\frac{1}{2\sqrt{3}} \approx -0.2887$ ανήκει πράγματι στο διάστημα σύγκλισης $\left(-\frac{1}{\sqrt{3}}, 0\right) \approx (-0.5774, 0)$ ✅.</li>
+              <li><strong>Έλεγχος 2ης παραγώγου (τάξη $p=2$ ακριβώς):</strong> Υπολογίζουμε $g''(x) = \frac{d}{dx}(1 + 2\lambda x) = 2\lambda$. Για το βέλτιστο $\lambda^*$:
+                $$g''(\sqrt{3}) = 2\left(-\frac{\sqrt{3}}{6}\right) = -\frac{\sqrt{3}}{3} \ne 0$$
+                Επειδή $g'(\xi) = 0$ και $g''(\xi) \ne 0$, από το ανάπτυγμα Taylor η τάξη σύγκλισης είναι <strong>ακριβώς $p=2$</strong> (τετραγωνική) ✅.
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="qa-side-notes">
+          <div class="side-notes-header">💡 Διαίσθηση &amp; Σύνδεση με Newton-Raphson</div>
+          <p>
+            <strong>Γιατί βγαίνει $\lambda^* = -\frac{1}{2\sqrt{3}}$;</strong>
+            <br>Η κλασική μέθοδος Newton-Raphson είναι:
+            $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} = x_n - \frac{x_n^2 - 3}{2x_n}$$
+            Κοντά στη ρίζα $\xi = \sqrt{3}$, ο συντελεστής μπροστά από το $(x_n^2 - 3)$ είναι $-\frac{1}{2\xi} = -\frac{1}{2\sqrt{3}}$.
+            Δηλαδή η μέθοδος του θέματος είναι η Newton-Raphson με «παγωμένη» την παράγωγο στη ρίζα!
+          </p>
+
+          <!-- STUDENT TRAP 1 -->
+          <div class="student-trap">
+            <div class="student-trap-header">
+              <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ #1</span>
+              <span class="student-trap-scope">ΑΡΝΗΤΙΚΗ ΡΙΖΑ</span>
+            </div>
+            <div class="student-trap-title">Αντιστροφή φοράς ανίσωσης σε αρνητική διαίρεση</div>
+            <div class="student-trap-body">
+              <p>Αν η εκφώνηση ζητούσε τη ρίζα $\xi = -\sqrt{3}$, τότε $g'(-\sqrt{3}) = 1 - 2\sqrt{3}\lambda$.
+              Η ανίσωση γίνεται $-2 < -2\sqrt{3}\lambda < 0$.
+              <strong>ΠΡΟΣΟΧΗ:</strong> Διαιρώντας με το αρνητικό $-2\sqrt{3}$, <em>η φορά της ανίσωσης αντιστρέφεται</em>:
+              $$\frac{-2}{-2\sqrt{3}} > \lambda > 0 \implies 0 < \lambda < \frac{1}{\sqrt{3}}$$
+              Αν ξεχάσεις να αλλάξεις φορά, χάνεις το μισό θέμα!</p>
+            </div>
+          </div>
+
+          <!-- STUDENT TRAP 2 -->
+          <div class="student-trap">
+            <div class="student-trap-header">
+              <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ #2</span>
+              <span class="student-trap-scope">ΤΟ ΑΚΡΟ ΜΗΔΕΝ</span>
+            </div>
+            <div class="student-trap-title">Το $\lambda = 0$ αποκλείεται αυστηρά</div>
+            <div class="student-trap-body">
+              <p>Το διάστημα είναι αυστηρά ανοικτό: $\lambda \ne 0$. Για $\lambda = 0$, η αναδρομή γίνεται $x_{n+1} = x_n$, δηλαδή η μέθοδος «παγώνει» στο αρχικό σημείο $x_0$ και δεν προχωράει ποτέ προς τη ρίζα!</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ Β ===== -->
+  <div class="qa-card" id="recipe-type-b">
+    <div class="qa-q">
+      <span class="qno">Β.</span>
+      <span>Αντίστροφος πίνακα με Jordan + μερική οδήγηση <span class="exam-badge">Θέμα 1.2 · 12–14 Μόρια</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 1.2 · ΑΝΤΙΣΤΡΟΦΟΣ JORDAN</span>
+        </div>
+        <div class="recognition-title">Όταν η εκφώνηση ζητά: «Να υπολογιστεί ο $A^{-1}$ με τη μέθοδο Jordan με μερική οδήγηση και η πολυπλοκότητα»</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Σου δίνουν πίνακα $3 \times 3$ και ζητούν υπολογισμό του $A^{-1}$ με Gauss-Jordan και μερική οδήγηση (partial pivoting), καθώς και το ασυμπτωτικό κόστος για $n \times n$.</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή</div>
+          <ol class="recognition-steps">
+            <li><strong>Βήμα 0:</strong> Σχημάτισε τον επαυξημένο πίνακα $[A \mid I_n]$ διαστάσεων $n \times 2n$.</li>
+            <li><strong>Σε κάθε στήλη $k$ ($k=1 \dots n$):</strong>
+              <br>• <em>Μερική οδήγηση:</em> Βρες $\max_{i \ge k} |a_{ik}|$ (στη στήλη $k$, από τη διαγώνιο και κάτω). Αντάλλαξε <strong>ολόκληρη</strong> τη γραμμή $k$ με τη γραμμή του μέγιστου (ΚΑΙ στο δεξιό μπλοκ του $I$!).
+              <br>• <em>Μηδενισμός στήλης:</em> Υπολόγισε $m_{ik} = \frac{a_{ik}}{a_{kk}}$ για όλες τις άλλες γραμμές $i \ne k$ (άνω και κάτω!) και εκτέλεσε $R_i \leftarrow R_i - m_{ik}R_k$.
+            </li>
+            <li><strong>Κανονικοποίηση:</strong> Διαίρεσε κάθε γραμμή με το διαγώνιο στοιχείο της $a_{ii}$ ώστε το αριστερό μέρος να γίνει $I$. Το δεξιό μέρος είναι ο $A^{-1}$.</li>
+            <li><strong>Επαλήθευση &amp; Πολυπλοκότητα:</strong> Έλεγχος 10s: 1η γραμμή $A \times$ 1η στήλη $A^{-1} = 1$. Πολυπλοκότητα: $\frac{3}{2}n^3$ πράξεις.</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΚΟΣΤΟΣ ΑΝΤΙΣΤΡΟΦΟΥ $A^{-1}$</div>
+          <div class="key-formula-math">
+            $$\text{Κόστος Jordan}(A^{-1}) = \frac{3}{2}n^3 \quad \text{έναντι Gauss } \frac{4}{3}n^3 \quad \text{και επίλυσης } \frac{1}{2}n^3$$
+          </div>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:16px;">
+        <em><strong>Πρότυπη Εκφώνηση Εξετάσεων:</strong> Να βρεθεί ο $A^{-1}$ με τη μέθοδο απαλοιφής του Jordan με μερική οδήγηση, όπου
+        $$A = \begin{bmatrix} 1 & 1 & 2 \\ -1 & 1 & 0 \\ 2 & -2 & 4 \end{bmatrix}$$
+        Ποια η πολυπλοκότητα του υπολογισμού του $A^{-1}$ για $A \in \mathbb{R}^{n\times n}$;</em>
+      </p>
+
+      <!-- STEP 0 -->
+      <div class="step-box">
+        <div class="step-title">Βήμα 0 — Κατασκευή Επαυξημένου Πίνακα $[A \mid I_3]$</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          Κολλάμε τον ταυτοτικό πίνακα $I_3$ στα δεξιά του $A$. Κάθε πράξη γραμμών εφαρμόζεται <strong>και στις 6 στήλες</strong>:
+        </p>
+        $$\left[\begin{array}{ccc|ccc}
+          1 & 1 & 2 & 1 & 0 & 0 \\
+          -1 & 1 & 0 & 0 & 1 & 0 \\
+          2 & -2 & 4 & 0 & 0 & 1
+        \end{array}\right]$$
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="step-box">
+        <div class="step-title">Βήμα 1 — Στήλη 1: Μερική Οδήγηση &amp; Μηδενισμός Κάτω από τη Διαγώνιο</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          <strong>Αναζήτηση Οδηγού στη Στήλη 1:</strong> Εξετάζουμε τα στοιχεία $|a_{11}| = 1$, $|a_{21}| = |-1| = 1$, $|a_{31}| = |2| = 2$.
+          <br>Το μέγιστο κατ' απόλυτη τιμή είναι το $2$ στη Γραμμή 3. Αντιμεταθέτουμε τις γραμμές <strong>$R_1 \longleftrightarrow R_3$</strong> (σε όλο το πλάτος!):
+        </p>
+        $$\left[\begin{array}{ccc|ccc}
+          \mathbf{2} & \mathbf{-2} & \mathbf{4} & \mathbf{0} & \mathbf{0} & \mathbf{1} \\
+          -1 & 1 & 0 & 0 & 1 & 0 \\
+          \mathbf{1} & \mathbf{1} & \mathbf{2} & \mathbf{1} & \mathbf{0} & \mathbf{0}
+        \end{array}\right]$$
+
+        <div class="step-by-step-calc">
+          <div class="calc-header">
+            <span class="calc-badge">🔢 ΑΝΑΛΥΤΙΚΕΣ ΠΡΑΞΕΙΣ ΣΤΗΛΗΣ 1</span>
+            <span class="calc-tag">ΠΟΛΛΑΠΛΑΣΙΑΣΤΕΣ &amp; ΠΡΟΣΗΜΑ</span>
+          </div>
+          <div class="calc-step">
+            <div class="calc-step-header">
+              <span class="calc-step-num">1</span>
+              <span class="calc-step-title">Γραμμοπράξη για τη Γραμμή 2: $m_{21} = \frac{-1}{2} = -\frac{1}{2}$</span>
+            </div>
+            <div class="calc-step-content">
+              <p>Γραμμοπράξη: $R_2 \leftarrow R_2 - \left(-\frac{1}{2}\right)R_1 = R_2 + \frac{1}{2}R_1$.</p>
+              <div class="calc-intermediate-box">
+                <span class="calc-intermediate-badge">💡 Στοιχείο-προς-στοιχείο εκτέλεση:</span>
+                • $a_{21}: -1 + \frac{1}{2}(2) = 0$<br>
+                • $a_{22}: 1 + \frac{1}{2}(-2) = 1 - 1 = 0$<br>
+                • $a_{23}: 0 + \frac{1}{2}(4) = 2$<br>
+                • Δεξιό μέρος: $\left[0 + \frac{1}{2}(0),\; 1 + \frac{1}{2}(0),\; 0 + \frac{1}{2}(1)\right] = \left[0,\; 1,\; \frac{1}{2}\right]$
+              </div>
+              <p>$\implies R_2 = [0,\; 0,\; 2 \mid 0,\; 1,\; 1/2]$.</p>
+            </div>
+          </div>
+          <div class="calc-step">
+            <div class="calc-step-header">
+              <span class="calc-step-num">2</span>
+              <span class="calc-step-title">Γραμμοπράξη για τη Γραμμή 3: $m_{31} = \frac{1}{2}$</span>
+            </div>
+            <div class="calc-step-content">
+              <p>Γραμμοπράξη: $R_3 \leftarrow R_3 - \frac{1}{2}R_1$.</p>
+              <div class="calc-intermediate-box">
+                <span class="calc-intermediate-badge">💡 Στοιχείο-προς-στοιχείο εκτέλεση:</span>
+                • $a_{31}: 1 - \frac{1}{2}(2) = 0$<br>
+                • $a_{32}: 1 - \frac{1}{2}(-2) = 1 + 1 = 2$<br>
+                • $a_{33}: 2 - \frac{1}{2}(4) = 2 - 2 = 0$<br>
+                • Δεξιό μέρος: $\left[1 - \frac{1}{2}(0),\; 0 - \frac{1}{2}(0),\; 0 - \frac{1}{2}(1)\right] = \left[1,\; 0,\; -\frac{1}{2}\right]$
+              </div>
+              <p>$\implies R_3 = [0,\; 2,\; 0 \mid 1,\; 0,\; -1/2]$.</p>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin:8px 0 4px;font-size:0.9rem;">Μορφή πίνακα μετά το Βήμα 1:</p>
+        $$\left[\begin{array}{ccc|ccc}
+          2 & -2 & 4 & 0 & 0 & 1 \\
+          0 & 0 & 2 & 0 & 1 & 1/2 \\
+          0 & 2 & 0 & 1 & 0 & -1/2
+        \end{array}\right]$$
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-box">
+        <div class="step-title">Βήμα 2 — Στήλη 2: Μερική Οδήγηση (Σωτήρια Εναλλαγή!) &amp; Απαλοιφή</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          <strong>Αναζήτηση Οδηγού στη Στήλη 2 (από τη γραμμή 2 και κάτω):</strong>
+          <br>Εξετάζουμε $|a_{22}| = 0$ και $|a_{32}| = 2$.
+          <br>Επειδή $|a_{32}| = 2 > 0 = |a_{22}|$, <strong>επιβάλλεται εναλλαγή $R_2 \longleftrightarrow R_3$</strong>:
+        </p>
+        $$\left[\begin{array}{ccc|ccc}
+          2 & -2 & 4 & 0 & 0 & 1 \\
+          \mathbf{0} & \mathbf{2} & \mathbf{0} & \mathbf{1} & \mathbf{0} & \mathbf{-1/2} \\
+          \mathbf{0} & \mathbf{0} & \mathbf{2} & \mathbf{0} & \mathbf{1} & \mathbf{1/2}
+        \end{array}\right]$$
+
+        <div class="student-trap">
+          <div class="student-trap-header">
+            <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ</span>
+            <span class="student-trap-scope">ΜΗΔΕΝΙΚΟΣ ΟΔΗΓΟΣ</span>
+          </div>
+          <div class="student-trap-title">Γιατί η μερική οδήγηση είναι υποχρεωτική εδώ</div>
+          <div class="student-trap-body">
+            <p>Χωρίς την εναλλαγή $R_2 \leftrightarrow R_3$, ο οδηγός $a_{22}$ ήταν ακριβώς <strong>0</strong>. Ο υπολογισμός $m_{32} = a_{32}/a_{22} = 2/0$ θα οδηγούσε σε διαίρεση με το μηδέν και ο αλγόριθμος θα κατέρρεε!</p>
+          </div>
+        </div>
+
+        <p style="margin:10px 0 4px;font-size:0.9rem;">
+          <strong>Απαλοιφή στη Στήλη 2 (Μέθοδος Jordan — μηδενίζουμε και ΠΑΝΩ από τη διαγώνιο):</strong>
+          <br>Ο οδηγός είναι τώρα το $a_{22} = 2$. Θέλουμε να μηδενίσουμε το $a_{12} = -2$:
+          <br>• Πολλαπλασιαστής: $m_{12} = \frac{a_{12}}{a_{22}} = \frac{-2}{2} = -1$.
+          <br>• Γραμμοπράξη: $R_1 \leftarrow R_1 - (-1)R_2 = R_1 + R_2$.
+        </p>
+        <p style="margin:4px 0;font-size:0.88rem;color:var(--muted);">
+          <em>Πράξεις:</em> $[2,-2,4 \mid 0,0,1] + [0,2,0 \mid 1,0,-1/2] = [2+0,\; -2+2,\; 4+0 \mid 0+1,\; 0+0,\; 1-1/2] = [2, 0, 4 \mid 1, 0, 1/2]$.
+        </p>
+        $$\left[\begin{array}{ccc|ccc}
+          2 & 0 & 4 & 1 & 0 & 1/2 \\
+          0 & 2 & 0 & 1 & 0 & -1/2 \\
+          0 & 0 & 2 & 0 & 1 & 1/2
+        \end{array}\right]$$
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-box">
+        <div class="step-title">Βήμα 3 — Στήλη 3: Απαλοιφή Πάνω από τη Διαγώνιο</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          Ο οδηγός είναι το $a_{33} = 2$.
+          <br>Στη γραμμή 2, το στοιχείο $a_{23}$ είναι ήδη $0$ (δεν απαιτείται πράξη).
+          <br>Στη γραμμή 1, θέλουμε να μηδενίσουμε το $a_{13} = 4$:
+          <br>• Πολλαπλασιαστής: $m_{13} = \frac{a_{13}}{a_{33}} = \frac{4}{2} = 2$.
+          <br>• Γραμμοπράξη: $R_1 \leftarrow R_1 - 2R_3$.
+        </p>
+        <p style="margin:4px 0;font-size:0.88rem;color:var(--muted);">
+          <em>Πράξεις:</em> $[2, 0, 4 \mid 1, 0, 1/2] - 2 \cdot [0, 0, 2 \mid 0, 1, 1/2] = [2-0,\; 0-0,\; 4-4 \mid 1-0,\; 0-2,\; 1/2 - 1] = [2, 0, 0 \mid 1, -2, -1/2]$.
+        </p>
+        $$\left[\begin{array}{ccc|ccc}
+          2 & 0 & 0 & 1 & -2 & -1/2 \\
+          0 & 2 & 0 & 1 & 0 & -1/2 \\
+          0 & 0 & 2 & 0 & 1 & 1/2
+        \end{array}\right]$$
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step-box">
+        <div class="step-title">Βήμα 4 — Κανονικοποίηση Διαγωνίου &amp; Ανάγνωση του $A^{-1}$</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          Διαιρούμε κάθε γραμμή με το αντίστοιχο διαγώνιο στοιχείο της ($R_1/2,\; R_2/2,\; R_3/2$) ώστε το αριστερό μπλοκ να γίνει ο ταυτοτικός $I_3$:
+        </p>
+        $$\left[\begin{array}{ccc|ccc}
+          1 & 0 & 0 & 1/2 & -1 & -1/4 \\
+          0 & 1 & 0 & 1/2 & 0 & -1/4 \\
+          0 & 0 & 1 & 0 & 1/2 & 1/4
+        \end{array}\right]$$
+        <p style="margin:10px 0 4px;font-size:0.95rem;">
+          Το δεξιό μπλοκ είναι ο ζητούμενος αντίστροφος:
+        </p>
+        $$\boxed{A^{-1} = \begin{bmatrix} 1/2 & -1 & -1/4 \\ 1/2 & 0 & -1/4 \\ 0 & 1/2 & 1/4 \end{bmatrix}}$$
+
+        <div class="gbox" style="margin-top:12px;font-size:0.88rem;">
+          <div class="lbl" style="color:var(--green)">✅ Έλεγχος 10 Δευτερολέπτων στο Πρόχειρο</div>
+          Πολλαπλασιάζουμε την 1η γραμμή του $A$ με την 1η στήλη του $A^{-1}$:
+          $$[1, 1, 2] \cdot \begin{bmatrix} 1/2 \\ 1/2 \\ 0 \end{bmatrix} = 1\left(\frac{1}{2}\right) + 1\left(\frac{1}{2}\right) + 2(0) = \frac{1}{2} + \frac{1}{2} = 1 \quad \text{✅}$$
+        </div>
+      </div>
+
+      <!-- PART B: COMPLEXITY -->
+      <div class="gbox" style="margin-top:16px;">
+        <div class="lbl" style="color:var(--green)">✅ Το (β) σκέλος — Υπολογιστική Πολυπλοκότητα</div>
+        <p style="margin:0 0 6px;font-size:0.92rem;">
+          Ο υπολογισμός του αντιστρόφου $A^{-1}$ για $A \in \mathbb{R}^{n\times n}$ με τη μέθοδο απαλοιφής Gauss-Jordan απαιτεί:
+        </p>
+        $$\boxed{\text{Πολυπλοκότητα Jordan}(A^{-1}) = \frac{3}{2}n^3 + O(n^2) \quad \text{πράξεις}}$$
+        <p style="margin:6px 0 0;font-size:0.86rem;color:var(--muted);">
+          <em>Σύγκριση με Gauss:</em> Με μέθοδο Gauss (τριγωνοποίηση $\frac{1}{3}n^3$ και επίλυση $n$ συστημάτων με $n \times n^2 = n^3$), το κόστος είναι $\frac{4}{3}n^3$. Η μέθοδος Jordan είναι ελαφρώς πιο ακριβή για τον αντίστροφο ($\frac{3}{2}n^3 = 1.5n^3$ έναντι $\frac{4}{3}n^3 \approx 1.33n^3$), αλλά δεν απαιτεί πίσω αντικατάσταση.
+        </p>
+      </div>
+
+      <!-- STUDENT TRAPS FOR TYPE B -->
+      <div class="student-trap" style="margin-top:16px;">
+        <div class="student-trap-header">
+          <span class="student-trap-badge">🚨 SOS ΠΑΓΙΔΕΣ</span>
+          <span class="student-trap-scope">ΘΕΜΑ 1.2 · ΑΝΤΙΣΤΡΟΦΟΣ</span>
+        </div>
+        <div class="student-trap-title">Κλασικά λάθη που μηδενίζουν το θέμα του αντιστρόφου</div>
+        <div class="student-trap-body">
+          <ul style="margin:0;padding-left:1.2rem;font-size:0.88rem;line-height:1.75;">
+            <li><strong>Παγίδα Εναλλαγής του $I$:</strong> Στην $R_1 \leftrightarrow R_3$, πολλοί φοιτητές αλλάζουν μόνο το αριστερό μέρος $[A]$ και ξεχνούν να αντιμεταθέσουν τις γραμμές του ταυτοτικού $[I]$. Μηδενίζει όλο το θέμα!</li>
+            <li><strong>Παγίδα Προσήμου Πολλαπλασιαστή:</strong> Ο τύπος είναι $R_i - m_{ik}R_k$. Όταν $a_{21} = -1$, τότε $m_{21} = -1/2$, άρα $R_2 - (-1/2)R_1 = R_2 + 1/2 R_1$. Μην μπερδεύεις τα πρόσημα!</li>
+            <li><strong>Πεδίο Αναζήτησης Οδηγού:</strong> Στη στήλη $k$, ο μέγιστος αναζητείται <strong>αυστηρά από τη γραμμή $k$ και κάτω</strong>. Ποτέ σε προηγούμενες γραμμές και ποτέ σε διπλανές στήλες.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ Γ ===== -->
+  <div class="qa-card" id="recipe-type-c">
+    <div class="qa-q">
+      <span class="qno">Γ.</span>
+      <span>Πολυπλοκότητα &amp; μετασχηματισμός γραμμικού συστήματος <span class="exam-badge">Θέμα 1.3 · 11–16 Μόρια</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 1.3 · ΠΟΛΥΠΛΟΚΟΤΗΤΑ $O(n^3)$</span>
+        </div>
+        <div class="recognition-title">Όταν η εκφώνηση ζητά: «Βρείτε πολυπλοκότητα, μετασχηματίστε για μέγιστη βελτίωση και συγκρίνετε»</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Δίνονται μη-ιδιάζοντες πίνακες $A, B, C \in \mathbb{R}^{n \times n}$ και σύστημα όπως $(A^{-1} + BC^{-1})x = A^{-1}b$. Ζητείται ανάλυση πράξεων με Gauss/Jordan, μετασχηματισμός και συμπέρασμα.</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή</div>
+          <ol class="recognition-steps">
+            <li><strong>Βήμα 1 (Πίνακας Κόστους):</strong> Επίλυση $= n^3/3$ (Gauss) ή $n^3/2$ (Jordan), Αντίστροφος $= 4n^3/3$ (Gauss) ή $3n^3/2$ (Jordan), Γινόμενο πινάκων $= n^3$, Πίνακας $\times$ διάνυσμα $= n^2 \to 0$ (αμελητέο!).</li>
+            <li><strong>Βήμα 2 (Χρέωση Αρχικής Μορφής):</strong> Χρέωσε κάθε όρο ξεχωριστά. <em>Κανόνας μη διπλοχρέωσης:</em> Το $A^{-1}b$ κοστίζει $n^2 \approx 0$ γιατί το $A^{-1}$ έχει ήδη υπολογιστεί στο αριστερό μέλος!</li>
+            <li><strong>Βήμα 3 (Ο Μετασχηματισμός):</strong> Πολλαπλασίασε <strong>και τα δύο μέλη από αριστερά</strong> με τον πίνακα $A$ ($A \cdot A^{-1} = I_n$). Στόχος: να εξαφανιστεί ο ακριβός αντίστροφος και δεξιά να μείνει σκέτο $b$.</li>
+            <li><strong>Βήμα 4 (Νέα Χρέωση &amp; Συμπέρασμα):</strong> Ξαναχρέωσε τη νέα μορφή, υπολόγισε τη διαφορά $\Delta$, και διατύπωσε το συμπέρασμα εξοικονόμησης πόρων.</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΣΤΑΘΕΡΕΣ ΠΟΛΥΠΛΟΚΟΤΗΤΑΣ</div>
+          <div class="key-formula-math">
+            $$\text{Επίλυση Gauss: } \frac{1}{3}n^3 \quad | \quad \text{Αντίστροφος Gauss: } \frac{4}{3}n^3 \quad | \quad \text{Γινόμενο } M_1 M_2: n^3$$
+          </div>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:16px;">
+        <em><strong>Πρότυπη Εκφώνηση Εξετάσεων:</strong> Δίνονται $A, B, C \in \mathbb{R}^{n\times n}$ μη-ιδιάζοντες πίνακες, $b \in \mathbb{R}^n$ διάνυσμα, και το γραμμικό σύστημα $(A^{-1} + BC^{-1})x = A^{-1}b$.
+        <br>(α) Βρείτε την υπολογιστική πολυπλοκότητα επίλυσης του συστήματος με τη μέθοδο απαλοιφής Gauss.
+        <br>(β) Μετασχηματίστε το σύστημα κατάλληλα ώστε να επιτευχθεί η μέγιστη δυνατή μείωση πράξεων, και υπολογίστε τη νέα πολυπλοκότητα.
+        <br>(γ) Ποιο γενικό συμπέρασμα εξάγεται;</em>
+      </p>
+
+      <div class="qa-layout">
+        <div class="qa-main-ans">
+
+          <!-- STEP A -->
+          <div class="step-box">
+            <div class="step-title">(α) Αναλυτική Χρέωση Αρχικής Μορφής $(A^{-1} + BC^{-1})x = A^{-1}b$ (Gauss)</div>
+            <p style="margin:0 0 8px;font-size:0.9rem;">
+              Αναλύουμε το υπολογιστικό κόστος ανά επιμέρους πράξη, κρατώντας μόνο τους κυρίαρχους όρους τάξης $n^3$:
+            </p>
+
+            <div class="tbl-scroll">
+              <table class="vtbl" style="font-size:0.88rem;margin:8px 0;">
+                <thead>
+                  <tr><th>Όρος / Πράξη</th><th>Είδος Πράξης</th><th>Κόστος Gauss (σε $n^3$)</th><th>Αιτιολόγηση</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>$A^{-1}$</td>
+                    <td>Αντίστροφος $n \times n$</td>
+                    <td style="color:var(--orange);font-weight:700;">$\frac{4}{3}n^3$</td>
+                    <td>Υπολογίζεται 1 φορά για τον συντελεστή του $x$</td>
+                  </tr>
+                  <tr>
+                    <td>$C^{-1}$</td>
+                    <td>Αντίστροφος $n \times n$</td>
+                    <td style="color:var(--orange);font-weight:700;">$\frac{4}{3}n^3$</td>
+                    <td>Απαραίτητος για τον σχηματισμό του $BC^{-1}$</td>
+                  </tr>
+                  <tr>
+                    <td>$B \cdot C^{-1}$</td>
+                    <td>Γινόμενο πινάκων $n \times n$</td>
+                    <td style="color:var(--cyan);font-weight:700;">$1n^3$</td>
+                    <td>Πολλαπλασιασμός δύο γνωστών $n \times n$ πινάκων</td>
+                  </tr>
+                  <tr>
+                    <td>$A^{-1} + BC^{-1}$</td>
+                    <td>Πρόσθεση πινάκων $n \times n$</td>
+                    <td style="color:var(--muted);font-weight:700;">$0$ ($n^2$)</td>
+                    <td>Τάξης $O(n^2)$ $\implies$ ασυμπτωτικά αμελητέο</td>
+                  </tr>
+                  <tr>
+                    <td>$A^{-1}b$</td>
+                    <td>Πίνακας $\times$ Διάνυσμα</td>
+                    <td style="color:var(--green);font-weight:700;">$0$ ($n^2$)</td>
+                    <td><strong>ΜΗ ΔΙΠΛΟΧΡΕΩΣΗ:</strong> Ο $A^{-1}$ είναι ήδη υπολογισμένος, άρα είναι απλό γινόμενο $n^2$</td>
+                  </tr>
+                  <tr>
+                    <td>Επίλυση $(M)x = d$</td>
+                    <td>Επίλυση συστήματος</td>
+                    <td style="color:var(--yellow);font-weight:700;">$\frac{1}{3}n^3$</td>
+                    <td>Απαλοιφή Gauss και πίσω αντικατάσταση</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p style="margin:8px 0 4px;font-size:0.9rem;">Άθροισμα κυρίαρχων όρων:</p>
+            $$\text{Σύνολο Αρχικής Μορφής} = \frac{4}{3}n^3 + \frac{4}{3}n^3 + n^3 + \frac{1}{3}n^3 = \frac{4 + 4 + 3 + 1}{3}n^3 = \frac{12}{3}n^3 = \boxed{4n^3}$$
+          </div>
+
+          <!-- STEP B -->
+          <div class="step-box">
+            <div class="step-title">(β) Ο Βέλτιστος Μετασχηματισμός &amp; Νέα Χρέωση</div>
+            <p style="margin:0 0 8px;font-size:0.9rem;">
+              <strong>Αλγεβρικός Μετασχηματισμός:</strong> Πολλαπλασιάζουμε <em>και τα δύο μέλη από αριστερά</em> με τον πίνακα $A$:
+            </p>
+            $$A \cdot \big(A^{-1} + BC^{-1}\big)x = A \cdot \big(A^{-1}b\big)$$
+            $$\big(A A^{-1} + A B C^{-1}\big)x = (A A^{-1}) b$$
+            $$\boxed{\big(I_n + A B C^{-1}\big)x = b}$$
+            <p style="margin:8px 0;font-size:0.9rem;color:var(--green);">
+              ✨ <strong>Το κέρδος:</strong> Ο αντίστροφος $A^{-1}$ εξαφανίστηκε πλήρως και από τα δύο μέλη! Το δεξί μέλος είναι πλέον το σκέτο $b$, με μηδενικό κόστος προετοιμασίας.
+            </p>
+
+            <div class="tbl-scroll">
+              <table class="vtbl" style="font-size:0.88rem;margin:8px 0;">
+                <thead>
+                  <tr><th>Όρος / Πράξη</th><th>Είδος Πράξης</th><th>Κόστος Gauss (σε $n^3$)</th><th>Αιτιολόγηση</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>$C^{-1}$</td>
+                    <td>Αντίστροφος $n \times n$</td>
+                    <td style="color:var(--orange);font-weight:700;">$\frac{4}{3}n^3$</td>
+                    <td>Ο μόνος αντίστροφος που απομένει</td>
+                  </tr>
+                  <tr>
+                    <td>$M_1 = A \cdot B$</td>
+                    <td>Γινόμενο πινάκων $n \times n$</td>
+                    <td style="color:var(--cyan);font-weight:700;">$1n^3$</td>
+                    <td>Πρώτος πολλαπλασιασμός</td>
+                  </tr>
+                  <tr>
+                    <td>$M_1 \cdot C^{-1}$</td>
+                    <td>Γινόμενο πινάκων $n \times n$</td>
+                    <td style="color:var(--cyan);font-weight:700;">$1n^3$</td>
+                    <td>Δεύτερος πολλαπλασιασμός $(AB)C^{-1}$</td>
+                  </tr>
+                  <tr>
+                    <td>$I_n + (AB)C^{-1}$</td>
+                    <td>Πρόσθεση ταυτοτικού</td>
+                    <td style="color:var(--muted);font-weight:700;">$0$ ($n$)</td>
+                    <td>Προσθέτουμε 1 στα διαγώνια στοιχεία ($O(n)$) $\implies 0$</td>
+                  </tr>
+                  <tr>
+                    <td>Δεξί μέλος $b$</td>
+                    <td>Έτοιμο διάνυσμα</td>
+                    <td style="color:var(--green);font-weight:700;">$0$</td>
+                    <td>Δεν απαιτεί καμία πράξη</td>
+                  </tr>
+                  <tr>
+                    <td>Επίλυση $(M)x = b$</td>
+                    <td>Επίλυση συστήματος</td>
+                    <td style="color:var(--yellow);font-weight:700;">$\frac{1}{3}n^3$</td>
+                    <td>Απαλοιφή Gauss</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p style="margin:8px 0 4px;font-size:0.9rem;">Άθροισμα νέων κυρίαρχων όρων:</p>
+            $$\text{Σύνολο Μετασχηματισμένης Μορφής} = \frac{4}{3}n^3 + 1n^3 + 1n^3 + \frac{1}{3}n^3 = \frac{4 + 3 + 3 + 1}{3}n^3 = \boxed{\frac{11}{3}n^3 \approx 3.67n^3}$$
+          </div>
+
+          <!-- STEP C -->
+          <div class="step-box">
+            <div class="step-title">(γ) Συμπέρασμα &amp; Εξοικονόμηση Πράξεων</div>
+            <p style="margin:0 0 6px;font-size:0.92rem;">
+              <strong>Υπολογιστικό Κέρδος:</strong>
+              $$\Delta = 4n^3 - \frac{11}{3}n^3 = \frac{12n^3 - 11n^3}{3} = \boxed{\frac{1}{3}n^3 \quad \text{πράξεις}}$$
+            </p>
+            <p style="margin:6px 0 0;font-size:0.9rem;line-height:1.6;">
+              <strong>Τυπικό Συμπέρασμα Εξετάσεων:</strong>
+              Γλιτώσαμε έναν ολόκληρο υπολογισμό αντιστρόφου ($\frac{4}{3}n^3$) με τίμημα έναν επιπλέον πολλαπλασιασμό πινάκων ($1n^3$), επιτυγχάνοντας καθαρή μείωση $\frac{1}{3}n^3$ πράξεων.
+              <br><em>Γενικό Συμπέρασμα:</em> <strong>Μια απλή αλγεβρική αναδιατύπωση πριν από την αριθμητική εκτέλεση μειώνει δραστικά τον υπολογιστικό χρόνο και τη χρήση μνήμης, χωρίς καμία απολύτως απώλεια ακρίβειας ή μεταβολή στη λύση του συστήματος.</strong>
+            </p>
+          </div>
+
+        </div>
+
+        <div class="qa-side-notes">
+          <div class="side-notes-header">📊 Πίνακας Σταθερών Gauss vs Jordan</div>
+          <table class="vtbl" style="margin:4px 0 10px;font-size:0.84rem;">
+            <thead><tr><th>Πράξη</th><th>Gauss</th><th>Jordan</th></tr></thead>
+            <tbody>
+              <tr><td>Επίλυση $Mx=d$</td><td>$\mathbf{\frac{1}{3}n^3}$</td><td>$\mathbf{\frac{1}{2}n^3}$</td></tr>
+              <tr><td>Αντίστροφος $M^{-1}$</td><td>$\mathbf{\frac{4}{3}n^3}$</td><td>$\mathbf{\frac{3}{2}n^3}$</td></tr>
+              <tr><td>Γινόμενο $M_1 M_2$</td><td>$n^3$</td><td>$n^3$</td></tr>
+              <tr><td>Πίνακας $\times$ διάνυσμα</td><td>$n^2 \to 0$</td><td>$n^2 \to 0$</td></tr>
+            </tbody>
+          </table>
+
+          <div style="background:rgba(88,166,255,0.06);border-left:3px solid var(--blue);padding:8px 12px;border-radius:4px;margin-bottom:12px;font-size:0.84rem;">
+            <strong>Αν η άσκηση ζητούσε Jordan:</strong>
+            <br>• Αρχικό: $\frac{3}{2} + \frac{3}{2} + 1 + \frac{1}{2} = \mathbf{4.5n^3}$
+            <br>• Νέο: $\frac{3}{2} + 1 + 1 + \frac{1}{2} = \mathbf{4n^3}$
+            <br>• Κέρδος: $\Delta = \mathbf{0.5n^3} = \frac{1}{2}n^3$!
+          </div>
+
+          <!-- STUDENT TRAPS FOR TYPE C -->
+          <div class="student-trap">
+            <div class="student-trap-header">
+              <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ #1</span>
+              <span class="student-trap-scope">ΔΙΠΛΟΧΡΕΩΣΗ $A^{-1}$</span>
+            </div>
+            <div class="student-trap-title">Μην ξαναχρεώνεις τον ίδιο αντίστροφο δύο φορές!</div>
+            <div class="student-trap-body">
+              <p>Πολλοί χρεώνουν τον $A^{-1}$ δύο φορές ($\frac{4}{3}n^3$ στο αριστερό μέλος και άλλη μία $\frac{4}{3}n^3$ στο δεξί $A^{-1}b$). <strong>ΛΑΘΟΣ:</strong> Ο πίνακας υπολογίζεται μία φορά στη μνήμη. Ο πολλαπλασιασμός $A^{-1}b$ κοστίζει μόνο $n^2$ πράξεις, που είναι ασυμπτωτικά $0 \cdot n^3$!</p>
+            </div>
+          </div>
+
+          <div class="student-trap">
+            <div class="student-trap-header">
+              <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ #2</span>
+              <span class="student-trap-scope">ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ</span>
+            </div>
+            <div class="student-trap-title">Πολλαπλασιασμός ΠΑΝΤΑ από αριστερά</div>
+            <div class="student-trap-body">
+              <p>Οι πίνακες ΔΕΝ είναι μεταθετικοί ($AB \ne BA$). Αν πολλαπλασιάσεις από τα δεξιά, το $A$ δεν μπορεί να περάσει μέσα από το διάνυσμα $x$, και ακόμα κι αν πέρναγε, $(A^{-1} + BC^{-1})A \ne I + \dots$! Πάντα πολλαπλασιάζουμε <strong>από αριστερά</strong>.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ Δ ===== -->
+  <div class="qa-card" id="recipe-type-d">
+    <div class="qa-q">
+      <span class="qno">Δ.</span>
+      <span>Παρεμβολή Newton (Διηρημένες Διαφορές) + Θεώρημα Σφάλματος + Κανόνας Simpson <span class="exam-badge">Θέμα 2.1 · 15–16 Μόρια</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 2.1 · ΠΑΡΕΜΒΟΛΗ NEWTON</span>
+        </div>
+        <div class="recognition-title">Όταν η εκφώνηση λέει: «Κατασκευάστε με την πλέον αποτελεσματική μέθοδο το πολυώνυμο, βρείτε σφάλμα και Simpson»</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Δίνεται πίνακας τιμών $(x_i, f_i)$. Ζητείται πολυώνυμο παρεμβολής στα πρώτα $k$ σημεία, επέκταση σε όλα τα σημεία, υπολογισμός σφάλματος και κανόνας Simpson.</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή</div>
+          <ol class="recognition-steps">
+            <li><strong>Βήμα 0 (Έλεγχος Αποστάσεων):</strong> Έλεγξε πρώτα αν $x_{i+1} - x_i = h$ σταθερό. Αν <strong>ΔΕΝ</strong> ισαπέχουν $\implies$ Υποχρεωτικά <strong>Διηρημένες Διαφορές</strong> (Divided Differences).</li>
+            <li><strong>Βήμα 1 (Πίνακας Διαφορών):</strong> Κατασκεύασε τον πίνακα. Η <strong>πάνω διαγώνιος</strong> δίνει τους συντελεστές $c_0, c_1, c_2, \dots$ του πολυωνύμου.</li>
+            <li><strong>Βήμα 2 (Ποτέ από την αρχή!):</strong> Για το πολυώνυμο «σε όλα τα σημεία», προσθέτεις απλώς <strong>έναν επιπλέον όρο</strong>: $P_{k+1}(x) = P_k(x) + c_{k+1}(x-x_0)\cdots(x-x_k)$.</li>
+            <li><strong>Βήμα 3 (Σφάλμα $E=0$):</strong> Αν η συνάρτηση είναι πολυώνυμο βαθμού $m \le n$, τότε $f^{(n+1)} \equiv 0 \implies E(x) \equiv 0$ παντού.</li>
+            <li><strong>Βήμα 4 (Simpson):</strong> Μέτρα διαστήματα ($N = \text{σημεία} - 1$). 3 σημεία $\implies N=2$ διαστήματα $\implies$ Απλός Simpson 1/3: $I \approx \frac{h}{3}(f_0 + 4f_1 + f_2)$. Ακριβές για βαθμό $\le 3$.</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΤΥΠΟΣ ΔΙΗΡΗΜΕΝΩΝ &amp; ΣΦΑΛΜΑΤΟΣ</div>
+          <div class="key-formula-math">
+            $$f[x_0, x_1, x_2] = \frac{f[x_1, x_2] - f[x_0, x_1]}{x_2 - x_0} \quad | \quad E(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}\prod_{i=0}^n (x - x_i)$$
+          </div>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:14px;">
+        <em><strong>Πρότυπη Εκφώνηση Εξετάσεων:</strong> Δίνεται ο πίνακας τιμών της συνάρτησης $f(x) = x^3 + 5$:</em>
+      </p>
+
+      <div class="tbl-scroll">
+        <table class="vtbl" style="width:auto;font-family:'JetBrains Mono',monospace;margin-bottom:14px;">
+          <tbody>
+            <tr><td><strong>Δείκτης $i$</strong></td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+            <tr><td><strong>Κόμβοι $x_i$</strong></td><td>−2</td><td>−1</td><td>1</td><td>3</td></tr>
+            <tr><td><strong>Τιμές $f_i = f(x_i)$</strong></td><td>−3</td><td>4</td><td>6</td><td>32</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- STEP 0 -->
+      <div class="rbox" style="margin-bottom:16px;">
+        <div class="lbl" style="color:var(--red)">🚨 Βήμα 0: Ο υποχρεωτικός έλεγχος αποστάσεων $\Delta x_i$</div>
+        <p style="margin:0;font-size:0.92rem;line-height:1.7;">
+          Ελέγχουμε τις αποστάσεις μεταξύ διαδοχικών κόμβων:
+          <br>• $x_1 - x_0 = -1 - (-2) = 1$
+          <br>• $x_2 - x_1 = 1 - (-1) = 2$
+          <br>Επειδή $1 \ne 2$, οι κόμβοι <strong>ΔΕΝ ΙΣΑΠΕΧΟΥΝ</strong>!
+          <br>Επομένως, η «πλέον αποτελεσματική μέθοδος παρεμβολής» είναι υποχρεωτικά η <strong>Μέθοδος Newton με Διηρημένες Διαφορές</strong> (η μέθοδος εμπρός διαφορών $\Delta^k f_0$ απαγορεύεται αυστηρά).
+        </p>
+      </div>
+
+      <!-- STEP A-1 -->
+      <div class="step-box">
+        <div class="step-title">(α)(i) Πολυώνυμο Παρεμβολής στα 3 Πρώτα Σημεία ($x_0=-2, x_1=-1, x_2=1$)</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          Κατασκευάζουμε τον πίνακα διηρημένων διαφορών για τα τρία πρώτα σημεία:
+        </p>
+
+        <div class="tbl-scroll">
+          <table class="vtbl" style="width:auto;font-family:'JetBrains Mono',monospace;font-size:0.9rem;">
+            <thead>
+              <tr><th>$i$</th><th>$x_i$</th><th>$f[x_i]$</th><th>1ης Τάξης $f[x_i, x_{i+1}]$</th><th>2ης Τάξης $f[x_i, x_{i+1}, x_{i+2}]$</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td><td>−2</td>
+                <td style="color:var(--green);font-weight:700;background:rgba(63,185,80,0.12);">−3 ($c_0$)</td>
+                <td style="color:var(--green);font-weight:700;background:rgba(63,185,80,0.12);">7 ($c_1$)</td>
+                <td style="color:var(--green);font-weight:700;background:rgba(63,185,80,0.12);">−2 ($c_2$)</td>
+              </tr>
+              <tr>
+                <td>1</td><td>−1</td>
+                <td>4</td>
+                <td>1</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>2</td><td>1</td>
+                <td>6</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="step-by-step-calc">
+          <div class="calc-header">
+            <span class="calc-badge">🔢 ΑΝΑΛΥΤΙΚΗ ΕΚΤΕΛΕΣΗ ΠΗΛΙΚΩΝ</span>
+            <span class="calc-tag">ΔΙΗΡΗΜΕΝΕΣ ΔΙΑΦΟΡΕΣ</span>
+          </div>
+          <div class="calc-step">
+            <div class="calc-step-header">
+              <span class="calc-step-num">1</span>
+              <span class="calc-step-title">1η Τάξη</span>
+            </div>
+            <div class="calc-step-content">
+              • $f[x_0, x_1] = \dfrac{f(x_1) - f(x_0)}{x_1 - x_0} = \dfrac{4 - (-3)}{-1 - (-2)} = \dfrac{7}{1} = \mathbf{7}$<br>
+              • $f[x_1, x_2] = \dfrac{f(x_2) - f(x_1)}{x_2 - x_1} = \dfrac{6 - 4}{1 - (-1)} = \dfrac{2}{2} = \mathbf{1}$
+            </div>
+          </div>
+          <div class="calc-step">
+            <div class="calc-step-header">
+              <span class="calc-step-num">2</span>
+              <span class="calc-step-title">2η Τάξη (Προσοχή στον Παρονομαστή $x_2 - x_0$!)</span>
+            </div>
+            <div class="calc-step-content">
+              • $f[x_0, x_1, x_2] = \dfrac{f[x_1, x_2] - f[x_0, x_1]}{x_2 - x_0} = \dfrac{1 - 7}{1 - (-2)} = \dfrac{-6}{3} = \mathbf{-2}$
+              <br><span style="color:var(--yellow);font-size:0.82rem;">⚠️ Παρονομαστής: $x_2 - x_0 = 1 - (-2) = 3$ (το πλήρες άνοιγμα των 3 σημείων!).</span>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin:8px 0 4px;font-size:0.9rem;">
+          Οι συντελεστές του πολυωνύμου είναι η <strong>πάνω διαγώνιος</strong>: $c_0 = -3,\; c_1 = 7,\; c_2 = -2$.
+        </p>
+        $$P_2(x) = c_0 + c_1(x - x_0) + c_2(x - x_0)(x - x_1) = -3 + 7(x + 2) - 2(x + 2)(x + 1)$$
+        <p style="margin:8px 0 4px;font-size:0.9rem;">
+          Υπολογισμός της τιμής στο σημείο $x^* = 0$:
+        </p>
+        $$P_2(0) = -3 + 7(0 + 2) - 2(0 + 2)(0 + 1) = -3 + 14 - 4 = \boxed{7}$$
+      </div>
+
+      <!-- STEP A-2 -->
+      <div class="step-box">
+        <div class="step-title">(α)(ii) Πολυώνυμο Παρεμβολής σε ΟΛΑ τα Σημεία (Προσθήκη Ενός Όρου!)</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          Προσθέτουμε το 4ο σημείο $(x_3, f_3) = (3, 32)$. <strong>ΔΕΝ ξαναρχίζουμε από την αρχή!</strong>
+          <br>Υπολογίζουμε μόνο τη νέα κατωφερική διαγώνιο στον πίνακα διηρημένων διαφορών:
+        </p>
+
+        <div class="tbl-scroll">
+          <table class="vtbl" style="width:auto;font-family:'JetBrains Mono',monospace;font-size:0.88rem;">
+            <thead>
+              <tr><th>$i$</th><th>$x_i$</th><th>$f[x_i]$</th><th>1ης Τάξης</th><th>2ης Τάξης</th><th>3ης Τάξης</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td>−2</td><td style="color:var(--green);font-weight:700;">−3</td><td style="color:var(--green);font-weight:700;">7</td><td style="color:var(--green);font-weight:700;">−2</td><td style="color:var(--green);font-weight:700;background:rgba(63,185,80,0.15);">1 ($c_3$)</td></tr>
+              <tr><td>1</td><td>−1</td><td>4</td><td>1</td><td style="color:var(--cyan);font-weight:700;">3</td><td>—</td></tr>
+              <tr><td>2</td><td>1</td><td>6</td><td style="color:var(--cyan);font-weight:700;">13</td><td>—</td><td>—</td></tr>
+              <tr><td>3</td><td>3</td><td>32</td><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="calc-intermediate-box">
+          • $f[x_2, x_3] = \dfrac{32 - 6}{3 - 1} = \dfrac{26}{2} = 13$<br>
+          • $f[x_1, x_2, x_3] = \dfrac{13 - 1}{3 - (-1)} = \dfrac{12}{4} = 3$<br>
+          • $f[x_0, x_1, x_2, x_3] = \dfrac{3 - (-2)}{3 - (-2)} = \dfrac{5}{5} = \mathbf{1} = c_3$
+        </div>
+
+        <p style="margin:8px 0 4px;font-size:0.9rem;">
+          Συμπληρώνουμε το $P_2(x)$ με τον νέο όρο 3ης τάξης:
+        </p>
+        $$P_3(x) = P_2(x) + c_3(x - x_0)(x - x_1)(x - x_2) = P_2(x) + 1 \cdot (x + 2)(x + 1)(x - 1)$$
+        <p style="margin:8px 0 4px;font-size:0.9rem;">
+          Υπολογισμός στο $x^* = 0$:
+        </p>
+        $$P_3(0) = P_2(0) + 1 \cdot (0 + 2)(0 + 1)(0 - 1) = 7 + (2)(1)(-1) = 7 - 2 = \boxed{5}$$
+        <p style="margin:4px 0 0;font-size:0.88rem;color:var(--green);">
+          ✨ Παρατήρηση: Η πραγματική συνάρτηση στο 0 δίνει $f(0) = 0^3 + 5 = 5$. Το $P_3(0)$ ταυτίζεται απόλυτα!
+        </p>
+      </div>
+
+      <!-- STEP B -->
+      <div class="step-box">
+        <div class="step-title">(β) Το Σφάλμα Παρεμβολής &amp; Θεωρητική Αιτιολόγηση ($E \equiv 0$)</div>
+        <p style="margin:0 0 8px;font-size:0.9rem;">
+          Ο θεωρητικός τύπος σφάλματος για παρεμβολή σε $n+1$ σημεία είναι:
+        </p>
+        $$E(x) = f(x) - P_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} \prod_{i=0}^n (x - x_i)$$
+        <p style="margin:8px 0 4px;font-size:0.9rem;">
+          Εδώ έχουμε $n+1 = 4$ σημεία ($n = 3$), οπότε εμφανίζεται η 4η παράγωγος $f^{(4)}(\xi)$:
+          <br>• $f(x) = x^3 + 5$
+          <br>• $f'(x) = 3x^2$
+          <br>• $f''(x) = 6x$
+          <br>• $f'''(x) = 6$
+          <br>• $f^{(4)}(x) = \mathbf{0} \quad \text{για κάθε } x \in \mathbb{R}$
+        </p>
+        <p style="margin:6px 0 0;font-size:0.92rem;">
+          Επειδή $f^{(4)}(\xi) \equiv 0$, το σφάλμα παρεμβολής είναι <strong>ακριβώς μηδέν</strong> για κάθε $x$:
+        </p>
+        $$\boxed{E(x) = 0 \quad \forall x \in \mathbb{R} \iff P_3(x) \equiv f(x)}$$
+        <p style="margin:6px 0 0;font-size:0.86rem;color:var(--muted);">
+          <em>Αιτιολόγηση μοναδικότητας:</em> Το πολυώνυμο παρεμβολής βαθμού $\le 3$ που διέρχεται από 4 διακριτά σημεία είναι μοναδικό. Επειδή η ίδια η $f(x) = x^3 + 5$ είναι πολυώνυμο 3ου βαθμού που διέρχεται από τα σημεία αυτά, εξ ανάγκης $P_3(x) \equiv f(x)$.
+        </p>
+      </div>
+
+      <!-- STEP C -->
+      <div class="step-box">
+        <div class="step-title">(γ) Κανόνας Simpson στα 3 Τελευταία Σημεία &amp; Σύγκριση με Ακριβή Τιμή</div>
+        <p style="margin:0 0 6px;font-size:0.9rem;">
+          Τα τρία τελευταία σημεία είναι $x_1 = -1, x_2 = 1, x_3 = 3$.
+          <br>Ελέγχουμε τις αποστάσεις: $1 - (-1) = 2$ και $3 - 1 = 2 \implies h = 2$ (ισαπέχουν!).
+          <br>Πλήθος σημείων = 3 $\implies$ Πλήθος διαστημάτων $N = 3 - 1 = 2$ (άρτιο!).
+          <br>Εφαρμόζεται ο <strong>Απλός Κανόνας Simpson 1/3</strong> στο διάστημα $[-1, 3]$:
+        </p>
+        $$I_{\text{Simpson}} = \frac{h}{3}\big[f(-1) + 4f(1) + f(3)\big] = \frac{2}{3}\big[4 + 4(6) + 32\big] = \frac{2}{3}\big[4 + 24 + 32\big] = \frac{2}{3}(60) = \boxed{40}$$
+
+        <p style="margin:12px 0 6px;font-size:0.9rem;"><strong>Υπολογισμός Ακριβούς Ολοκληρώματος:</strong></p>
+        $$\int_{-1}^3 (x^3 + 5)\,dx = \left[ \frac{x^4}{4} + 5x \right]_{-1}^3$$
+        <p style="margin:4px 0;font-size:0.88rem;color:var(--muted);">
+          • Στο άνω άκρο $x=3$: $F(3) = \frac{3^4}{4} + 5(3) = \frac{81}{4} + 15 = \frac{81 + 60}{4} = \frac{141}{4}$
+          <br>• Στο κάτω άκρο $x=-1$: $F(-1) = \frac{(-1)^4}{4} + 5(-1) = \frac{1}{4} - 5 = \frac{1 - 20}{4} = -\frac{19}{4}$
+          <br>• Αφαίρεση (προσοχή στο διπλό μείον!): $F(3) - F(-1) = \frac{141}{4} - \left(-\frac{19}{4}\right) = \frac{141 + 19}{4} = \frac{160}{4} = \mathbf{40}$
+        </p>
+
+        <div class="gbox" style="margin-top:10px;">
+          <div class="lbl" style="color:var(--green)">✅ Σφάλμα = 0 &amp; Το Ζητούμενο Σχόλιο Θεωρίας</div>
+          <p style="margin:0;font-size:0.88rem;line-height:1.7;">
+            Το σφάλμα είναι $\text{Error} = |40 - 40| = 0$.
+            <br><strong>Η ζητούμενη ερμηνεία:</strong> Ο τύπος σφάλματος του κανόνα Simpson είναι $E_{\text{Simpson}} = -\frac{h^5}{90} f^{(4)}(\xi) = -\frac{(b-a)h^4}{180} f^{(4)}(\xi)$.
+            Επειδή η $f(x) = x^3 + 5$ είναι πολυώνυμο 3ου βαθμού, η 4η παράγωγός της μηδενίζεται ταυτοτικά ($f^{(4)} \equiv 0$).
+            Επομένως, παρότι ο κανόνας Simpson κατασκευάζεται παρεμβάλλοντας παραβολή 2ου βαθμού, <strong>λόγω συμμετρίας ολοκληρώνει με απόλυτη ακρίβεια (σφάλμα μηδέν) και όλα τα κυβικά πολυώνυμα (βαθμός ακρίβειας $d = 3$)!</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- STUDENT TRAPS FOR TYPE D -->
+      <div class="student-trap" style="margin-top:16px;">
+        <div class="student-trap-header">
+          <span class="student-trap-badge">🚨 SOS ΠΑΓΙΔΕΣ</span>
+          <span class="student-trap-scope">ΘΕΜΑ 2.1 · ΠΑΡΕΜΒΟΛΗ</span>
+        </div>
+        <div class="student-trap-title">Κρίσιμα σημεία προσοχής στις διηρημένες διαφορές</div>
+        <div class="student-trap-body">
+          <ul style="margin:0;padding-left:1.2rem;font-size:0.88rem;line-height:1.75;">
+            <li><strong>Παγίδα Εμπρός Διαφορών:</strong> Μην υποθέσεις ποτέ ότι τα σημεία ισαπέχουν χωρίς να αφαιρέσεις $x_1 - x_0$ και $x_2 - x_1$. Αν γράψεις τον τύπο $\Delta f_0$ σε μη-ισαπέχοντα σημεία, μηδενίζεσαι.</li>
+            <li><strong>Παγίδα Παρονομαστών 2ης Τάξης:</strong> Στο $f[x_0, x_1, x_2]$, ο παρονομαστής είναι $x_2 - x_0$, δηλαδή το πρώτο μείον το τελευταίο άκρο του τριγώνου! Μην βάλεις $x_2 - x_1$.</li>
+            <li><strong>Παγίδα Σημείων vs Διαστημάτων στον Simpson:</strong> Ο απλός Simpson 1/3 χρειάζεται <strong>3 σημεία</strong> (2 διαστήματα). Ο σύνθετος Simpson απαιτεί <strong>άρτιο πλήθος διαστημάτων</strong> $N$ (δηλαδή περιττό πλήθος σημείων). Μην τα μπερδεύεις!</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ Ε ===== -->
+  <div class="qa-card" id="recipe-type-e">
+    <div class="qa-q">
+      <span class="qno">Ε.</span>
+      <span>Προσδιορισμός Βαρών, Θέσεων &amp; Μέγιστος Βαθμός Ακρίβειας <span class="exam-badge">Θέμα 2.2 — 12–14 Μονάδες</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 2.2 · ΑΡΙΘΜΗΤΙΚΗ ΟΛΟΚΛΗΡΩΣΗ</span>
+        </div>
+        <div class="recognition-title">Όταν η εκφώνηση ζητά: «Προσδιορίστε τα βάρη $w_i$ και κόμβους $x_i$ ώστε ο τύπος να έχει μέγιστο βαθμό ακρίβειας»</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Δίνεται τύπος αριθμητικής ολοκλήρωσης $\int_a^b f(x)dx \approx \sum w_i f(x_i)$ με αγνώστους. Ζητείται εύρεση παραμέτρων και ο ακριβής βαθμός ακρίβειας $d$.</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή</div>
+          <ol class="recognition-steps">
+            <li><strong>Βήμα 1 (Καταμέτρηση Αγνώστων):</strong> Μέτρα τους αγνώστους $K$ (βάρη + ελεύθεροι κόμβοι). Αν ένας κόμβος είναι καρφωμένος (π.χ. $x_2 = 1$), δεν μετράει ως άγνωστος!</li>
+            <li><strong>Βήμα 2 (Σύστημα Ροπών):</strong> Απαίτησε ο τύπος να είναι ακριβής για τα μονώνυμα $f(x) = 1, x, x^2, \dots, x^{K-1}$. Υπολόγισε τα αναλυτικά ολοκληρώματα $\int_a^b x^k dx = \frac{b^{k+1}-a^{k+1}}{k+1}$.</li>
+            <li><strong>Βήμα 3 (Επίλυση &amp; Έλεγχος):</strong> Λύσε το σύστημα για τα $w_i, x_i$. <em>10s Sanity Check:</em> Πάντα $\sum w_i = b - a$!</li>
+            <li><strong>Βήμα 4 (Έλεγχος Βαθμού Ακρίβειας):</strong> <strong>Δοκίμασε την επόμενη δύναμη</strong> $f(x) = x^K$. Υπολόγισε αναλυτικό ολοκλήρωμα και αποτίμηση τύπου. Αν διαφέρουν $\implies d = K - 1$.</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΣΥΣΤΗΜΑ ΡΟΠΩΝ &amp; ΕΛΕΓΧΟΣ ΒΑΡΩΝ</div>
+          <div class="key-formula-math">
+            $$\sum_{i=1}^m w_i x_i^k = \int_a^b x^k dx \quad (k=0,1,\dots,K-1) \quad \text{και} \quad \sum w_i = b - a$$
+          </div>
+        </div>
+      </div>
+
+      <div class="student-trap">
+        <div class="student-trap-header">
+          <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ ΣΤΙΣ ΕΞΕΤΑΣΕΙΣ</span>
+          <span class="student-trap-scope">ΘΕΜΑ 2.2 · ΚΑΡΦΩΜΕΝΟΙ ΚΟΜΒΟΙ</span>
+        </div>
+        <div class="student-trap-title">Μην γράφεις μηχανικά «βαθμός ακρίβειας = 2n - 1»!</div>
+        <div class="student-trap-body">
+          <div class="student-trap-comparison">
+            <div class="student-trap-wrong">
+              <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+              <p>Βλέπει 2 σημεία και γράφει $2n - 1 = 2(2) - 1 = 3$. Όμως το ένα σημείο είναι καρφωμένο ($x_2 = 1$).</p>
+            </div>
+            <div class="student-trap-right">
+              <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+              <p>Μετράς τις <strong>ελεύθερες παραμέτρους</strong>: έχουμε 3 ($w_1, w_2, x_1$), όχι 4. Άρα ο τύπος μπορεί να εξασφαλίσει ακρίβεια έως βαθμό $3 - 1 = 2$. Επαληθεύεις πάντα δοκιμάζοντας $f(x) = x^3$!</p>
+            </div>
+          </div>
+          <div class="student-trap-takeaway">
+            <strong>💡 Κανόνας:</strong> Ο τύπος $2n-1$ ισχύει <em>μόνο</em> για γνήσια Gauss ολοκλήρωση όπου και τα $n$ σημεία είναι ελεύθερα!
+          </div>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:16px;">
+        <em><strong>Πρότυπη Εκφώνηση Εξετάσεων:</strong> Δίνεται ο τύπος $\displaystyle\int_{-1}^{1} f(x)\,dx \simeq w_1 f(x_1) + w_2 f(1)$.
+        <br>(α) Προσδιορίστε τα $w_1, w_2, x_1$ ώστε ο τύπος να είναι όσο το δυνατόν πιο ακριβής.
+        <br>(β) Βρείτε τον μεγαλύτερο βαθμό πολυωνύμου για τον οποίο είναι ακριβής.</em>
+      </p>
+
+      <div class="qa-layout">
+        <div class="qa-main-ans">
+
+          <!-- STEP 1 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 1 — Καταμέτρηση Αγνώστων &amp; Κατασκευή Συστήματος Ροπών</div>
+            <p style="font-size:0.9rem;margin-bottom:6px;">
+              Άγνωστοι: $w_1, w_2, x_1$ &rarr; <strong>3 ελεύθερες παράμετροι</strong> (το σημείο $x_2 = 1$ είναι καρφωμένο).
+              Απαιτούμε ο τύπος να είναι ακριβής για $f(x) = 1, x, x^2$:
+            </p>
+            $$\begin{aligned}
+            f(x) = 1: &\quad w_1(1) + w_2(1) = \int_{-1}^1 1\,dx = [x]_{-1}^1 = 1 - (-1) = \mathbf{2} &&(1) \\
+            f(x) = x: &\quad w_1(x_1) + w_2(1) = \int_{-1}^1 x\,dx = \left[\frac{x^2}{2}\right]_{-1}^1 = \frac{1}{2} - \frac{1}{2} = \mathbf{0} &&(2) \\
+            f(x) = x^2: &\quad w_1(x_1^2) + w_2(1^2) = \int_{-1}^1 x^2\,dx = \left[\frac{x^3}{3}\right]_{-1}^1 = \frac{1}{3} - \left(-\frac{1}{3}\right) = \mathbf{\frac{2}{3}} &&(3)
+            \end{aligned}$$
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 2 — Αναλυτική Επίλυση Συστήματος χωρίς Άλματα</div>
+            <ol style="margin:0;padding-left:18px;font-size:0.88rem;line-height:1.8;">
+              <li>Από την εξίσωση (1) εκφράζουμε το $w_2$:
+                $$w_2 = 2 - w_1$$
+              </li>
+              <li>Αντικαθιστούμε το $w_2$ στην εξίσωση (2):
+                $$w_1 x_1 + (2 - w_1) = 0 \implies w_1 x_1 - w_1 = -2 \implies w_1(x_1 - 1) = -2 \implies \mathbf{w_1 = \frac{-2}{x_1 - 1}} \quad (*)$$
+              </li>
+              <li>Αφαιρούμε την εξίσωση (2) από την (3) κατά μέλη για να εξαλειφθεί το $w_2$:
+                $$(w_1 x_1^2 + w_2) - (w_1 x_1 + w_2) = \frac{2}{3} - 0 \implies w_1 x_1^2 - w_1 x_1 = \frac{2}{3} \implies w_1 x_1 (x_1 - 1) = \frac{2}{3}$$
+              </li>
+              <li>Αντικαθιστούμε το γινόμενο $w_1(x_1 - 1) = -2$ από το προηγούμενο βήμα:
+                $$(-2) \cdot x_1 = \frac{2}{3} \implies x_1 = \frac{2/3}{-2} = -\frac{2}{6} \implies \mathbf{x_1 = -\frac{1}{3}}$$
+              </li>
+              <li>Υπολογίζουμε τα βάρη $w_1$ και $w_2$ με πλήρη ανάλυση κλασμάτων:
+                $$w_1 = \frac{-2}{-\frac{1}{3} - 1} = \frac{-2}{-\frac{4}{3}} = (-2) \cdot \left(-\frac{3}{4}\right) = \frac{6}{4} \implies \mathbf{w_1 = \frac{3}{2}}$$
+                $$w_2 = 2 - w_1 = 2 - \frac{3}{2} = \frac{4 - 3}{2} \implies \mathbf{w_2 = \frac{1}{2}}$$
+              </li>
+            </ol>
+            <div class="gbox" style="margin-top:10px;">
+              <div class="lbl" style="color:var(--green)">✅ 10s Sanity Check Αθροίσματος Βαρών</div>
+              $w_1 + w_2 = \frac{3}{2} + \frac{1}{2} = \frac{4}{2} = 2 = b - a$. Ο τύπος είναι:
+              $$\int_{-1}^1 f(x)\,dx \simeq \mathbf{\frac{3}{2} f\left(-\frac{1}{3}\right) + \frac{1}{2} f(1)}$$
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 3 (β) — Έλεγχος Μέγιστου Βαθμού Ακρίβειας (Δοκιμή για $f(x) = x^3$)</div>
+            <p style="font-size:0.9rem;margin-bottom:6px;">
+              Ο τύπος κατασκευάστηκε για να ισχύει έως $x^2$. Ελέγχουμε αν ισχύει και για $f(x) = x^3$:
+            </p>
+            $$\text{Αναλυτικό Ολοκλήρωμα: } I_3 = \int_{-1}^1 x^3\,dx = \left[\frac{x^4}{4}\right]_{-1}^1 = \frac{1^4}{4} - \frac{(-1)^4}{4} = \frac{1}{4} - \frac{1}{4} = \mathbf{0}$$
+            $$\text{Αποτίμηση Τύπου: } Q_3 = \frac{3}{2}\left(-\frac{1}{3}\right)^3 + \frac{1}{2}(1)^3 = \frac{3}{2}\left(-\frac{1}{27}\right) + \frac{1}{2}(1) = -\frac{3}{54} + \frac{1}{2} = -\frac{1}{18} + \frac{9}{18} = \mathbf{\frac{8}{18} = \frac{4}{9}}$$
+            <p style="font-size:0.9rem;margin:6px 0;">
+              Επειδή $I_3 = 0 \ne Q_3 = \frac{4}{9}$, ο τύπος <strong>αποτυγχάνει</strong> για πολυώνυμα 3ου βαθμού.
+              <br>Επομένως, ο μέγιστος βαθμός ακρίβειας του τύπου είναι $\mathbf{d = 2}$.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="qa-side-notes">
+          <div class="side-notes-header">💡 Διαίσθηση &amp; Ελεύθερες Παράμετροι</div>
+          <p>
+            Κάθε ελεύθερη παράμετρος (βάρος ή κόμβος) επιτρέπει την εξασφάλιση ακρίβειας για ένα επιπλέον μονώνυμο.
+            <br>• $K = 3$ ελεύθερες παράμετροι $\implies$ βαθμός ακρίβειας $d = K - 1 = 2$.
+            <br>• Αν το $x_2$ ήταν επίσης ελεύθερο (γνήσια Gauss-Legendre 2 σημείων), οι παράμετροι θα ήταν 4 και ο βαθμός $d = 2(2)-1 = 3$.
+          </p>
+
+          <div class="student-trap">
+            <div class="student-trap-header">
+              <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ</span>
+              <span class="student-trap-scope">ΠΡΟΣΗΜΟ ΔΥΝΑΜΕΩΝ</span>
+            </div>
+            <div class="student-trap-title">Προσοχή στο $(-1/3)^3$</div>
+            <div class="student-trap-body">
+              <p>Το $(-1/3)^3 = -1/27$. Το μείον διατηρείται στις περιττές δυνάμεις! Αν ξεχάσεις το μείον, θα βγάλεις $1/18 + 9/18 = 10/18 = 5/9$ αντί για $4/9$.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ ΣΤ ===== -->
+  <div class="qa-card" id="recipe-type-f">
+    <div class="qa-q">
+      <span class="qno">ΣΤ.</span>
+      <span>Newton-Raphson: Έλεγχος των 5 Συνθηκών Ολικής Σύγκλισης <span class="exam-badge">Θέμα 1.1 (εναλλακτικό) · 10–12 Μόρια</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 1.1 ALT · NEWTON-RAPHSON</span>
+        </div>
+        <div class="recognition-title">Όταν η εκφώνηση ρωτά: «Συγκλίνει η Newton-Raphson στη ρίζα για ΚΑΘΕ αρχική τιμή $x_0 \in [a,b]$;»</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Δίνεται συνάρτηση $f(x)$ σε κλειστό διάστημα $[a, b]$ και ζητείται να αποδειχθεί αν η μέθοδος N-R συγκλίνει για <strong>οποιαδήποτε</strong> αφετηρία $x_0 \in [a, b]$, και να γραφεί ο αναδρομικός τύπος.</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή (Λίστα των 5 Συνθηκών)</div>
+          <ol class="recognition-steps">
+            <li><strong>Συνθήκη 1 (Ομαλότητα):</strong> $f \in C^2[a,b]$ (πολυωνυμική/τριγωνομετρική).</li>
+            <li><strong>Συνθήκη 2 (Ύπαρξη ρίζας - Bolzano):</strong> $f(a) \cdot f(b) < 0$.</li>
+            <li><strong>Συνθήκη 3 (Μοναδικότητα ρίζας):</strong> $f'(x) \ne 0$ παντού στο $[a,b]$ (γνησίως μονότονη).</li>
+            <li><strong>Συνθήκη 4 (Σταθερή κυρτότητα):</strong> $f''(x) \ge 0$ ή $f''(x) \le 0$ παντού στο $[a,b]$ (δεν αλλάζει πρόσημο η καμπυλότητα).</li>
+            <li><strong>Συνθήκη 5 (Συνθήκη Fourier στα άκρα):</strong> $\left|\frac{f(c)}{f'(c)}\right| \le b - a$ σε εκείνο το άκρο $c \in \{a, b\}$ όπου $|f'(x)|$ παίρνει την ελάχιστη τιμή του.</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΑΝΑΔΡΟΜΙΚΟΣ ΤΥΠΟΣ NEWTON-RAPHSON</div>
+          <div class="key-formula-math">
+            $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$$
+          </div>
+        </div>
+      </div>
+
+      <div class="student-trap">
+        <div class="student-trap-header">
+          <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ ΣΤΙΣ ΕΞΕΤΑΣΕΙΣ</span>
+          <span class="student-trap-scope">ΘΕΜΑ 1.1 ALT · 5η ΣΥΝΘΗΚΗ</span>
+        </div>
+        <div class="student-trap-title">Μην ξεχνάς την 5η συνθήκη Fourier!</div>
+        <div class="student-trap-body">
+          <div class="student-trap-comparison">
+            <div class="student-trap-wrong">
+              <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+              <p>Ο φοιτητής ελέγχει μόνο τις συνθήκες Bolzano και μονοτονίας (1–3) ή ξεχνάει την 5η συνθήκη Fourier, χάνοντας 4 από τα 10 μόρια.</p>
+            </div>
+            <div class="student-trap-right">
+              <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+              <p>Γράφεις και τις 5 συνθήκες αριθμημένες μία-μία με έλεγχο $\checkmark$. Για την 5η, διαλέγεις το άκρο $c$ με το μικρότερο $|f'(c)|$ και δείχνεις ότι $|f(c)/f'(c)| \le b-a$.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:16px;">
+        <em><strong>Πρότυπη Εκφώνηση Εξετάσεων:</strong> Δίνεται $f(x) = x^3 + 6x - 1$ με μοναδική ρίζα $\xi \in [0,1]$.
+        Εξετάστε αν η Newton-Raphson συγκλίνει στη ρίζα για κάθε αρχική τιμή $x_0 \in [0,1]$, και γράψτε τον τύπο της μεθόδου.</em>
+      </p>
+
+      <div class="tbl-scroll">
+        <table class="vtbl" style="margin-bottom:16px;">
+          <thead><tr><th>#</th><th>Συνθήκη Θεωρήματος</th><th>Αναλυτικός Έλεγχος &amp; Αριθμητική Εκτέλεση</th><th>Αποτέλεσμα</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td>$f \in C^2[a,b]$</td>
+              <td>Η $f(x) = x^3 + 6x - 1$ είναι πολυωνυμική, άρα άπειρα παραγωγίσιμη στο $[0, 1]$.</td>
+              <td style="color:var(--green);font-weight:700;">✅ Ισχύει</td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td>$f(a) \cdot f(b) < 0$ (Bolzano)</td>
+              <td>$f(0) = 0^3 + 6(0) - 1 = -1$<br>$f(1) = 1^3 + 6(1) - 1 = 6$<br>Γινόμενο: $f(0) \cdot f(1) = (-1)(6) = -6 < 0$. Υπάρχει ρίζα $\xi \in (0, 1)$.</td>
+              <td style="color:var(--green);font-weight:700;">✅ Ισχύει</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td>$f'(x) \ne 0$ σε όλο το $[a,b]$</td>
+              <td>$f'(x) = 3x^2 + 6 \ge 6 > 0$ για κάθε $x \in [0, 1]$. Η $f$ είναι γνησίως αύξουσα, άρα η ρίζα $\xi$ είναι <strong>μοναδική</strong>.</td>
+              <td style="color:var(--green);font-weight:700;">✅ Ισχύει</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td>$f''(x)$ σταθερό πρόσημο</td>
+              <td>$f''(x) = 6x \ge 0$ για κάθε $x \in [0, 1]$. Η συνάρτηση είναι κυρτή και δεν αλλάζει καμπυλότητα (δεν έχει σημείο καμπής στο εσωτερικό).</td>
+              <td style="color:var(--green);font-weight:700;">✅ Ισχύει</td>
+            </tr>
+            <tr>
+              <td><strong>5</strong></td>
+              <td>$\left|\dfrac{f(c)}{f'(c)}\right| \le b - a$ σε κατάλληλο άκρο</td>
+              <td>Η $f'(x) = 3x^2 + 6$ παίρνει την ελάχιστη τιμή της στο $x=0$, όπου $f'(0) = 6$.<br>Ελέγχουμε στο άκρο $c = 0$:
+                $$\left|\frac{f(0)}{f'(0)}\right| = \left|\frac{-1}{6}\right| = \frac{1}{6} \le 1 - 0 = 1 \quad \text{✅}$$
+              </td>
+              <td style="color:var(--green);font-weight:700;">✅ Ισχύει</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="gbox">
+        <div class="lbl" style="color:var(--green)">✅ Τελικό Συμπέρασμα &amp; Αναδρομικός Τύπος</div>
+        <p style="margin:0 0 6px;font-size:0.92rem;">
+          Επειδή ικανοποιούνται πλήρως και οι <strong>πέντε συνθήκες του Θεωρήματος Ολικής Σύγκλισης</strong>, η μέθοδος Newton-Raphson συγκλίνει στη μοναδική ρίζα $\xi \in (0, 1)$ για <strong>οποιαδήποτε αρχική τιμή $x_0 \in [0, 1]$</strong>.
+        </p>
+        $$\boxed{x_{n+1} = x_n - \frac{x_n^3 + 6x_n - 1}{3x_n^2 + 6} = \frac{3x_n^3 + 6x_n - (x_n^3 + 6x_n - 1)}{3x_n^2 + 6} = \frac{2x_n^3 + 1}{3x_n^2 + 6}}$$
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ Ζ ===== -->
+  <div class="qa-card" id="recipe-type-g">
+    <div class="qa-q">
+      <span class="qno">Ζ.</span>
+      <span>Αριθμητική Επίλυση ΣΔΕ: Μέθοδος Taylor 3 Όρων &amp; Σύγκριση με Euler <span class="exam-badge">Θέμα 2.3 — 8 Μονάδες</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 2.3 · ΣΔΕ TAYLOR 3 ΟΡΩΝ</span>
+        </div>
+        <div class="recognition-title">Όταν η εκφώνηση ζητά: «Υπολογίστε την $y(b)$ με μέθοδο Taylor 3 όρων και συγκρίνετε με Euler»</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Δίνεται Πρόβλημα Αρχικών Τιμών $y' = f(x, y)$ με $y(x_0) = y_0$ στο διάστημα $[a, b]$ και ζητείται υπολογισμός με Taylor 3 όρων και σύγκριση με Euler.</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή</div>
+          <ol class="recognition-steps">
+            <li><strong>Βήμα 1 (Βήμα $h$):</strong> Βρίσκεις το βήμα $h = \frac{b-a}{n}$ και ορίζεις τα σημεία $x_k = x_0 + k\cdot h$.</li>
+            <li><strong>Βήμα 2 (Έμμεση Παραγώγιση $y''$):</strong> Παραγωγίζεις τη ΣΔΕ ως προς $x$. <strong>Κανόνας Αλυσίδας (SOS):</strong> $\frac{d}{dx}[y] = y'$. Αντικαθιστάς το $y' = f(x,y)$ ώστε η $y''$ να εξαρτάται μόνο από $x, y$.</li>
+            <li><strong>Βήμα 3 (Αποτίμηση Παραγώγων):</strong> Υπολογίζεις $y'_0 = f(x_0, y_0)$ και $y''_0$ στο αρχικό σημείο $(x_0, y_0)$.</li>
+            <li><strong>Βήμα 4 (Τύπος Taylor 3 Όρων):</strong> Εφαρμόζεις $y_{k+1} = y_k + h y'_k + \frac{h^2}{2} y''_k$. (Προσοχή στο $\frac{1}{2}$!).</li>
+            <li><strong>Βήμα 5 (Σύγκριση με Euler):</strong> Euler: $y_{k+1}^{\text{Euler}} = y_k + h y'_k$. Σχολιάζεις ότι αν $y''_0 = 0$, συμπίπτουν!</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΤΥΠΟΣ TAYLOR 3 ΟΡΩΝ &amp; ΕΜΜΕΣΗ ΠΑΡΑΓΩΓΟΣ</div>
+          <div class="key-formula-math">
+            $$y_{k+1} = y_k + h y'_k + \frac{h^2}{2} y''_k \quad \text{όπου} \quad y'' = \frac{\partial f}{\partial x} + \frac{\partial f}{\partial y} y'$$
+          </div>
+        </div>
+      </div>
+
+      <div class="student-trap">
+        <div class="student-trap-header">
+          <span class="student-trap-badge">⚠️ ΠΑΓΙΔΑ ΣΤΙΣ ΕΞΕΤΑΣΕΙΣ</span>
+          <span class="student-trap-scope">ΘΕΜΑ 2.3 · ΕΜΜΕΣΗ ΠΑΡΑΓΩΓΟΣ</span>
+        </div>
+        <div class="student-trap-title">Το $y$ ΔΕΝ είναι σταθερά — παραγωγίζεται σε $y'$!</div>
+        <div class="student-trap-body">
+          <div class="student-trap-comparison">
+            <div class="student-trap-wrong">
+              <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+              <p>Αν $y' = y - x^2 + 1$, γράφει $y'' = 0 - 2x = -2x$ θεωρώντας το $y$ ως σταθερό αριθμό.</p>
+            </div>
+            <div class="student-trap-right">
+              <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+              <p>Το $y = y(x)$ είναι συνάρτηση του $x$, άρα $\frac{d}{dx}[y] = y'$. Το σωστό είναι $y'' = y' - 2x = (y - x^2 + 1) - 2x = y - x^2 - 2x + 1$!</p>
+            </div>
+          </div>
+          <div class="student-trap-takeaway">
+            <strong>💡 Κανόνας:</strong> Στην Taylor 3 όρων, μην ξεχνάς ποτέ το $\frac{1}{2}$ στον 3ο όρο: $\frac{h^2}{2}y''_0$!
+          </div>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:16px;">
+        <em><strong>Πρότυπη Εκφώνηση Εξετάσεων (Φεβρουάριος 2024):</strong> Δίνεται το πρόβλημα αρχικών τιμών $y' = y - x^2 + 1$, $1 \le x \le 2$, με αρχική συνθήκη $y(1) = 2$.
+        Αν $n = 1$, υπολογίστε την $y(2.0)$ με τη μέθοδο Taylor με τρεις όρους και συγκρίνετε με τη μέθοδο Euler.</em>
+      </p>
+
+      <div class="qa-layout">
+        <div class="qa-main-ans">
+
+          <!-- STEP 1 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 1 — Υπολογισμός Βήματος $h$ και Πλέγματος</div>
+            $$h = \frac{b - a}{n} = \frac{2 - 1}{1} = \mathbf{1}$$
+            <p style="margin:4px 0;font-size:0.9rem;">
+              Σημεία διαμέρισης: $x_0 = 1,\; x_1 = 2$. Χρειάζεται μόνο <strong>ένα βήμα</strong> ($k=0$) από το $x_0$ στο $x_1$.
+            </p>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 2 — Έμμεση Παραγώγιση της ΣΔΕ για την Εύρεση της $y''$</div>
+            <p style="font-size:0.9rem;margin-bottom:6px;">
+              Επειδή η άγνωστη συνάρτηση $y = y(x)$ εξαρτάται από το $x$, εφαρμόζουμε τον κανόνα της αλυσίδας:
+            </p>
+            $$y' = y - x^2 + 1$$
+            $$y'' = \frac{d}{dx}\big(y - x^2 + 1\big) = \frac{dy}{dx} - \frac{d}{dx}(x^2) + \frac{d}{dx}(1) = y' - 2x + 0$$
+            <p style="font-size:0.9rem;margin:6px 0;">
+              Αντικαθιστούμε το $y' = y - x^2 + 1$ στην παραπάνω σχέση ώστε η $y''$ να εκφραστεί μόνο μέσω $x$ και $y$:
+            </p>
+            $$y'' = (y - x^2 + 1) - 2x = \mathbf{y - x^2 - 2x + 1}$$
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 3 — Αποτίμηση Παραγώγων στο Σημείο Αρχικών Τιμών $(x_0, y_0) = (1, 2)$</div>
+            $$\mathbf{y'_0} = f(x_0, y_0) = y_0 - x_0^2 + 1 = 2 - 1^2 + 1 = 2 - 1 + 1 = \mathbf{2}$$
+            $$\mathbf{y''_0} = y'_0 - 2x_0 = 2 - 2(1) = 2 - 2 = \mathbf{0}$$
+            <p style="font-size:0.85rem;color:var(--muted);margin-top:4px;">
+              (Επαλήθευση μέσω της γενικής έκφρασης: $y''_0 = y_0 - x_0^2 - 2x_0 + 1 = 2 - 1 - 2 + 1 = 0$ ✅).
+            </p>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 4 — Εφαρμογή Τύπου Taylor 3 Όρων</div>
+            $$y(2.0) \approx y_1 = y_0 + h\,y'_0 + \frac{h^2}{2} y''_0$$
+            $$y_1 = 2 + (1)\cdot(2) + \frac{1^2}{2}\cdot(0) = 2 + 2 + 0 = \mathbf{4}$$
+          </div>
+
+          <!-- STEP 5 -->
+          <div class="step-box">
+            <div class="step-title">Βήμα 5 — Σύγκριση Euler vs Taylor 3 Όρων</div>
+            <p style="font-size:0.9rem;margin-bottom:6px;">
+              Αν εφαρμόζαμε την απλή μέθοδο Euler:
+            </p>
+            $$y_1^{\text{Euler}} = y_0 + h\,f(x_0, y_0) = 2 + 1\cdot(2) = \mathbf{4}$$
+            <div class="gbox" style="margin-top:8px;">
+              <div class="lbl" style="color:var(--green)">✅ Το Σχόλιο Σύγκρισης που Βαθμολογείται</div>
+              Παρατηρούμε ότι οι μέθοδοι Euler και Taylor 3 όρων δίνουν <strong>ακριβώς το ίδιο αποτέλεσμα</strong> ($y_1 = 4$).
+              <br><strong>Γιατί συνέβη αυτό;</strong> Επειδή στο συγκεκριμένο σημείο εκκίνησης $(1, 2)$ έτυχε η δεύτερη παράγωγος να μηδενίζεται ($y''_0 = 0$), ο διορθωτικός τετραγωνικός όρος $\frac{h^2}{2}y''_0$ εξαφανίστηκε. Γενικά, αν $y''_0 \ne 0$, η Taylor 3 όρων είναι πολύ ακριβέστερη (τοπικό σφάλμα $O(h^3)$ έναντι $O(h^2)$ της Euler).
+            </div>
+          </div>
+
+        </div>
+
+        <div class="qa-side-notes">
+          <div class="side-notes-header">💡 Euler vs Taylor</div>
+          <p><strong>Euler</strong> = οι δύο πρώτοι όροι: $y_{i+1} = y_i + h y'_i$.<br>
+             <strong>Taylor 3 όρων</strong> = προσθέτεις τον $\frac{h^2}{2}y''_i$.</p>
+          <p>Εδώ έτυχε $y''_1 = 0$, οπότε τα δύο δίνουν το ίδιο. Μη βιαστείς να συμπεράνεις ότι είναι πάντα έτσι.</p>
+          <p style="margin-bottom:0"><strong>Το μόνο σημείο που μπερδεύει:</strong> η $y''$ <em>δεν</em> υπολογίζεται
+             αριθμητικά. Παραγωγίζεις τη σχέση που σου δίνει η άσκηση, με κανόνα αλυσίδας — το $y$ είναι
+             συνάρτηση του $x$, άρα $\frac{d}{dx}y = y'$.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ΤΥΠΟΣ Η ===== -->
+  <div class="qa-card" id="recipe-type-h">
+    <div class="qa-q">
+      <span class="qno">Η.</span>
+      <span>MATLAB: Column-Major Indexing, Διανυσματοποίηση &amp; Επαναληπτικοί Πίνακες <span class="exam-badge">Θέμα 3 — 30 Μονάδες</span></span>
+    </div>
+    <div class="qa-a">
+
+      <!-- 🔍 RECOGNITION RECIPE BOX -->
+      <div class="recognition-formula">
+        <div class="recognition-header">
+          <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+          <span class="recognition-topic">ΘΕΜΑ 3 · MATLAB DRIVER</span>
+        </div>
+        <div class="recognition-title">Το Θέμα 3 χαρίζει 30 μονάδες με 3 μηχανικά βήματα</div>
+        <div class="recognition-trigger">
+          <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+          <p>Ζητούνται μονογραμμικές εντολές MATLAB, αποτελέσματα δεικτών <code>find(...)</code> σε πίνακα $3 \times 3$, και συνάρτηση <code>iterMatrix</code> για κατασκευή επαναληπτικού πίνακα και φασματικής ακτίνας.</p>
+        </div>
+        <div class="recognition-recipe">
+          <div class="recognition-lbl">📋 Η Μηχανική Συνταγή</div>
+          <ol class="recognition-steps">
+            <li><strong>Μέρος 1 (Εντολές &amp; Νόρμες):</strong> Μία γραμμή ανά ζητούμενο: <code>cond(A)</code>, <code>det(A)</code>, <code>norm(x - xhat)/norm(x)</code>, <code>norm(b - A*xhat, inf)</code>.</li>
+            <li><strong>Μέρος 2 (Column-Major Indexing):</strong> Σχεδίασε αμέσως το πλέγμα δεικτών: σάρωση <strong>κατά στήλες</strong> (1η στήλη $1, 2, 3$, 2η στήλη $4, 5, 6$, 3η στήλη $7, 8, 9$).</li>
+            <li><strong>Μέρος 3 (Πολυώνυμα):</strong> Ρίζες σε συντελεστές: <code>poly(r)</code>, παράγωγος: <code>polyder(p)</code> (ποτέ <code>diff</code> σε αριθμητικά!).</li>
+            <li><strong>Μέρος 4 (Συνάρτηση):</strong> Στάνταρ template 10 γραμμών με διπλό <code>diag(diag(A))</code>, <code>-tril(A,-1)</code>, <code>-triu(A,1)</code>, και <code>rho = max(abs(eig(Z)))</code>.</li>
+          </ol>
+        </div>
+        <div class="key-formula-box">
+          <div class="key-formula-lbl">🔑 ΤΥΠΟΛΟΓΙΟ ΕΠΑΝΑΛΗΠΤΙΚΩΝ ΠΙΝΑΚΩΝ MATLAB</div>
+          <div class="key-formula-math">
+            $$D = \text{diag}(\text{diag}(A)), \quad C_L = -\text{tril}(A,-1), \quad C_U = -\text{triu}(A,1), \quad \rho = \max|\text{eig}(Z)|$$
+          </div>
+        </div>
+      </div>
+
+      <div class="student-trap">
+        <div class="student-trap-header">
+          <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΕΣ</span>
+          <span class="student-trap-scope">ΘΕΜΑ 3 · MATLAB</span>
+        </div>
+        <div class="student-trap-title">Κλασικά λάθη που κοστίζουν 10–15 μόρια στο Θέμα 3</div>
+        <div class="student-trap-body">
+          <ul style="margin:0;padding-left:1.2rem;font-size:0.88rem;line-height:1.75;">
+            <li><strong>Το Διπλό diag:</strong> <code>D = diag(diag(A))</code>. Το μονό <code>diag(A)</code> δίνει <em>διάνυσμα</em> (μόνο τη διαγώνιο). Αν γράψεις <code>inv(diag(A))</code> βγάζει error!</li>
+            <li><strong>Πρόσημα στα Τρίγωνα:</strong> <code>CL = -tril(A, -1)</code> και <code>CU = -triu(A, 1)</code>. Το μείον είναι υποχρεωτικό λόγω της σύμβασης $A = D - C_L - C_U$.</li>
+            <li><strong>Παράγωγος Πολυωνύμου:</strong> Χωρίς symbolic γράφεις <code>polyder(p)</code>, ΠΟΤΕ <code>diff(p)</code>. Το <code>diff</code> υπολογίζει απλές διαφορές στοιχείων!</li>
+            <li><strong>Στήλες vs Γραμμές:</strong> Η <code>find</code> σαρώνει προς τα κάτω την 1η στήλη, μετά τη 2η στήλη κ.ο.κ.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:12px;"><em>Το πλήρες λεξικό όσων έχουν ζητηθεί στις εξετάσεις (30 μονάδες):</em></p>
+
+      <div class="tbl-scroll">
+      <table class="vtbl">
+        <thead><tr><th>Ζητούμενο</th><th>Εντολή MATLAB</th></tr></thead>
+        <tbody>
+          <tr><td>Αριθμός συνθήκης</td><td><code>cond(A)</code></td></tr>
+          <tr><td>Ορίζουσα · ίχνος · βαθμός</td><td><code>det(A)</code> · <code>trace(A)</code> · <code>rank(A)</code></td></tr>
+          <tr><td>Ανάστροφος</td><td><code>transpose(A)</code> ή <code>A.'</code></td></tr>
+          <tr><td><strong>Συζυγής</strong> ανάστροφος</td><td><code>A'</code> <span style="color:var(--muted)">(η απλή απόστροφος κάνει complex conjugate)</span></td></tr>
+          <tr><td>Ιδιοτιμές · και ιδιοδιανύσματα</td><td><code>eig(A)</code> · <code>[V,D] = eig(A)</code></td></tr>
+          <tr><td>Ιδιοτιμές μέσω χαρακτηριστικού πολυωνύμου</td><td><code>cp = charpoly(A); roots(cp)</code></td></tr>
+          <tr><td>Εσωτερικό γινόμενο διανυσμάτων</td><td><code>dot(x,y)</code></td></tr>
+          <tr><td><strong>Κατά γραμμές</strong> εσωτερικό γινόμενο πινάκων</td><td><code>sum(A.*B, 2)</code></td></tr>
+          <tr><td>Μέση τιμή · μήκος</td><td><code>mean(x)</code> · <code>length(x)</code></td></tr>
+          <tr><td>Μέγιστο <strong>κάθε στήλης</strong></td><td><code>max(A)</code> <span style="color:var(--muted)">(δουλεύει κατά στήλες από μόνη της)</span></td></tr>
+          <tr><td>Μέγιστο <strong>όλου</strong> του πίνακα</td><td><code>max(A(:))</code></td></tr>
+          <tr><td><strong>Θέση</strong> μεγαλύτερου κατά μέτρο (μικρότερη θέση σε ισοπαλία)</td><td><code>[m,p] = max(abs(y))</code></td></tr>
+          <tr><td>Πίνακας 3×2 με όλα τα στοιχεία 20</td><td><code>20*ones(3,2)</code></td></tr>
+          <tr><td>$\|\delta x\|_2 / \|x\|_2$ με $\delta x = x - \hat{x}$</td><td><code>norm(x - xhat)/norm(x)</code></td></tr>
+          <tr><td>$\|\delta r\|_\infty$ με $\delta r = b - A\hat{x}$</td><td><code>norm(b - A*xhat, inf)</code></td></tr>
+          <tr><td>Ρίζες πολυωνύμου ↔ πολυώνυμο από ρίζες</td><td><code>roots(p)</code> ↔ <code>poly(r)</code></td></tr>
+          <tr><td>Τιμή πολυωνύμου</td><td><code>polyval(p, x)</code></td></tr>
+          <tr><td><strong>Παράγωγος</strong> πολυωνύμου (χωρίς symbolic)</td><td><code>polyder(p)</code></td></tr>
+          <tr><td>Γινόμενο ↔ πηλίκο πολυωνύμων</td><td><code>conv(p1,p2)</code> ↔ <code>deconv(p1,p2)</code></td></tr>
+          <tr><td>Ελάχιστα τετράγωνα βαθμού k</td><td><code>polyfit(x, y, k)</code></td></tr>
+          <tr><td>Ολοκλήρωμα συνάρτησης</td><td><code>integral(f, a, b)</code></td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title">Μέρος 1 — Column-Major Linear Indexing (Αναλυτική Αντιστοίχιση)</div>
+        <p style="font-size:0.9rem;margin-bottom:6px;">Δίνεται ο πίνακας:</p>
+        $$A = \begin{bmatrix} 10 & 3 & -7 \\ 0 & -6 & 0 \\ 1 & 0 & 4 \end{bmatrix}$$
+        <p style="font-size:0.9rem;margin:6px 0;">
+          Στο MATLAB τα στοιχεία αποθηκεύονται στη μνήμη <strong>κατά στήλες</strong> (column-major order):
+        </p>
+        <div class="tbl-scroll">
+          <table class="vtbl" style="width:auto;font-family:'JetBrains Mono',monospace;text-align:center;">
+            <thead><tr><th>Γραμμή \ Στήλη</th><th>Στήλη 1</th><th>Στήλη 2</th><th>Στήλη 3</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Γραμμή 1</strong></td><td>Δείκτης 1 &rarr; <strong>10</strong></td><td>Δείκτης 4 &rarr; <strong>3</strong></td><td>Δείκτης 7 &rarr; <strong>−7</strong></td></tr>
+              <tr><td><strong>Γραμμή 2</strong></td><td>Δείκτης 2 &rarr; <strong>0</strong></td><td>Δείκτης 5 &rarr; <strong>−6</strong></td><td>Δείκτης 8 &rarr; <strong>0</strong></td></tr>
+              <tr><td><strong>Γραμμή 3</strong></td><td>Δείκτης 3 &rarr; <strong>1</strong></td><td>Δείκτης 6 &rarr; <strong>0</strong></td><td>Δείκτης 9 &rarr; <strong>4</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.9rem;margin:8px 0 4px;">Η γραμμική μορφή του πίνακα είναι: $A(:) = [10,\, 0,\, 1,\, 3,\, -6,\, 0,\, -7,\, 0,\, 4]^T$.</p>
+        <ul style="font-size:0.88rem;line-height:1.8;">
+          <li><code>find(A > 1)</code>: Ψάχνει τα στοιχεία με τιμή $>1$ κατά στήλη:
+            <br>&bull; Θέση 1: $10 > 1$ &check; &rarr; <strong>1</strong>
+            <br>&bull; Θέση 4: $3 > 1$ &check; &rarr; <strong>4</strong>
+            <br>&bull; Θέση 9: $4 > 1$ &check; &rarr; <strong>9</strong>
+            <br>&rarr; Αποτέλεσμα: <code>[1; 4; 9]</code> (διάνυσμα δεικτών θέσης).
+          </li>
+          <li><code>A(find(A > 1))</code>: Επιστρέφει τις <strong>τιμές</strong> στις παραπάνω θέσεις:
+            <br>&rarr; Αποτέλεσμα: <code>[10; 3; 4]</code>.
+          </li>
+          <li><code>find(A == 0)</code>: Θέσεις όπου $A_{ij} = 0$:
+            <br>&rarr; Αποτέλεσμα: <code>[2; 6; 8]</code>.
+          </li>
+          <li><code>A(2:end, :)</code>: Επιλογή υποπίνακα (όλες οι γραμμές από τη 2η και κάτω, όλες οι στήλες):
+            <br>&rarr; Αποτέλεσμα: $\begin{bmatrix} 0 & -6 & 0 \\ 1 & 0 & 4 \end{bmatrix}$.
+          </li>
+        </ul>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title">Μέρος 2 — Πολυώνυμο από Ρίζες + Αποτίμηση + Συμβολικές Μεταβλητές</div>
+        <p style="margin:0 0 6px;font-size:0.9rem">Ρίζες $r_1=-4$, $r_2=5$· τιμές στα $x_i = -10 + ih$, $i=0..2000$, $h=0.01$:</p>
+<div class="cb"><code>p = <span class="fn">poly</span>([-<span class="nm">4</span> <span class="nm">5</span>]);              <span class="cm">% συντελεστές από ρίζες</span>
+h = <span class="nm">0.01</span>;
+x = -<span class="nm">10</span> : h : (-<span class="nm">10</span> + <span class="nm">2000</span>*h);  <span class="cm">% τα 2001 σημεία</span>
+y = <span class="fn">polyval</span>(p, x);
+<span class="fn">plot</span>(x, y);</code></div>
+
+        <p style="margin:10px 0 6px;font-size:0.9rem;"><strong>Συμβολικές μεταβλητές (όταν ζητά ρητά «με χρήση συμβολικών»):</strong></p>
+<div class="cb"><code><span class="kw">syms</span> x
+f  = x^<span class="nm">2</span> - <span class="nm">5</span>*x + <span class="nm">6</span>;
+df = <span class="fn">diff</span>(f, x);        <span class="cm">% η συμβολική παράγωγος</span>
+<span class="fn">subs</span>(df, x, <span class="nm">3</span>)          <span class="cm">% η τιμή της στο x = 3</span></code></div>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title">Μέρος 3 — Πλήρης Συνάρτηση Επαναληπτικού Πίνακα &amp; Φασματικής Ακτίνας</div>
+        <p style="font-size:0.9rem;margin-bottom:6px;">
+          Πρότυπο συνάρτησης για υπολογισμό του πίνακα SOR / ESOR και της φασματικής του ακτίνας (10 γραμμές που χαρίζουν 15–20 μονάδες):
+        </p>
+<div class="cb"><code><span class="kw">function</span> [Z, rho] = <span class="fn">iterMatrix</span>(A, w, t)
+    <span class="cm">% A: τετραγωνικός πίνακας συντελεστών n x n</span>
+    <span class="cm">% w: παράμετρος χαλάρωσης (omega), t: παράμετρος επιτάχυνσης (tau)</span>
+    n = <span class="fn">size</span>(A, <span class="nm">1</span>);
+    I = <span class="fn">eye</span>(n);
+    
+    <span class="cm">% 1. Διαγώνιος D (διπλό diag!)</span>
+    D = <span class="fn">diag</span>(<span class="fn">diag</span>(A));
+    
+    <span class="cm">% 2. Αυστηρά κάτω και άνω τρίγωνα με ΑΝΤΙΘΕΤΟ πρόσημο (σύμβαση A = D - CL - CU)</span>
+    CL = -<span class="fn">tril</span>(A, -<span class="nm">1</span>);
+    CU = -<span class="fn">triu</span>(A, <span class="nm">1</span>);
+    
+    <span class="cm">% 3. Κανονικοποιημένα L και U</span>
+    L = <span class="fn">inv</span>(D) * CL;
+    U = <span class="fn">inv</span>(D) * CU;
+    
+    <span class="cm">% 4. Μετάφραση δοσμένου τύπου επαναληπτικού πίνακα (π.χ. SOR)</span>
+    Z = I - w * <span class="fn">inv</span>(I - w*L) * <span class="fn">inv</span>(D) * A;
+    
+    <span class="cm">% 5. Υπολογισμός ιδιοτιμών και φασματικής ακτίνας</span>
+    eigenvalues = <span class="fn">eig</span>(Z);
+    rho = <span class="fn">max</span>(<span class="fn">abs</span>(eigenvalues));
+<span class="kw">end</span></code></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="examprep" data-section="answers"></div>
+</section>
+
+<!-- ============ SECTION 5: PROOFS ============ -->
+<section id="proofs">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">📐</div>
+    <h2>5. Θεωρία &amp; αποδείξεις</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--purple)">Απόδειξη: η Newton-Raphson έχει τετραγωνική σύγκλιση</div>
+    <p>Η N-R είναι μέθοδος σταθερού σημείου με $g(x) = x - \dfrac{f(x)}{f'(x)}$. Παραγωγίζουμε:</p>
+    $$g'(x) = 1 - \frac{f'(x)f'(x) - f(x)f''(x)}{[f'(x)]^2} = 1 - \frac{[f'(x)]^2 - f(x)f''(x)}{[f'(x)]^2} = \frac{f(x)f''(x)}{[f'(x)]^2}$$
+    <p>Στη ρίζα ξ ισχύει $f(\xi) = 0$ και (για απλή ρίζα) $f'(\xi) \neq 0$, οπότε:</p>
+    $$g'(\xi) = \frac{0 \cdot f''(\xi)}{[f'(\xi)]^2} = 0$$
+    <p>Αφού $g'(\xi) = 0$ και γενικά $g''(\xi) = \dfrac{f''(\xi)}{f'(\xi)} \neq 0$, η σύγκλιση είναι
+       <strong>ακριβώς τετραγωνική</strong> $(p = 2)$. $\blacksquare$</p>
+    <div class="ibox">
+      <div class="lbl" style="color:var(--blue)">Σημείωση</div>
+      Αν η ρίζα είναι <strong>πολλαπλή</strong> ($f'(\xi) = 0$), το επιχείρημα καταρρέει και η σύγκλιση
+      υποβαθμίζεται σε <strong>γραμμική</strong>.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--cyan)">Ο κανόνας τάξης σύγκλισης</div>
+    <p>Για μέθοδο σταθερού σημείου $x_{n+1} = g(x_n)$ με $g(\xi) = \xi$, το ανάπτυγμα Taylor γύρω από το ξ δίνει:</p>
+    $$x_{n+1} - \xi = g'(\xi)(x_n-\xi) + \frac{g''(\xi)}{2!}(x_n-\xi)^2 + \frac{g'''(\xi)}{3!}(x_n-\xi)^3 + \dots$$
+    <p>Ο <strong>πρώτος μη μηδενικός</strong> όρος καθορίζει την τάξη:</p>
+    <table class="vtbl">
+      <thead><tr><th>Συνθήκη</th><th>Τάξη</th><th>Τι σημαίνει πρακτικά</th></tr></thead>
+      <tbody>
+        <tr><td>$g'(\xi) \neq 0$, $|g'(\xi)|\lt 1$</td><td>Γραμμική ($p=1$)</td><td>Σταθερός αριθμός νέων ψηφίων ανά βήμα</td></tr>
+        <tr><td>$g'(\xi) = 0$, $g''(\xi) \neq 0$</td><td>Τετραγωνική ($p=2$)</td><td>Διπλασιάζονται τα σωστά ψηφία κάθε βήμα</td></tr>
+        <tr><td>$g'(\xi)=g''(\xi)=0$, $g'''(\xi)\neq 0$</td><td>Κυβική ($p=3$)</td><td>Τριπλασιάζονται</td></tr>
+      </tbody>
+    </table>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:0">
+      Γι' αυτό στο Θέμα 1.1 η ερώτηση «βρείτε λ ώστε η σύγκλιση να είναι <em>τουλάχιστον</em> τετραγωνική»
+      μεταφράζεται πάντα σε μία εξίσωση: $g'(\xi) = 0$.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--yellow)">Θεωρία μιας γραμμής — έτοιμες απαντήσεις σε «γιατί;»</div>
+    <div class="tbl-scroll">
+    <table class="vtbl">
+      <thead><tr><th style="width:32%">Ερώτηση</th><th>Απάντηση-μοντέλο</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Άμεσες vs επαναληπτικές μέθοδοι</strong></td>
+          <td>Οι <strong>άμεσες</strong> έχουν σταθερό, προβλέψιμο υπολογιστικό κόστος. Στις <strong>επαναληπτικές</strong>,
+              ανάλογα με τον πίνακα και τη μέθοδο, ενδέχεται να διαφέρει ο αριθμός των βημάτων που απαιτούνται
+              για να συγκλίνει η μέθοδος σε λύση.</td>
+        </tr>
+        <tr>
+          <td><strong>Γιατί μερική οδήγηση;</strong></td>
+          <td>Αυξάνει την <strong>ακρίβεια</strong> και την <strong>ευστάθεια</strong> των υπολογισμών, αποφεύγοντας
+              τις διαιρέσεις με μικρούς αριθμούς — ειδικά σε πυκνά γραμμικά συστήματα. Επιπλέον εξασφαλίζει
+              $|m_{ik}| \le 1$ για τους πολλαπλασιαστές, περιορίζοντας τη διάδοση σφαλμάτων στρογγυλοποίησης.</td>
+        </tr>
+        <tr>
+          <td><strong>Πότε ΔΕΝ χρειάζεται οδήγηση;</strong></td>
+          <td>Όταν ο πίνακας είναι πραγματικά <strong>συμμετρικός και θετικά ορισμένος</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>Τι κάνει η Μέθοδος των Δυνάμεων;</strong></td>
+          <td>Υπολογίζει τη <strong>μεγαλύτερη κατά μέτρο ιδιοτιμή</strong>. Η ταχύτητα σύγκλισης εξαρτάται από τους
+              λόγους της μεγαλύτερης προς τις υπόλοιπες ιδιοτιμές, καθώς και από την αρχική επιλογή του ιδιοδιανύσματος.</td>
+        </tr>
+        <tr>
+          <td><strong>Ποια μέθοδο παρεμβολής αν δεν ξέρω αν ισαπέχουν;</strong></td>
+          <td><strong>Lagrange</strong> ή <strong>Newton με διηρημένες διαφορές</strong>. (Αν ισαπέχουν, οι
+              <strong>εμπρός διαφορές</strong> είναι αποδοτικότερες.)</td>
+        </tr>
+        <tr>
+          <td><strong>Κι αν τα σημεία έχουν θόρυβο ή είναι πολλά;</strong></td>
+          <td><strong>Μέθοδος ελαχίστων τετραγώνων</strong> — προσέγγιση, όχι παρεμβολή.</td>
+        </tr>
+        <tr>
+          <td><strong>Newton-Cotes vs Gauss</strong></td>
+          <td>Η <strong>Newton-Cotes</strong> επιλέγει σημεία που <strong>ισαπέχουν</strong> στο διάστημα ολοκλήρωσης
+              και δίνει ακριβή αποτελέσματα για πολυώνυμα έως και $n-1$ βαθμού. Η <strong>Gauss</strong> επιλέγει
+              και τις θέσεις, οπότε φτάνει έως και $2n-1$ βαθμού, όπου $n$ ο αριθμός των σημείων.</td>
+        </tr>
+        <tr>
+          <td><strong>Γιατί ο Simpson είναι ακριβής για κυβικά;</strong></td>
+          <td>Ο όρος σφάλματος είναι $E = -\frac{h^4(b-a)}{180}f^{(4)}(\xi)$ και περιέχει την <strong>4η
+              παράγωγο</strong>, η οποία μηδενίζεται για κάθε πολυώνυμο βαθμού ≤ 3.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="examprep" data-section="proofs"></div>
+</section>
+
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>

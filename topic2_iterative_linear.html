@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 2 · Επαναληπτικές Μέθοδοι (Jacobi / GS / SOR - Οδηγός Αρχαρίων)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--gdim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'ρ(L) < 1';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(63,185,80,.08);
+  pointer-events:none;font-weight:700;
+}
+.cb{background:#060a10;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;margin:12px 0;overflow-x:auto}
+.kw{color:var(--blue);font-weight:600}
+.fn{color:var(--yellow);font-weight:600}
+.st{color:var(--orange)}
+.cm{color:var(--dim);font-style:italic}
+.nm{color:var(--purple)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 8px;margin-left:6px}
+.step-box{background:var(--surf2);border-left:4px solid var(--green);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);margin-bottom:6px;font-size:0.95rem}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script src="data/flashcards.js" defer></script>
+<script src="js/flashcards.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · TOPIC 02</div>
+  <h1>Επαναληπτικές Μέθοδοι <em>(Jacobi / GS / SOR)</em></h1>
+  <p>Πλήρης οδηγός για αρχάριους: Διάσπαση Πίνακα $A = D - L - U$, Πίνακες Επανάληψης, Φασματική Ακτίνα $\rho(\mathcal{L})$, Ίκανοποίηση Διαγώνιας Υπεροχής &amp; MATLAB Συνάρτηση Υπολογισμού.</p>
+  <div class="chips">
+    <span class="chip">Jacobi</span>
+    <span class="chip">Gauss-Seidel</span>
+    <span class="chip">SOR / ESOR</span>
+    <span class="chip">Spectral Radius</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#essence">🎯 Η Ουσία</a>
+  <a href="#jacobi">1. Μέθοδος Jacobi</a>
+  <a href="#gauss_seidel">2. Μέθοδος Gauss-Seidel</a>
+  <a href="#spectral">3. Σύγκλιση &amp; Φασματική Ακτίνα</a>
+  <a href="#matlab_code">4. MATLAB Code &amp; ESOR</a>
+  <a href="#flashcards">🗂️ Flashcards</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ΠΡΟΑΠΑΙΤΟΥΜΕΝΟ ΥΠΟΒΑΘΡΟ · STEP 0</div>
+      <div class="prereq-title">Προαπαιτούμενα για τις Επαναληπτικές Μεθόδους (Jacobi / GS / SOR)</div>
+      <p class="prereq-text">
+        Η ανάλυση επαναληπτικών μεθόδων στηρίζεται στον πολλαπλασιασμό πινάκων, στην αντιστροφή του διαγώνιου πίνακα $D^{-1} = \text{diag}(1/a_{ii})$ και στη μέτρηση του σφάλματος επανάληψης ($|x^{(k)} - \xi|$). Φρεσκάρισε τις βάσεις σου πριν ξεκινήσεις.
+      </p>
+      <a href="prerequisites.html#sec-iteration-error" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν: Πίνακες &amp; Σφάλμα Επανάληψης &rarr;</a>
+    </div>
+  </div>
+
+<!-- 🎯 ESSENCE SECTION -->
+<section id="essence">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🎯</div>
+    <h2>Η Ουσία σε 60 δευτερόλεπτα</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΤΙ ΚΑΝΕΙ</div>
+    Οι επαναληπτικές μέθοδοι ξεκινάνε από μια αρχική προσέγγιση $x^{(0)}$ και παράγουν μια ακολουθία διανυσμάτων $x^{(1)}, x^{(2)}, \dots, x^{(k)}$ η οποία συγκλίνει στην ακριβή λύση $x$ του συστήματος $Ax = b$. Είναι ιδανικές για μεγάλους αραιούς (sparse) πίνακες.
+  </div>
+
+  <p style="margin-bottom:14px">
+    <strong>💡 Διαίσθηση για Αρχάριους:</strong> Στη μέθοδο Jacobi υπολογίζεις τις νέες τιμές χρησιμοποιώντας <em>μόνο</em> τις τιμές του προηγούμενου βήματος. Στη Gauss-Seidel χρησιμοποιείς <em>αμέσως</em> τις νέες τιμές μόλις υπολογιστούν, κάνοντας τη σύγκλιση διπλάσια ταχεία!
+  </p>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">✅ Δουλεύει καλά όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Ο πίνακας $A$ είναι αυστηρά διαγώνια υπερέχων (Strictly Diagonally Dominant).</li>
+        <li>Η φασματική ακτίνα του επαναληπτικού πίνακα είναι μικρότερη της μονάδας: $\rho(\mathcal{L}) < 1$.</li>
+      </ul>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">❌ Αποτυγχάνει όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>$\rho(\mathcal{L}) \ge 1$ (αποκλίνει η επαναληπτική διαδικασία).</li>
+        <li>Υπάρχουν μηδενικά στη διαγώνιο του πίνακα $A$.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-icon">📝</div>
+    <div class="tip-text">
+      <strong>Για τις εξετάσεις θυμήσου:</strong>
+      <ol style="margin:4px 0 0 18px;padding:0">
+        <li><strong>Η σύμβαση των εκφωνήσεων:</strong> τα $L, U$ είναι <em>κανονικοποιημένα</em> — τα αυστηρά κάτω/άνω τριγωνικά τμήματα του $D^{-1}A$, με <strong>αντίθετο πρόσημο</strong>. Χρησιμοποίησε αυτά και οι τύποι βγαίνουν σωστά.</li>
+        <li><strong>Πίνακας Jacobi:</strong> $B = L + U$.</li>
+        <li><strong>Πίνακας Gauss-Seidel:</strong> $\mathcal{L}_1 = (I - L)^{-1}U$.</li>
+        <li><strong>Πίνακας SOR:</strong> $\mathcal{L}_\omega = I - \omega(I - \omega L)^{-1}D^{-1}A$ &nbsp;(για $\omega = 1$ δίνει τη Gauss-Seidel).</li>
+        <li><strong>Φασματική Ακτίνα:</strong> $\rho(\mathcal{L}) = \max \{|\lambda_1|, \dots, |\lambda_n|\}$, όπου $\lambda_i$ οι ιδιοτιμές του <em>επαναληπτικού</em> πίνακα. Συγκλίνει $\iff \rho < 1$.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic2" data-section="essence"></div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="jacobi">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--bdim)">1️⃣</div>
+    <h2>1. Μέθοδος Jacobi (Simultaneous Iteration)</h2>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">💡 Διάσπαση Πίνακα για Αρχάριους:</div>
+    <p style="margin:4px 0">Έστω ο πίνακας $A = \begin{bmatrix} 4 & -1 & 0 \\ -1 & 4 & -1 \\ 0 & -1 & 4 \end{bmatrix}$. Τον διασπούμε ως $A = D - L - U$:</p>
+    $$D = \begin{bmatrix} 4 & 0 & 0 \\ 0 & 4 & 0 \\ 0 & 0 & 4 \end{bmatrix}, \quad L = \begin{bmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix}, \quad U = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}$$
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Αυστηρά Διαγώνια Υπερέχων (SDD) &amp; Κανονικοποιημένα $L, U$</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong>
+        <br>• <strong>SDD (Strictly Diagonally Dominant):</strong> Σε κάθε γραμμή, το διαγώνιο στοιχείο είναι κατ' απόλυτη τιμή αυστηρά μεγαλύτερο από το άθροισμα όλων των άλλων στοιχείων της ίδιας γραμμής μαζί: $|a_{ii}| > \sum_{j \neq i} |a_{ij}|$.
+        <br>• <strong>Κανονικοποιημένα $L, U$:</strong> Στο DIT, τα $L$ και $U$ ορίζονται ως τα αυστηρά κάτω και άνω τριγωνικά τμήματα του $D^{-1}A$ <strong>με αντίθετο πρόσημο</strong> ($L = -D^{-1}\text{tril}(A,-1)$, $U = -D^{-1}\text{triu}(A,1)$).
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> Αν ένας πίνακας είναι SDD, οι μέθοδοι Jacobi και Gauss-Seidel <strong>συγκλίνουν εγγυημένα</strong> από οποιοδήποτε αρχικό διάνυσμα $x^{(0)}$! Στις ασκήσεις MATLAB (Θέμα 3.4), αν ξεχάσεις το μείον στα $L, U$ ή την κανονικοποίηση με $D^{-1}$, ο υπολογισμός του επαναληπτικού πίνακα SOR θα βγάλει εντελώς λάθος αποτέλεσμα.</p>
+    </div>
+  </details>
+
+  <div class="recognition-formula" id="matrix-splitting">
+    <div class="recognition-header">
+      <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+      <span class="recognition-topic">ΘΕΜΑ 3.4 · ΕΠΑΝΑΛΗΠΤΙΚΟΙ ΠΙΝΑΚΕΣ</span>
+    </div>
+    <div class="recognition-title">Μηχανική Κατασκευή Πινάκων Jacobi και Gauss-Seidel</div>
+    <div class="recognition-trigger">
+      <div class="recognition-lbl">🔍 Πώς διασπάς τον πίνακα $A$</div>
+      <p>Διασπούμε τον πίνακα ως $A = D - C_L - C_U$, όπου $D$ η κύρια διαγώνιος, $C_L = -\text{tril}(A,-1)$ και $C_U = -\text{triu}(A,1)$ (με αντίθετο πρόσημο!).</p>
+    </div>
+    <div class="recognition-recipe">
+      <div class="recognition-lbl">📋 Οι 2 Βασικοί Επαναληπτικοί Πίνακες</div>
+      <ol class="recognition-steps">
+        <li><strong>Κανονικοποίηση:</strong> $L = D^{-1} C_L$ και $U = D^{-1} C_U$.</li>
+        <li><strong>Πίνακας Jacobi:</strong> $B = D^{-1}(C_L + C_U) = L + U$.</li>
+        <li><strong>Πίνακας Gauss-Seidel:</strong> $\mathcal{L}_1 = (D - C_L)^{-1} C_U = (I - L)^{-1} U$.</li>
+      </ol>
+    </div>
+    <div class="key-formula-box">
+      <div class="key-formula-lbl">🔑 ΣΥΝΘΗΚΗ ΣΥΓΚΛΙΣΗΣ</div>
+      <div class="key-formula-math">
+        $$\text{Σύγκλιση } \iff \rho(T) = \max_{1 \le i \le n} |\lambda_i(T)| < 1$$
+      </div>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic2" data-section="jacobi"></div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="gauss_seidel">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--ydim)">2️⃣</div>
+    <h2>2. Μέθοδος Gauss-Seidel (Successive Iteration)</h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Η μέθοδος Gauss-Seidel χρησιμοποιεί τις ήδη υπολογισμένες τιμές $x_1^{(k+1)}, \dots, x_{i-1}^{(k+1)}$ μέσα στο ίδιο επαναληπτικό βήμα:
+    $$x_i^{(k+1)} = \frac{1}{a_{ii}} \left( b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{(k+1)} - \sum_{j=i+1}^n a_{ij} x_j^{(k)} \right)$$
+  </p>
+
+  <div class="section-quiz" data-topic="topic2" data-section="gauss_seidel"></div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="spectral">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">📉</div>
+    <h2>3. Θεώρημα Σύγκλισης &amp; Φασματική Ακτίνα $\rho(\mathcal{L})$</h2>
+  </div>
+
+  <div class="student-trap">
+    <div class="student-trap-header">
+      <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ ΘΕΩΡΙΑΣ</span>
+      <span class="student-trap-scope">ΚΕΦΑΛΑΙΟ 2 · ΔΙΑΓΩΝΙΑ ΥΠΕΡΟΧΗ</span>
+    </div>
+    <div class="student-trap-title">Το «Μη Διαγώνια Υπερέχων» ΔΕΝ σημαίνει «Αποκλίνει»!</div>
+    <div class="student-trap-body">
+      <div class="student-trap-comparison">
+        <div class="student-trap-wrong">
+          <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+          <p>Ο πίνακας δεν είναι αυστηρά διαγώνια υπερέχων (SDD), άρα ο φοιτητής βγάζει βιαστικά το συμπέρασμα: «η μέθοδος Gauss-Seidel αποκλίνει».</p>
+        </div>
+        <div class="student-trap-right">
+          <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+          <p>Η συνθήκη SDD είναι <strong>ικανή αλλά όχι αναγκαία</strong>! Αν δεν ισχύει SDD, οφείλεις να υπολογίσεις τον επαναληπτικό πίνακα και τις ιδιοτιμές του. Αν $\rho(T) < 1$, η μέθοδος <strong>συγκλίνει κανονικότατα</strong>!</p>
+        </div>
+      </div>
+      <div class="student-trap-takeaway">
+        <strong>💡 Κανόνας:</strong> Η μόνη αναγκαία και ικανή συνθήκη σύγκλισης για κάθε $x^{(0)}$ είναι $\rho(T) < 1$.
+      </div>
+    </div>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Φασματική Ακτίνα ($\rho(\mathcal{L}) = \max |\lambda_i|$)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Η φασματική ακτίνα ενός τετραγωνικού πίνακα είναι το μέτρο της μεγαλύτερης ιδιοτιμής του: $\rho(M) = \max_i |\lambda_i|$. Στις επαναληπτικές μεθόδους, ο πίνακας επανάληψης $\mathcal{L}$ πολλαπλασιάζει το διάνυσμα σφάλματος σε κάθε βήμα: $e^{(k+1)} = \mathcal{L} e^{(k)}$.</p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> Για να εκμηδενίζεται το σφάλμα καθώς $k \to \infty$, πρέπει υποχρεωτικά <strong>$\rho(\mathcal{L}) < 1$</strong>. Όσο μικρότερο είναι το $\rho$ (π.χ. $0.125$ έναντι $0.353$), τόσο ταχύτερα εξαφανίζεται το σφάλμα. <strong>SOS στο MATLAB:</strong> Γράφουμε <code>max(abs(eig(L_iter)))</code> παίρνοντας τις ιδιοτιμές του <em>επαναληπτικού</em> πίνακα και ΟΧΙ του αρχικού πίνακα $A$!</p>
+    </div>
+  </details>
+
+  <div class="wbox">
+    <strong style="color:var(--cyan)">Θεώρημα Σύγκλισης:</strong><br>
+    Η επαναληπτική μέθοδος $x^{(k+1)} = \mathcal{L} x^{(k)} + c$ συγκλίνει για κάθε αρχική διανυσματική τιμή $x^{(0)}$ αν και μόνο αν:
+    $$\rho(\mathcal{L}) < 1$$
+  </div>
+
+  <div class="section-quiz" data-topic="topic2" data-section="spectral"></div>
+</section>
+
+<!-- SECTION 4 -->
+<section id="matlab_code">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">💻</div>
+    <h2>4. MATLAB Συνάρτηση Υπολογισμού Πίνακα &amp; $\rho(\mathcal{L})$ <span class="exam-badge">Θέμα 3.4 - SOS</span></h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">✅ Δεν χρειάζεται να θυμάσαι τον τύπο</div>
+    Η εκφώνηση <strong>σου δίνει</strong> τον επαναληπτικό πίνακα. Αυτό που πρέπει να ξέρεις απ' έξω είναι
+    (α) το <strong>μπλοκ προετοιμασίας</strong> και (β) ότι το $X^{-1}Y$ γράφεται <code>inv(X)*Y</code>.
+    Μετά μεταφράζεις τον δοσμένο τύπο σύμβολο-προς-σύμβολο.
+  </div>
+
+  <div class="rbox">
+    <div class="lbl" style="color:var(--red)">🚨 Πρόσεξε πώς ορίζει η εκφώνηση τα $L$ και $U$</div>
+    Οι εκφωνήσεις γράφουν: «<em>$L, U$ αυστηρά κάτω και άνω τριγωνικοί πίνακες που περιέχουν τα στοιχεία,
+    με <strong>αντίθετο πρόσημο</strong>, του κάτω και άνω τριγωνικού τμήματος του $D^{-1}A$</em>».
+    Δηλαδή είναι <strong>κανονικοποιημένα</strong> (πολλαπλασιασμένα με $D^{-1}$) και με <strong>μείον</strong>.
+    Αν χρησιμοποιήσεις τα μη κανονικοποιημένα, ο δοσμένος τύπος <em>δεν</em> θα βγάλει σωστό αποτέλεσμα.
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Το μπλοκ προετοιμασίας — ίδιο ΠΑΝΤΑ, μάθε το απ' έξω</div>
+<div class="cb"><code>I  = <span class="fn">eye</span>(n);
+D  = <span class="fn">diag</span>(<span class="fn">diag</span>(A));      <span class="cm">% διπλό diag: το μονό σε πίνακα δίνει ΔΙΑΝΥΣΜΑ</span>
+CL = -<span class="fn">tril</span>(A,-<span class="nm">1</span>);        <span class="cm">% αυστηρά κάτω (-1), με ΑΝΤΙΘΕΤΟ πρόσημο</span>
+CU = -<span class="fn">triu</span>(A, <span class="nm">1</span>);        <span class="cm">% αυστηρά άνω  ( 1), με ΑΝΤΙΘΕΤΟ πρόσημο</span>
+L  = <span class="fn">inv</span>(D)*CL;             <span class="cm">% κανονικοποίηση με D⁻¹</span>
+U  = <span class="fn">inv</span>(D)*CU;</code></div>
+    <p style="margin:6px 0 0;font-size:0.9rem;color:var(--muted)">
+      Οι δείκτες $-1$ και $1$ κάνουν τα τριγωνικά <strong>αυστηρά</strong> (χωρίς τη διαγώνιο).
+      Χωρίς αυτούς θα συμπεριλάμβανες τη διαγώνιο και όλα θα έβγαιναν λάθος.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--cyan)">Το λεξικό μετάφρασης — όλοι οι επαναληπτικοί πίνακες</div>
+    <div style="overflow-x:auto">
+    <table class="vtbl">
+      <thead><tr><th>Μέθοδος</th><th>Μαθηματικός τύπος</th><th>MATLAB</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Jacobi</strong></td><td>$B = L + U$</td><td><code>B = L + U;</code></td></tr>
+        <tr><td><strong>Gauss-Seidel</strong></td><td>$\mathcal{L}_1 = (I-L)^{-1}U$</td><td><code>L1 = inv(I-L)*U;</code></td></tr>
+        <tr><td><strong>EGS</strong></td><td>$\mathcal{L}_t = (1-t)I + t(I-L)^{-1}U$</td><td><code>Lt = (1-t)*I + t*inv(I-L)*U;</code></td></tr>
+        <tr><td><strong>SOR</strong></td><td>$\mathcal{L}_\omega = I - \omega(I-\omega L)^{-1}D^{-1}A$</td><td><code>Lw = I - w*inv(I-w*L)*inv(D)*A;</code></td></tr>
+        <tr><td><strong>ESOR</strong></td><td>$\mathcal{L}_{t,\omega} = I - t(I-\omega L)^{-1}D^{-1}A$</td><td><code>Ltw = I - t*inv(I-w*L)*inv(D)*A;</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:0">
+      Αν σου δώσουν άλλη μορφή, π.χ. $\mathcal{L}_\omega = (I-\omega L)^{-1}\big[(1-\omega)I + \omega U\big]$,
+      γράφεις απλώς <code>Lw = inv(I - w*L)*((1-w)*I + w*U);</code> — <strong>κατά λέξη μετάφραση</strong>.
+    </p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Η πλήρης συνάρτηση που ζητείται (παράδειγμα: SOR)</div>
+<div class="cb"><code><span class="kw">function</span> [Lw, r] = <span class="fn">sorMatrix</span>(A, w)
+    n  = <span class="fn">size</span>(A, <span class="nm">1</span>);
+    I  = <span class="fn">eye</span>(n);
+    D  = <span class="fn">diag</span>(<span class="fn">diag</span>(A));
+    CL = -<span class="fn">tril</span>(A,-<span class="nm">1</span>);
+    CU = -<span class="fn">triu</span>(A, <span class="nm">1</span>);
+    L  = <span class="fn">inv</span>(D)*CL;
+    U  = <span class="fn">inv</span>(D)*CU;
+
+    <span class="cm">% α) ο επαναληπτικός πίνακας</span>
+    Lw = I - w*<span class="fn">inv</span>(I - w*L)*<span class="fn">inv</span>(D)*A;
+
+    <span class="cm">% β) η φασματική ακτίνα</span>
+    x = <span class="fn">eig</span>(Lw);
+    r = <span class="fn">max</span>(<span class="fn">abs</span>(x));
+<span class="kw">end</span></code></div>
+    <p style="margin:6px 0 0;font-size:0.9rem;color:var(--yellow)">
+      ⚠️ Η <code>eig</code> παίρνει τον <strong>επαναληπτικό</strong> πίνακα (<code>Lw</code>), όχι τον <code>A</code>.
+      Και το <code>abs</code> είναι απαραίτητο — οι ιδιοτιμές μπορεί να είναι αρνητικές ή μιγαδικές.
+    </p>
+  </div>
+
+  <div class="tip">
+    <div class="tip-icon">🧠</div>
+    <div>
+      <div class="tip-title">Αν σου δώσουν επαναληπτικό ΣΧΗΜΑ αντί για έτοιμο πίνακα</div>
+      <div class="tip-text">
+        Από το $u^{(k+1)} = u^{(k)} + \tau R^{-1}\!\big(b - Au^{(k)}\big)$ μάζεψε τους όρους του $u^{(k)}$:
+        $$u^{(k+1)} = \big(I - \tau R^{-1}A\big)u^{(k)} + \tau R^{-1}b$$
+        άρα ο επαναληπτικός πίνακας είναι $\;I - \tau R^{-1}A$. Με $R = D - \omega C_L$ γράφεις
+        <code>R = D - w*CL; Z = I - t*inv(R)*A;</code> — που είναι <strong>ισοδύναμο</strong> με τον τύπο
+        της ESOR, αφού $(D-\omega C_L)^{-1} = (I-\omega L)^{-1}D^{-1}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic2" data-section="matlab_code"></div>
+</section>
+
+
+<section id="flashcards">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">🗂️</div>
+    <h2>Flashcards — Επαναληπτικές Μέθοδοι</h2>
+  </div>
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάρτες θεωρίας για γρήγορη επανάληψη. Κάνε κλικ σε μια κάρτα για να τη γυρίσεις,
+    ή πάτησε «Υπόδειξη» αν κολλήσεις. Για τεστ σε όλα τα κεφάλαια δες τη
+    <a href="flashcards.html">σελίδα Flashcards</a>.
+  </p>
+  <div data-fc-deck="topic2"></div>
+</section>
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>

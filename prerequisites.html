@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Μαθηματικά από το Μηδέν (Prerequisites Hub) · Αριθμητική Ανάλυση</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root {
+  --bg: #0d1117; --bg-rgb: 13, 17, 23; --surf: #161b22; --surf2: #1c2230; --border: #30363d;
+  --blue: #58a6ff; --blue-rgb: 88, 166, 255; --bdim: #0d1f40;
+  --green: #3fb950; --green-rgb: 63, 185, 80; --gdim: #0d2218;
+  --yellow: #e3b341; --ydim: #2d2208;
+  --red: #f85149; --rdim: #2d1010;
+  --cyan: #39d4c8; --cdim: #0a2422;
+  --purple: #bc8cff; --purple-rgb: 188, 140, 255; --pdim: #1a1040;
+  --orange: #f0883e; --orange-rgb: 240, 136, 62; --odim: #2d1800;
+  --txt: #e6edf3; --muted: #8b949e; --dim: #6e7681;
+}
+
+/* Page Hero */
+.hero {
+  background: linear-gradient(150deg, #0d1117 0%, var(--cdim) 55%, #0d1117 100%);
+  position: relative;
+  padding: 60px 40px 40px;
+}
+.hero::after {
+  content: 'MATH 101';
+  position: absolute; right: 32px; bottom: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  color: rgba(57, 212, 200, 0.07);
+  pointer-events: none; font-weight: 700;
+}
+
+/* Custom Callouts & Visual Containers */
+.trap-box {
+  background: var(--rdim);
+  border: 1px solid rgba(248, 81, 73, 0.35);
+  border-left: 5px solid var(--red);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.trap-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--red);
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formula-box {
+  background: #060a10;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  margin: 14px 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.step-card {
+  background: var(--surf2);
+  border-left: 4px solid var(--cyan);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.step-card-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0;
+}
+@media (max-width: 768px) {
+  .compare-grid { grid-template-columns: 1fr; }
+}
+
+/* Matrix Table Visualizer */
+.matrix-visual {
+  display: inline-flex;
+  align-items: center;
+  margin: 10px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+.matrix-bracket-left, .matrix-bracket-right {
+  font-size: 2.2rem;
+  color: var(--cyan);
+  font-weight: 300;
+  line-height: 1;
+}
+.matrix-table {
+  border-collapse: collapse;
+  margin: 0 4px;
+}
+.matrix-table td {
+  padding: 6px 12px;
+  text-align: center;
+  color: var(--txt);
+  font-weight: 500;
+}
+.matrix-table td.highlight {
+  background: var(--cdim);
+  color: var(--cyan);
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+/* Interactive Mini-Drill Component */
+.drill-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 24px 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+.drill-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.drill-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--cdim);
+  color: var(--cyan);
+  border: 1px solid rgba(57, 212, 200, 0.3);
+}
+.drill-reveal {
+  margin-top: 14px;
+  border-top: 1px dashed var(--border);
+  padding-top: 14px;
+}
+.drill-reveal summary {
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--cyan);
+  user-select: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color var(--transition);
+}
+.drill-reveal summary:hover {
+  color: var(--blue);
+}
+.drill-solution {
+  background: #070b12;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Nav Footer Links */
+.footer-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 48px;
+}
+@media (max-width: 640px) {
+  .footer-nav { grid-template-columns: 1fr; }
+}
+.footer-nav-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-decoration: none;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.footer-nav-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-3px);
+  background: var(--surf2);
+}
+.footer-nav-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.footer-nav-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--txt);
+}
+</style>
+
+<script src="js/nav.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · FOUNDATIONS HUB</div>
+  <h1>Μαθηματικά από το <em>Μηδέν</em></h1>
+  <p>Τα 7 μαθηματικά θεμέλια που χρειάζεσαι για να περάσεις το μάθημα, ακόμα κι αν δεν θυμάσαι τίποτα από το Λύκειο. Χωρίς περιττή θεωρία — μόνο η πρακτική άλγεβρα και οι παγίδες των θεμάτων.</p>
+  <div class="chips">
+    <span class="chip">Πίνακες &amp; Διαστάσεις</span>
+    <span class="chip">Γινόμενο Πινάκων</span>
+    <span class="chip">Αντίστροφος A⁻¹</span>
+    <span class="chip">Γραμμοπράξεις &amp; Πρόσημα</span>
+    <span class="chip">Παράγωγοι &amp; ΣΔΕ</span>
+    <span class="chip">Ανισότητες Απολύτων</span>
+    <span class="chip">Σφάλμα &amp; Υπόλοιπο</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#module1">1. Ανατομία Πινάκων</a>
+  <a href="#module2">2. Πράξεις &amp; Γινόμενο</a>
+  <a href="#module3">3. Μοναδιαίος &amp; Αντίστροφος</a>
+  <a href="#module4">4. Γραμμοπράξεις &amp; Πρόσημα</a>
+  <a href="#module5">5. Απειροστικός &amp; Taylor</a>
+  <a href="#module6">6. Ανισότητες Απολύτων</a>
+  <a href="#module7">7. Σφάλμα &amp; Υπόλοιπο</a>
+  <a href="#next-steps">🚀 Επόμενα Βήματα</a>
+</nav>
+
+<div class="wrap">
+
+<!-- =========================================================================
+     MODULE 1: MATRIX ANATOMY & DIMENSIONS
+     ========================================================================= -->
+<section id="module1">
+  <div id="sec-matrices"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">📐</div>
+    <h2>1. Ανατομία Πινάκων: Διαστάσεις, Δείκτες &amp; Ειδικές Μορφές</h2>
+  </div>
+
+  <div class="step-card">
+    <div class="step-card-title">ELI5 ΔΙΑΙΣΘΗΣΗ: ΤΙ ΕΙΝΑΙ ΕΝΑΣ ΠΙΝΑΚΑΣ;</div>
+    <p>Φαντάσου έναν πίνακα σαν ένα <strong>φύλλο του Excel (spreadsheet)</strong> γεμάτο αριθμούς. Στην Αριθμητική Ανάλυση χρησιμοποιούμε πίνακες επειδή ένα τεράστιο γραμμικό σύστημα με 100 εξισώσεις και 100 αγνώστους γράφεται σε <strong>μία και μόνο γραμμή</strong>: $Ax = b$!</p>
+  </div>
+
+  <h3>Ο Χρυσός Κανόνας των Διαστάσεων: $m \times n$ (Γραμμές $\times$ Στήλες)</h3>
+  <p>Όταν βλέπεις ένα σύμβολο όπως $A \in \mathbb{R}^{m \times n}$, σημαίνει ότι ο πίνακας $A$ έχει <strong>$m$ γραμμές</strong> και <strong>$n$ στήλες</strong> με πραγματικούς αριθμούς:</p>
+  <ul>
+    <li><strong>$m$ = Πλήθος Γραμμών (Rows):</strong> Οι οριζόντιες σειρές. Μετράμε πάντα από <em>πάνω προς τα κάτω</em> (Γραμμή 1, Γραμμή 2, ...).</li>
+    <li><strong>$n$ = Πλήθος Στηλών (Columns):</strong> Οι κατακόρυφες σειρές. Μετράμε πάντα από <em>αριστερά προς τα δεξιά</em> (Στήλη 1, Στήλη 2, ...).</li>
+  </ul>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΜΝΗΜΟΝΙΚΟΣ ΚΑΝΟΝΑΣ: Γ-Σ Ή RC</div>
+    Θυμήσου το <strong>«Γραμμή - Στήλη» (Γ-Σ)</strong>. Στα αγγλικά: <strong>Row - Column (RC)</strong>, όπως το αναψυκτικό «RC Cola»! Πρώτα η γραμμή, μετά η στήλη.
+  </div>
+
+  <h3>Πώς Διαβάζουμε τους Δείκτες $a_{ij}$;</h3>
+  <p>Το σύμβολο $a_{ij}$ (ή $A(i,j)$ στο MATLAB) συμβολίζει το στοιχείο που βρίσκεται στη <strong>γραμμή $i$</strong> και στη <strong>στήλη $j$</strong>.</p>
+
+  <p>Ας δούμε έναν πίνακα διαστάσεων $2 \times 3$ (2 γραμμές, 3 στήλες):</p>
+  <div class="formula-box">
+    $$A = \begin{bmatrix} 4 & -1 & 7 \\ 0 & 5 & -3 \end{bmatrix}$$
+  </div>
+  <ul>
+    <li><strong>Γραμμή 1:</strong> $[4, -1, 7]$ &nbsp;|&nbsp; <strong>Γραμμή 2:</strong> $[0, 5, -3]$</li>
+    <li><strong>Στήλη 1:</strong> $\begin{bmatrix} 4 \\ 0 \end{bmatrix}$ &nbsp;|&nbsp; <strong>Στήλη 2:</strong> $\begin{bmatrix} -1 \\ 5 \end{bmatrix}$ &nbsp;|&nbsp; <strong>Στήλη 3:</strong> $\begin{bmatrix} 7 \\ -3 \end{bmatrix}$</li>
+    <li>$a_{11} = 4$ (1η γραμμή, 1η στήλη) &nbsp;|&nbsp; $a_{12} = -1$ &nbsp;|&nbsp; $a_{13} = 7$</li>
+    <li>$a_{21} = 0$ (2η γραμμή, 1η στήλη) &nbsp;|&nbsp; $a_{22} = 5$ &nbsp;|&nbsp; $a_{23} = -3$</li>
+  </ul>
+
+  <h3>Ειδικές Μορφές Πινάκων που Πρέπει να Αναγνωρίζεις Ακαριαία</h3>
+  <div class="compare-grid">
+    <div class="card" style="background:var(--surf)">
+      <h4 style="color:var(--cyan);margin-top:0;">Τετραγωνικός ($m = n$) &amp; Διαγώνιος ($D$)</h4>
+      <p>• <strong>Τετραγωνικός:</strong> Ίδιος αριθμός γραμμών και στηλών ($n \times n$). Έχει <em>κύρια διαγώνιο</em> τα στοιχεία $a_{11}, a_{22}, \dots, a_{nn}$.</p>
+      <p>• <strong>Διαγώνιος ($D$):</strong> Όλα τα στοιχεία εκτός της κύριας διαγωνίου είναι 0 ($a_{ij}=0$ για $i \ne j$).</p>
+      <div class="formula-box" style="font-size:0.85rem">$$D = \begin{bmatrix} 4 & 0 & 0 \\ 0 & -2 & 0 \\ 0 & 0 & 7 \end{bmatrix}$$</div>
+    </div>
+    <div class="card" style="background:var(--surf)">
+      <h4 style="color:var(--cyan);margin-top:0;">Άνω ($U$) &amp; Κάτω ($L$) Τριγωνικός</h4>
+      <p>• <strong>Άνω Τριγωνικός ($U$):</strong> Όλα τα στοιχεία <em>κάτω</em> από τη διαγώνιο είναι 0 ($a_{ij}=0$ για $i > j$). Αυτός είναι ο στόχος της απαλοιφής Gauss!</p>
+      <p>• <strong>Κάτω Τριγωνικός ($L$):</strong> Όλα τα στοιχεία <em>πάνω</em> από τη διαγώνιο είναι 0 ($a_{ij}=0$ για $i < j$).</p>
+      <div class="formula-box" style="font-size:0.85rem">$$U = \begin{bmatrix} 2 & 1 & 5 \\ 0 & 3 & -1 \\ 0 & 0 & 4 \end{bmatrix}, \quad L = \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 4 & 1 \end{bmatrix}$$</div>
+    </div>
+  </div>
+
+  <!-- MINI DRILL 1 -->
+  <div class="drill-card">
+    <div class="drill-header">
+      <span style="font-weight:700;font-size:1.05rem;">🎯 Mini-Drill 1: Αναγνώριση Διαστάσεων &amp; Δεικτών</span>
+      <span class="drill-badge">Άσκηση Εμπέδωσης</span>
+    </div>
+    <p>Δίνεται ο πίνακας:
+      $$M = \begin{bmatrix} 3 & -2 & 0 \\ 1 & 4 & 9 \\ -5 & 0 & 2 \end{bmatrix}$$
+    </p>
+    <p><strong>Ερωτήσεις:</strong> (α) Ποιες είναι οι διαστάσεις του; (β) Βρες τα στοιχεία $m_{21}, m_{32}, m_{13}$. (γ) Ποια είναι τα στοιχεία της κύριας διαγωνίου;</p>
+
+    <details class="drill-reveal">
+      <summary><span>👁️ Κλικ για αποκάλυψη της λύσης βήμα-βήμα</span></summary>
+      <div class="drill-solution">
+        <p><strong>(α) Διαστάσεις:</strong> Ο πίνακας έχει 3 οριζόντιες γραμμές και 3 κατακόρυφες στήλες. Άρα είναι <strong>τετραγωνικός διαστάσεων $3 \times 3$</strong>.</p>
+        <p><strong>(β) Στοιχεία:</strong>
+          <br>• $m_{21}$: 2η γραμμή, 1η στήλη $\to$ <strong>$1$</strong>
+          <br>• $m_{32}$: 3η γραμμή, 2η στήλη $\to$ <strong>$0$</strong>
+          <br>• $m_{13}$: 1η γραμμή, 3η στήλη $\to$ <strong>$0$</strong>
+        </p>
+        <p><strong>(γ) Κύρια Διαγώνιος:</strong> Τα στοιχεία με $i = j$, δηλαδή $m_{11}, m_{22}, m_{33}$ $\to$ <strong>$\{3, 4, 2\}$</strong>.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     MODULE 2: MATRIX ADDITION & MULTIPLICATION
+     ========================================================================= -->
+<section id="module2">
+  <div id="matrix-mult"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">✖️</div>
+    <h2>2. Πράξεις Πινάκων: Πρόσθεση &amp; Πολλαπλασιασμός (Γραμμή επί Στήλη)</h2>
+  </div>
+
+  <h3>1. Πρόσθεση &amp; Αφαίρεση Πινάκων: Στοιχείο προς Στοιχείο</h3>
+  <p><strong>Κανόνας Συμβατότητας:</strong> Μπορούμε να προσθέσουμε ή να αφαιρέσουμε δύο πίνακες <strong>ΜΟΝΟ αν έχουν τις ΑΚΡΙΒΩΣ ίδιες διαστάσεις</strong> ($m \times n$). Η πράξη γίνεται στοιχείο-στοιχείο: $C_{ij} = A_{ij} \pm B_{ij}$.</p>
+  <div class="formula-box">
+    $$\begin{bmatrix} 2 & -1 \\ 4 & 3 \end{bmatrix} + \begin{bmatrix} 5 & 6 \\ -2 & 0 \end{bmatrix} = \begin{bmatrix} 2+5 & -1+6 \\ 4+(-2) & 3+0 \end{bmatrix} = \begin{bmatrix} 7 & 5 \\ 2 & 3 \end{bmatrix}$$
+  </div>
+
+  <h3>2. Πολλαπλασιασμός Πινάκων: Γραμμή επί Στήλη (Dot Product)</h3>
+  <p>Εδώ είναι το σημείο που μπερδεύονται όλοι οι αρχάριοι. Στους πίνακες <strong>ΔΕΝ</strong> πολλαπλασιάζουμε τα στοιχεία ένα-προς-ένα!</p>
+
+  <div class="step-card">
+    <div class="step-card-title">ΠΟΤΕ ΕΠΙΤΡΕΠΕΤΑΙ ΤΟ ΓΙΝΟΜΕΝΟ $A \cdot B$;</div>
+    <p>Για να ορίζεται το γινόμενο $A \cdot B$, οι <strong>στήλες του πρώτου πίνακα</strong> πρέπει να είναι ίσες με τις <strong>γραμμές του δεύτερου πίνακα</strong>:</p>
+    <div class="formula-box" style="margin:8px 0">
+      $$(m \times \mathbf{k}) \times (\mathbf{k} \times n) \implies m \times n$$
+    </div>
+    <p>Οι εσωτερικές διαστάσεις $\mathbf{k}$ πρέπει να ταιριάζουν απόλυτα και «εξαφανίζονται», αφήνοντας εξωτερικές διαστάσεις $m \times n$.</p>
+  </div>
+
+  <h3>Βήμα-Βήμα Υπολογισμός Εσωτερικού Γινομένου</h3>
+  <p>Το στοιχείο $c_{ij}$ του γινομένου προκύπτει παίρνοντας την <strong>$i$-οστή γραμμή</strong> του $A$ και κάνοντας «εσωτερικό γινόμενο» με την <strong>$j$-οστή στήλη</strong> του $B$:</p>
+  <div class="formula-box">
+    $$c_{ij} = a_{i1}b_{1j} + a_{i2}b_{2j} + \dots + a_{ik}b_{kj}$$
+  </div>
+
+  <p><strong>Αναλυτικό Αριθμητικό Παράδειγμα $2 \times 2$:</strong></p>
+  <p>Έστω $A = \begin{bmatrix} 1 & 2 \\ 3 & -1 \end{bmatrix}$ και $B = \begin{bmatrix} 4 & 0 \\ 2 & 5 \end{bmatrix}$ (και οι δύο $2 \times 2$, άρα αποτέλεσμα $2 \times 2$):</p>
+  <ul>
+    <li><strong>$c_{11}$ (Γραμμή 1 του $A$ $\times$ Στήλη 1 του $B$):</strong> $(1)(4) + (2)(2) = 4 + 4 = \mathbf{8}$</li>
+    <li><strong>$c_{12}$ (Γραμμή 1 του $A$ $\times$ Στήλη 2 του $B$):</strong> $(1)(0) + (2)(5) = 0 + 10 = \mathbf{10}$</li>
+    <li><strong>$c_{21}$ (Γραμμή 2 του $A$ $\times$ Στήλη 1 του $B$):</strong> $(3)(4) + (-1)(2) = 12 - 2 = \mathbf{10}$</li>
+    <li><strong>$c_{22}$ (Γραμμή 2 του $A$ $\times$ Στήλη 2 του $B$):</strong> $(3)(0) + (-1)(5) = 0 - 5 = \mathbf{-5}$</li>
+  </ul>
+  <div class="formula-box">
+    $$AB = \begin{bmatrix} 8 & 10 \\ 10 & -5 \end{bmatrix}$$
+  </div>
+
+  <div class="trap-box">
+    <div class="trap-title">⚠️ Η ΧΡΥΣΗ ΠΑΓΙΔΑ ΤΩΝ ΕΞΕΤΑΣΕΩΝ: ΜΗ ΑΝΤΙΜΕΤΑΘΕΤΙΚΟΤΗΤΑ ($AB \ne BA$)</div>
+    <p>Στους απλούς αριθμούς $2 \cdot 3 = 3 \cdot 2 = 6$. Στους πίνακες <strong>ΣΧΕΔΟΝ ΠΟΤΕ ΔΕΝ ΙΣΧΥΕΙ $AB = BA$</strong>!</p>
+    <p>Αν υπολογίσουμε το $BA$ με τους ίδιους πίνακες:</p>
+    <div class="formula-box" style="margin:8px 0; font-size:0.9rem">
+      $$BA = \begin{bmatrix} 4 & 0 \\ 2 & 5 \end{bmatrix} \begin{bmatrix} 1 & 2 \\ 3 & -1 \end{bmatrix} = \begin{bmatrix} 4(1)+0(3) & 4(2)+0(-1) \\ 2(1)+5(3) & 2(2)+5(-1) \end{bmatrix} = \begin{bmatrix} 4 & 8 \\ 17 & -1 \end{bmatrix} \ne AB!$$
+    </div>
+    <p><strong>Συνέπεια για το Θέμα 1.3 (Πολυπλοκότητα &amp; Μετασχηματισμοί):</strong> Αν έχεις την εξίσωση $(A^{-1} + BC^{-1})x = b$ και θες να πολλαπλασιάσεις με $A$ για να διώξεις το $A^{-1}$, ΠΡΕΠΕΙ να πολλαπλασιάσεις <strong>από τα αριστερά</strong>:
+    $$A(A^{-1} + BC^{-1})x = Ab \implies (I + ABC^{-1})x = Ab$$
+    Αν πολλαπλασιάσεις από δεξιά, είναι μοιραίο μαθηματικό λάθος και μηδενίζεσαι!</p>
+  </div>
+
+  <!-- MINI DRILL 2 -->
+  <div class="drill-card">
+    <div class="drill-header">
+      <span style="font-weight:700;font-size:1.05rem;">🎯 Mini-Drill 2: Διαστάσεις &amp; Γινόμενο Διανυσμάτων</span>
+      <span class="drill-badge">Άσκηση Εμπέδωσης</span>
+    </div>
+    <p>Δίνονται τα διανύσματα $A = \begin{bmatrix} 2 & 3 \end{bmatrix}$ (διάσταση $1 \times 2$) και $B = \begin{bmatrix} 4 \\ -1 \end{bmatrix}$ (διάσταση $2 \times 1$).</p>
+    <p><strong>Ερωτήσεις:</strong> (α) Ορίζεται το $AB$ και ποιες οι διαστάσεις του; Υπολόγισέ το. (β) Ορίζεται το $BA$ και ποιες οι διαστάσεις του; Υπολόγισέ το.</p>
+
+    <details class="drill-reveal">
+      <summary><span>👁️ Κλικ για αποκάλυψη της λύσης βήμα-βήμα</span></summary>
+      <div class="drill-solution">
+        <p><strong>(α) Υπολογισμός $AB$:</strong>
+          <br>Διαστάσεις: $(1 \times 2) \times (2 \times 1)$. Οι εσωτερικές διαστάσεις είναι ίσες ($2 = 2$). Το αποτέλεσμα είναι πίνακας $1 \times 1$ (ένας μοναδικός αριθμός / βαθμωτό):
+          $$AB = (2)(4) + (3)(-1) = 8 - 3 = [5]$$
+        </p>
+        <p><strong>(β) Υπολογισμός $BA$:</strong>
+          <br>Διαστάσεις: $(2 \times 1) \times (1 \times 2)$. Οι εσωτερικές διαστάσεις είναι ίσες ($1 = 1$). Το αποτέλεσμα είναι πίνακας <strong>$2 \times 2$</strong>!
+          $$BA = \begin{bmatrix} 4(2) & 4(3) \\ (-1)(2) & (-1)(3) \end{bmatrix} = \begin{bmatrix} 8 & 12 \\ -2 & -3 \end{bmatrix}$$
+        </p>
+        <p>Παρατήρησε πόσο εντελώς διαφορετικά είναι: το $AB$ είναι ένας αριθμός ($5$), ενώ το $BA$ είναι ολόκληρος πίνακας $2 \times 2$!</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     MODULE 3: IDENTITY & INVERSE MATRIX
+     ========================================================================= -->
+<section id="module3">
+  <div id="sec-identity-inverse"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">🔄</div>
+    <h2>3. Μοναδιαίος Πίνακας $I$ &amp; Αντίστροφος $A^{-1}$: Τι Πραγματικά Σημαίνουν</h2>
+  </div>
+
+  <h3>Ο Μοναδιαίος Πίνακας $I$ (The Matrix "Number 1")</h3>
+  <p>Στην άλγεβρα των αριθμών, ο αριθμός $1$ είναι το ουδέτερο στοιχείο: $x \cdot 1 = 1 \cdot x = x$. Στους πίνακες, τον ρόλο αυτό παίζει ο <strong>Μοναδιαίος Πίνακας $I$</strong>.</p>
+  <p>Είναι τετραγωνικός ($n \times n$), έχει <strong>άσσους ($1$) στην κύρια διαγώνιο και μηδενικά ($0$) παντού αλλού</strong>:</p>
+  <div class="formula-box">
+    $$I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}, \quad I_3 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+  </div>
+  <p>Βασική ιδιότητα: Για κάθε συμβατό πίνακα $A$, ισχύει <strong>$A I = I A = A$</strong>.</p>
+
+  <h3>Ο Αντίστροφος Πίνακας $A^{-1}$</h3>
+  <p>Ο αντίστροφος ενός τετραγωνικού πίνακα $A$ ορίζεται ως ο <strong>μοναδικός</strong> πίνακας $A^{-1}$ για τον οποίο ισχύει:</p>
+  <div class="formula-box">
+    $$A A^{-1} = A^{-1} A = I$$
+  </div>
+
+  <div class="trap-box">
+    <div class="trap-title">🛑 SOS: $A^{-1}$ ΔΕΝ ΣΗΜΑΙΝΕΙ $1/A$! ΔΕΝ ΥΠΑΡΧΕΙ ΔΙΑΙΡΕΣΗ ΠΙΝΑΚΩΝ!</div>
+    <p>Στη γραμμική άλγεβρα <strong>δεν υπάρχει η πράξη της διαίρεσης</strong>. Δεν γράφουμε ποτέ $\frac{B}{A}$ ή $\frac{1}{A}$.</p>
+    <p>Επίσης, ο αντίστροφος ενός πίνακα <strong>ΔΕΝ</strong> προκύπτει αντιστρέφοντας τα στοιχεία του ένα προς ένα! Π.χ. ο αντίστροφος του $\begin{bmatrix} 2 & 4 \\ 1 & 3 \end{bmatrix}$ <em>δεν</em> είναι ο $\begin{bmatrix} 1/2 & 1/4 \\ 1 & 1/3 \end{bmatrix}$!</p>
+  </div>
+
+  <h3>Πότε Υπάρχει Αντίστροφος; (Μη Ιδιάζων Πίνακας - Non-singular)</h3>
+  <p>Ένας πίνακας $A$ έχει αντίστροφο $A^{-1}$ <strong>αν και μόνο αν η ορίζουσά του είναι διάφορη του μηδενός: $\det(A) \ne 0$</strong>.</p>
+  <ul>
+    <li>Αν $\det(A) \ne 0$ $\to$ Ο πίνακας λέγεται <strong>μη ιδιάζων (non-singular / invertible)</strong> και αντιστρέφεται.</li>
+    <li>Αν $\det(A) = 0$ $\to$ Ο πίνακας λέγεται <strong>ιδιάζων (singular)</strong> και <strong>ΔΕΝ</strong> έχει αντίστροφο (όπως δεν μπορείς να διαιρέσεις με το $0$).</li>
+  </ul>
+
+  <h3>Ο Τύπος του Αντιστρόφου για Πίνακα $2 \times 2$</h3>
+  <p>Για έναν πίνακα $A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$ με ορίζουσα $\det(A) = ad - bc \ne 0$:</p>
+  <div class="formula-box">
+    $$A^{-1} = \frac{1}{ad - bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
+  </div>
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΜΝΗΜΟΝΙΚΟ ΚΟΛΠΟ ΓΙΑ ΤΟΝ $2 \times 2$ ΑΝΤΙΣΤΡΟΦΟ</div>
+    1. Αλλάζεις θέσεις στα στοιχεία της κύριας διαγωνίου: το $a$ πάει στη θέση του $d$ και το $d$ στη θέση του $a$.<br>
+    2. Αλλάζεις πρόσημα στα άλλα δύο στοιχεία: το $b$ γίνεται $-b$ και το $c$ γίνεται $-c$.<br>
+    3. Διαιρείς όλα τα στοιχεία με την ορίζουσα $\det(A) = ad - bc$.
+  </div>
+
+  <p><strong>Αριθμητικό Παράδειγμα:</strong> Έστω $A = \begin{bmatrix} 3 & 1 \\ 5 & 2 \end{bmatrix}$.</p>
+  <ul>
+    <li>Ορίζουσα: $\det(A) = (3)(2) - (1)(5) = 6 - 5 = 1 \ne 0$ (υπάρχει αντίστροφος).</li>
+    <li>Αντίστροφος: $A^{-1} = \frac{1}{1} \begin{bmatrix} 2 & -1 \\ -5 & 3 \end{bmatrix} = \begin{bmatrix} 2 & -1 \\ -5 & 3 \end{bmatrix}$.</li>
+    <li>Επαλήθευση: $A A^{-1} = \begin{bmatrix} 3(2)+1(-5) & 3(-1)+1(3) \\ 5(2)+2(-5) & 5(-1)+2(3) \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I$ &nbsp; $\checkmark$</li>
+  </ul>
+
+  <!-- MINI DRILL 3 -->
+  <div class="drill-card">
+    <div class="drill-header">
+      <span style="font-weight:700;font-size:1.05rem;">🎯 Mini-Drill 3: Ορίζουσα &amp; Ύπαρξη Αντιστρόφου</span>
+      <span class="drill-badge">Άσκηση Εμπέδωσης</span>
+    </div>
+    <p>Δίνεται ο πίνακας $M = \begin{bmatrix} 4 & 2 \\ 6 & 3 \end{bmatrix}$.</p>
+    <p><strong>Ερωτήσεις:</strong> (α) Υπολόγισε την ορίζουσα $\det(M)$. (β) Υπάρχει ο αντίστροφος $M^{-1}$; Αν όχι, αιτιολόγησε.</p>
+
+    <details class="drill-reveal">
+      <summary><span>👁️ Κλικ για αποκάλυψη της λύσης βήμα-βήμα</span></summary>
+      <div class="drill-solution">
+        <p><strong>(α) Ορίζουσα:</strong>
+          $$\det(M) = (4)(3) - (2)(6) = 12 - 12 = 0$$
+        </p>
+        <p><strong>(β) Ύπαρξη Αντιστρόφου:</strong>
+          Επειδή $\det(M) = 0$, ο πίνακας είναι <strong>ιδιάζων (singular)</strong>. Κατά συνέπεια, ο αντίστροφος $M^{-1}$ <strong>ΔΕΝ υπάρχει</strong> (δεν ορίζεται), διότι στον τύπο θα έπρεπε να διαιρέσουμε με το μηδέν ($\frac{1}{0}$).
+        </p>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     MODULE 4: ROW OPERATIONS & MULTIPLIER SIGN SAFETY
+     ========================================================================= -->
+<section id="module4">
+  <div id="sec-row-ops"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">⚡</div>
+    <h2>4. Στοιχειώδεις Γραμμοπράξεις: Multipliers &amp; Πρωτόκολλο Ασφάλειας Προσήμων</h2>
+  </div>
+
+  <p>Στην απαλοιφή Gauss και στη μέθοδο Gauss-Jordan, επιλύουμε συστήματα εφαρμόζοντας 3 νόμιμες γραμμοπράξεις στον επαυξημένο πίνακα $[A \mid b]$:</p>
+  <ol>
+    <li><strong>Εναλλαγή Γραμμών ($R_i \leftrightarrow R_j$):</strong> Αλλάζουμε σειρά σε δύο εξισώσεις. (Αυτό ακριβώς κάνει η <em>Μερική Οδήγηση</em> όταν ψάχνει το μεγαλύτερο στοιχείο!).</li>
+    <li><strong>Πολλαπλασιασμός Γραμμής με Σταθερά ($R_i \leftarrow c R_i$ με $c \ne 0$):</strong> Πολλαπλασιάζουμε όλη την εξίσωση με έναν αριθμό.</li>
+    <li><strong>Αφαίρεση Πολλαπλασίου ($R_i \leftarrow R_i - m_{ik} R_k$):</strong> Το θεμέλιο της απαλοιφής Gauss.</li>
+  </ol>
+
+  <h3>Ο Πολλαπλασιαστής Απαλοιφής $m_{ik}$</h3>
+  <p>Στο βήμα $k$, ο οδηγός μας (pivot) είναι το διαγώνιο στοιχείο $a_{kk}$. Για να μηδενίσουμε το στοιχείο $a_{ik}$ που βρίσκεται από κάτω του στη γραμμή $i$, ο πολλαπλασιαστής είναι πάντα:</p>
+  <div class="formula-box">
+    $$m_{ik} = \frac{a_{ik}}{a_{kk}} = \frac{\text{στοιχείο που θέλω να μηδενίσω}}{\text{οδηγός (pivot)}}$$
+  </div>
+
+  <div class="trap-box">
+    <div class="trap-title">🚨 ΤΟ ΠΡΩΤΟΚΟΛΛΟ ΑΣΦΑΛΕΙΑΣ ΑΡΝΗΤΙΚΟΥ ΠΡΟΣΗΜΟΥ (ΤΟ #1 ΛΑΘΟΣ ΣΤΟ ΓΡΑΠΤΟ)</div>
+    <p>Ο επίσημος τύπος λέει: $R_i \leftarrow R_i - m_{ik} R_k$.</p>
+    <p><strong>Όταν το στοιχείο που θες να μηδενίσεις είναι αρνητικό ($a_{ik} < 0$)</strong>, ο πολλαπλασιαστής $m_{ik}$ βγαίνει <strong>αρνητικός</strong>!</p>
+    <p>Τότε το μείον με το μείον γίνεται <strong>ΣΥΝ</strong>:</p>
+    <div class="formula-box" style="margin:8px 0">
+      $$R_i - (-m) R_k \implies R_i + |m| R_k$$
+    </div>
+    <p><strong>Η Τεχνική του Προχείρου:</strong> Ποτέ μην κάνεις γραμμοπράξεις στο μυαλό σου! Γράψε στο πρόχειρο καθαρά:
+    <br>1η γραμμή: τα στοιχεία της $R_i$
+    <br>2η γραμμή: τα στοιχεία της $+ |m| R_k$
+    <br>Και πρόσθεσε κάθετα στήλη-στήλη!</p>
+  </div>
+
+  <h3>Πλήρες Αριθμητικό Παράδειγμα Απαλοιφής 1ης Στήλης</h3>
+  <p>Έστω ο επαυξημένος πίνακας $[A \mid b]$:</p>
+  <div class="formula-box">
+    $$\left[\begin{array}{ccc|c} 2 & 1 & -1 & 8 \\ -4 & 3 & 5 & 2 \\ 6 & -2 & 1 & 11 \end{array}\right]$$
+  </div>
+
+  <div class="step-card">
+    <div class="step-card-title">ΒΗΜΑ 1: ΜΗΔΕΝΙΣΜΟΣ ΤΟΥ $a_{21} = -4$ ΣΤΗ ΓΡΑΜΜΗ 2 ($R_2$)</div>
+    <p>• Οδηγός είναι το $a_{11} = 2$.
+    <br>• Πολλαπλασιαστής: $m_{21} = \frac{-4}{2} = \mathbf{-2}$.
+    <br>• Γραμμοπράξη: $R_2 \leftarrow R_2 - (-2)R_1 \implies \mathbf{R_2 \leftarrow R_2 + 2 R_1}$.
+    <br>• Υπολογισμός στο πρόχειρο ανά στήλη:
+    <br>&nbsp;&nbsp; - Στήλη 1: $-4 + 2(2) = -4 + 4 = \mathbf{0}$ (μηδενίστηκε!)
+    <br>&nbsp;&nbsp; - Στήλη 2: $3 + 2(1) = 3 + 2 = \mathbf{5}$
+    <br>&nbsp;&nbsp; - Στήλη 3: $5 + 2(-1) = 5 - 2 = \mathbf{3}$
+    <br>&nbsp;&nbsp; - Δεξί μέλος: $2 + 2(8) = 2 + 16 = \mathbf{18}$
+    <br>• Νέα γραμμή 2: $[0, 5, 3 \mid 18]$.</p>
+  </div>
+
+  <div class="step-card">
+    <div class="step-card-title">ΒΗΜΑ 2: ΜΗΔΕΝΙΣΜΟΣ ΤΟΥ $a_{31} = 6$ ΣΤΗ ΓΡΑΜΜΗ 3 ($R_3$)</div>
+    <p>• Οδηγός είναι το $a_{11} = 2$.
+    <br>• Πολλαπλασιαστής: $m_{31} = \frac{6}{2} = \mathbf{3}$.
+    <br>• Γραμμοπράξη: $\mathbf{R_3 \leftarrow R_3 - 3 R_1}$.
+    <br>• Υπολογισμός στο πρόχειρο ανά στήλη:
+    <br>&nbsp;&nbsp; - Στήλη 1: $6 - 3(2) = 6 - 6 = \mathbf{0}$ (μηδενίστηκε!)
+    <br>&nbsp;&nbsp; - Στήλη 2: $-2 - 3(1) = -2 - 3 = \mathbf{-5}$
+    <br>&nbsp;&nbsp; - Στήλη 3: $1 - 3(-1) = 1 + 3 = \mathbf{4}$
+    <br>&nbsp;&nbsp; - Δεξί μέλος: $11 - 3(8) = 11 - 24 = \mathbf{-13}$
+    <br>• Νέα γραμμή 3: $[0, -5, 4 \mid -13]$.</p>
+  </div>
+
+  <p>Ο πίνακας μετά την ολοκλήρωση της 1ης στήλης έχει γίνει:</p>
+  <div class="formula-box">
+    $$\left[\begin{array}{ccc|c} 2 & 1 & -1 & 8 \\ 0 & 5 & 3 & 18 \\ 0 & -5 & 4 & -13 \end{array}\right]$$
+  </div>
+
+  <!-- MINI DRILL 4 -->
+  <div class="drill-card">
+    <div class="drill-header">
+      <span style="font-weight:700;font-size:1.05rem;">🎯 Mini-Drill 4: Υπολογισμός Πολλαπλασιαστή &amp; Νέας Γραμμής</span>
+      <span class="drill-badge">Άσκηση Εμπέδωσης</span>
+    </div>
+    <p>Δίνονται οι γραμμές ενός πίνακα: $R_1 = [3, -2 \mid 5]$ και $R_2 = [-6, 1 \mid -4]$.</p>
+    <p><strong>Ερωτήσεις:</strong> (α) Βρες τον πολλαπλασιαστή $m_{21}$ για να μηδενιστεί το πρώτο στοιχείο της $R_2$. (β) Γράψε τη συγκεκριμένη γραμμοπράξη με το σωστό πρόσημο. (γ) Υπολόγισε τη νέα γραμμή $R_2$.</p>
+
+    <details class="drill-reveal">
+      <summary><span>👁️ Κλικ για αποκάλυψη της λύσης βήμα-βήμα</span></summary>
+      <div class="drill-solution">
+        <p><strong>(α) Πολλαπλασιαστής:</strong>
+          $$m_{21} = \frac{a_{21}}{a_{11}} = \frac{-6}{3} = \mathbf{-2}$$
+        </p>
+        <p><strong>(β) Γραμμοπράξη:</strong>
+          $$R_2 \leftarrow R_2 - (-2)R_1 \implies \mathbf{R_2 \leftarrow R_2 + 2 R_1}$$
+        </p>
+        <p><strong>(γ) Νέα Γραμμή $R_2$:</strong>
+          <br>• Στήλη 1: $-6 + 2(3) = -6 + 6 = \mathbf{0}$
+          <br>• Στήλη 2: $1 + 2(-2) = 1 - 4 = \mathbf{-3}$
+          <br>• Δεξί μέλος: $-4 + 2(5) = -4 + 10 = \mathbf{6}$
+          <br>Άρα: <strong>$R_2 = [0, -3 \mid 6]$</strong>.
+        </p>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     MODULE 5: BASIC CALCULUS, CRITICAL POINTS & ODE CHAIN RULE
+     ========================================================================= -->
+<section id="module5">
+  <div id="sec-derivatives"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">📈</div>
+    <h2>5. Απειροστικός Λογισμός: Παράγωγοι Πολυωνύμων, Κρίσιμα Σημεία &amp; ΣΔΕ</h2>
+  </div>
+
+  <h3>1. Ο Κανόνας της Δύναμης (Power Rule)</h3>
+  <p>Στην Αριθμητική Ανάλυση το 95% των παραγώγων που θα χρειαστείς είναι απλά πολυώνυμα:</p>
+  <div class="formula-box">
+    $$\frac{d}{dx}[c] = 0, \quad \frac{d}{dx}[x] = 1, \quad \frac{d}{dx}[x^n] = n x^{n-1}$$
+  </div>
+  <p><strong>Παραδείγματα:</strong></p>
+  <ul>
+    <li>$(x^3)' = 3x^2$</li>
+    <li>$(4x^2)' = 4 \cdot (2x) = 8x$</li>
+    <li>$(x^3 - 5x + 7)' = 3x^2 - 5 + 0 = 3x^2 - 5$</li>
+  </ul>
+
+  <h3>2. Κρίσιμα Σημεία ($f'(x) = 0$) &amp; Newton-Raphson</h3>
+  <p>Κρίσιμο σημείο μιας συνάρτησης είναι εκεί όπου η παράγωγος μηδενίζεται: $f'(x) = 0$ (γεωμετρικά, η εφαπτομένη είναι οριζόντια).</p>
+  <p>Στον τύπο Newton-Raphson: $x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$. Αν επιλέξεις αρχικό σημείο $x_0$ όπου $f'(x_0) \approx 0$, διαιρείς με το μηδέν και ο αλγόριθμος εκρήγνυται! Γι' αυτό μία από τις θεμελιώδεις συνθήκες σύγκλισης του Newton είναι <strong>$f'(x) \ne 0$</strong> σε όλο το διάστημα.</p>
+
+  <h3>3. Πεπλεγμένη Παράγωγος για ΣΔΕ (Chain Rule in ODEs)</h3>
+  <p>Στο Topic 6 (Αριθμητική ΣΔΕ), σου δίνεται μια διαφορική εξίσωση 1ης τάξης: $y' = f(x, y)$. Εδώ το $y$ δεν είναι ανεξάρτητη μεταβλητή, αλλά <strong>συνάρτηση του $x$ ($y = y(x)$)</strong>!</p>
+  <p>Όταν παραγωγίζουμε ως προς $x$, η παράγωγος του $y$ είναι $y'$:</p>
+  <div class="formula-box">
+    $$\frac{d}{dx}[y] = y', \quad \frac{d}{dx}[y^2] = 2y \cdot y', \quad \frac{d}{dx}[x \cdot y] = 1 \cdot y + x \cdot y'$$
+  </div>
+
+  <div class="step-card">
+    <div class="step-card-title">ΑΝΑΛΥΤΙΚΟ ΠΑΡΑΔΕΙΓΜΑ: ΥΠΟΛΟΓΙΣΜΟΣ $y''$ ΓΙΑ ΤΗ ΜΕΘΟΔΟ TAYLOR</div>
+    <p>Έστω η ΣΔΕ: $y' = y - x^2 + 1$.</p>
+    <p>Παραγωγίζουμε και τα δύο μέλη ως προς $x$:</p>
+    <div class="formula-box" style="margin:8px 0">
+      $$y'' = \frac{d}{dx}(y - x^2 + 1) = y' - 2x + 0 = y' - 2x$$
+    </div>
+    <p>Τώρα αντικαθιστούμε το $y'$ από την αρχική σχέση:</p>
+    <div class="formula-box" style="margin:8px 0">
+      $$y'' = (y - x^2 + 1) - 2x = y - x^2 - 2x + 1$$
+    </div>
+  </div>
+
+  <h3>4. Ανάπτυγμα Taylor 3 Όρων (Taylor 3-Term Method)</h3>
+  <p>Ο τύπος Taylor 3 όρων προσεγγίζει τη λύση $y(x_0 + h)$ με βήμα $h$:</p>
+  <div class="formula-box">
+    $$y(x_0 + h) \approx y_0 + h y'_0 + \frac{h^2}{2} y''_0$$
+  </div>
+  <p>Έστω αρχικές συνθήκες $x_0 = 0, y_0 = 1$ και βήμα $h = 0.1$ για την παραπάνω ΣΔΕ:</p>
+  <ul>
+    <li>$y'_0 = y_0 - x_0^2 + 1 = 1 - 0 + 1 = 2$.</li>
+    <li>$y''_0 = y'_0 - 2x_0 = 2 - 2(0) = 2$.</li>
+    <li>$y(0.1) \approx 1 + (0.1)(2) + \frac{0.01}{2}(2) = 1 + 0.2 + 0.01 = \mathbf{1.21}$.</li>
+  </ul>
+
+  <!-- MINI DRILL 5 -->
+  <div class="drill-card">
+    <div class="drill-header">
+      <span style="font-weight:700;font-size:1.05rem;">🎯 Mini-Drill 5: Παράγωγοι &amp; Κρίσιμα Σημεία</span>
+      <span class="drill-badge">Άσκηση Εμπέδωσης</span>
+    </div>
+    <p>Δίνεται η συνάρτηση $f(x) = x^3 - 6x + 2$ και η διαφορική εξίσωση $y' = x + y$.</p>
+    <p><strong>Ερωτήσεις:</strong> (α) Βρες την $f'(x)$ και την $f''(x)$. (β) Βρες τα κρίσιμα σημεία όπου $f'(x) = 0$. (γ) Βρες τη 2η παράγωγο $y''$ της ΣΔΕ συναρτήσει των $x$ και $y$.</p>
+
+    <details class="drill-reveal">
+      <summary><span>👁️ Κλικ για αποκάλυψη της λύσης βήμα-βήμα</span></summary>
+      <div class="drill-solution">
+        <p><strong>(α) Παράγωγοι:</strong>
+          <br>$f'(x) = 3x^2 - 6$
+          <br>$f''(x) = 6x$
+        </p>
+        <p><strong>(β) Κρίσιμα σημεία:</strong>
+          $$f'(x) = 0 \implies 3x^2 - 6 = 0 \implies x^2 = 2 \implies x = \pm\sqrt{2}$$
+        </p>
+        <p><strong>(γ) 2η Παράγωγος ΣΔΕ:</strong>
+          $$y'' = \frac{d}{dx}(x + y) = 1 + y' = 1 + (x + y) = \mathbf{x + y + 1}$$
+        </p>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     MODULE 6: ABSOLUTE VALUE INEQUALITIES
+     ========================================================================= -->
+<section id="module6">
+  <div id="sec-inequalities"></div>
+  <div id="abs-ineq"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">⚖️</div>
+    <h2>6. Ανισότητες Απολύτων: Συνθήκη Σύγκλισης $|g'(\xi)| < 1$ &amp; Αναστροφή Φοράς</h2>
+  </div>
+
+  <h3>Τι Σημαίνει η Ανισότητα Απολύτου $|u| < c$;</h3>
+  <p>Η απόλυτη τιμή $|u|$ εκφράζει την απόσταση του αριθμού $u$ από το μηδέν. Η συνθήκη $|u| < c$ (για $c > 0$) σημαίνει ότι το $u$ απέχει λιγότερο από $c$ μονάδες από το $0$, άρα βρίσκεται <strong>εγκλωβισμένο ανάμεσα στο $-c$ και στο $+c$</strong>:</p>
+  <div class="formula-box">
+    $$|u| < c \iff -c < u < c$$
+  </div>
+
+  <h3>Η Συνθήκη Σύγκλισης Σταθερού Σημείου (Θέμα 1.1 - 10-12 Μόρια)</h3>
+  <p>Στη μέθοδο σταθερού σημείου $x_{n+1} = g(x_n)$, για να συγκλίνει η ακολουθία στη ρίζα $\xi$, απαιτείται:</p>
+  <div class="formula-box">
+    $$|g'(\xi)| < 1 \iff -1 < g'(\xi) < 1$$
+  </div>
+
+  <div class="trap-box">
+    <div class="trap-title">⚠️ Η ΜΕΓΑΛΗ ΠΑΓΙΔΑ: ΑΝΑΣΤΡΟΦΗ ΦΟΡΑΣ ΣΕ ΔΙΑΙΡΕΣΗ ΜΕ ΑΡΝΗΤΙΚΟ</div>
+    <p>Όταν διαιρείς ή πολλαπλασιάζεις μια ανισότητα με έναν <strong>αρνητικό αριθμό</strong>, η φορά των συμβόλων <strong>ΑΝΑΣΤΡΕΦΕΤΑΙ ΥΠΟΧΡΕΩΤΙΚΑ</strong>:</p>
+    <div class="formula-box" style="margin:8px 0">
+      $$a < b \implies -a > -b$$
+      $$< \text{ γίνεται } >, \quad \text{και} \quad > \text{ γίνεται } <$$
+    </div>
+    <p>Αν το ξεχάσεις, θα καταλήξεις σε μαθηματικό παραλογισμό όπως $2 < \lambda < 0$ και θα χάσεις όλες τις μονάδες του θέματος!</p>
+  </div>
+
+  <h3>Πλήρες Πρότυπο Παράδειγμα Εξετάσεων (Thema 1.1 Style)</h3>
+  <p>Έστω επαναληπτική μέθοδος όπου στο σημείο ισορροπίας $\xi$ ισχύει $g'(\xi) = 1 - 2\sqrt{3}\lambda$. Ζητείται να βρεθεί το διάστημα τιμών της παραμέτρου $\lambda$ ώστε η μέθοδος να συγκλίνει.</p>
+
+  <div class="step-card">
+    <div class="step-card-title">ΒΗΜΑ-ΒΗΜΑ ΕΠΙΛΥΣΗ ΜΕ ΑΠΟΛΥΤΗ ΑΣΦΑΛΕΙΑ</div>
+    <p><strong>Βήμα 1:</strong> Εφαρμόζουμε τη συνθήκη σύγκλισης $|g'(\xi)| < 1$ σπάζοντας το απόλυτο σε διπλή ανισότητα:
+      $$-1 < 1 - 2\sqrt{3}\lambda < 1$$
+    </p>
+    <p><strong>Βήμα 2:</strong> Αφαιρούμε το $1$ από όλα τα μέλη:
+      $$-1 - 1 < -2\sqrt{3}\lambda < 1 - 1 \implies \mathbf{-2 < -2\sqrt{3}\lambda < 0}$$
+    </p>
+    <p><strong>Βήμα 3 (ΚΡΙΣΙΜΟ):</strong> Διαιρούμε παντού με τον αρνητικό συντελεστή $-2\sqrt{3}$. <strong>Αλλάζουμε αμέσως τη φορά όλων των συμβόλων</strong>:
+      $$\frac{-2}{-2\sqrt{3}} > \lambda > \frac{0}{-2\sqrt{3}}$$
+    </p>
+    <p><strong>Βήμα 4:</strong> Απλοποιούμε τα κλάσματα:
+      $$\frac{1}{\sqrt{3}} > \lambda > 0$$
+    </p>
+    <p><strong>Βήμα 5:</strong> Ξαναγράφουμε το διάστημα με τη συνηθισμένη διάταξη (από το μικρότερο στο μεγαλύτερο):
+      $$\mathbf{0 < \lambda < \frac{1}{\sqrt{3}}} \quad \left(\text{ή } \lambda \in \left(0, \frac{\sqrt{3}}{3}\right)\right)$$
+    </p>
+  </div>
+
+  <!-- MINI DRILL 6 -->
+  <div class="drill-card">
+    <div class="drill-header">
+      <span style="font-weight:700;font-size:1.05rem;">🎯 Mini-Drill 6: Επίλυση Ανισότητας με Παράμετρο</span>
+      <span class="drill-badge">Άσκηση Εμπέδωσης</span>
+    </div>
+    <p>Λύσε την ανισότητα $|1 + 4\lambda| < 1$ ως προς την παράμετρο $\lambda$.</p>
+
+    <details class="drill-reveal">
+      <summary><span>👁️ Κλικ για αποκάλυψη της λύσης βήμα-βήμα</span></summary>
+      <div class="drill-solution">
+        <p>1. Σπάσιμο απολύτου: $-1 < 1 + 4\lambda < 1$</p>
+        <p>2. Αφαίρεση 1: $-2 < 4\lambda < 0$</p>
+        <p>3. Διαίρεση με $+4$ (θετικός αριθμός, άρα η φορά <em>δεν</em> αλλάζει):
+          $$\frac{-2}{4} < \lambda < 0 \implies \mathbf{-\frac{1}{2} < \lambda < 0}$$
+        </p>
+        <p>Τελικό διάστημα: <strong>$\lambda \in (-0.5, 0)$</strong>.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     MODULE 7: ITERATION ERROR & RESIDUAL VECTORS
+     ========================================================================= -->
+<section id="module7">
+  <div id="sec-iteration-error"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">🎯</div>
+    <h2>7. Σφάλμα Επανάληψης &amp; Διάνυσμα Υπολοίπου ($r = b - Ax$)</h2>
+  </div>
+
+  <h3>Άμεση vs Επαναληπτική Φιλοσοφία</h3>
+  <ul>
+    <li><strong>Άμεση Μέθοδος (π.χ. Gauss):</strong> Εκτελεί έναν προκαθορισμένο αριθμό πράξεων ($\approx \frac{n^3}{3}$) και στο τέλος παράγει την ακριβή λύση (θεωρητικά, χωρίς σφάλματα στρογγυλοποίησης).</li>
+    <li><strong>Επαναληπτική Μέθοδος (π.χ. Jacobi, Gauss-Seidel, Newton):</strong> Ξεκινά από μια αρχική υπόθεση $x^{(0)}$ και παράγει διαδοχικές βελτιώσεις:
+      $$x^{(0)} \to x^{(1)} \to x^{(2)} \to \dots \to x^{(k)} \to \xi$$
+    </li>
+  </ul>
+
+  <h3>Απόλυτο vs Σχετικό Σφάλμα</h3>
+  <p>Έστω $\xi$ η ακριβής τιμή και $x^{(k)}$ η προσέγγιση στο βήμα $k$:</p>
+  <ul>
+    <li><strong>Απόλυτο Σφάλμα (Absolute Error):</strong>
+      $$\varepsilon_{\text{abs}} = |x^{(k)} - \xi|$$
+    </li>
+    <li><strong>Σχετικό Σφάλμα (Relative Error):</strong>
+      $$\varepsilon_{\text{rel}} = \frac{|x^{(k)} - \xi|}{|\xi|} \quad (\text{για } \xi \ne 0)$$
+    </li>
+  </ul>
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΓΙΑΤΙ ΜΑΣ ΝΟΙΑΖΕΙ ΤΟ ΣΧΕΤΙΚΟ ΣΦΑΛΜΑ;</div>
+    Ένα σφάλμα μεγέθους $0.1$ είναι καταστροφικό αν μετράς ένα μικρόβιο μήκους $0.2\text{ mm}$ (σχετικό σφάλμα $50\%$), αλλά εντελώς αμελητέο αν μετράς την απόσταση Αθήνα-Θεσσαλονίκη των $500\text{ km}$ (σχετικό σφάλμα $0.00002\%$)!
+  </div>
+
+  <h3>Το Διάνυσμα Υπολοίπου (Residual Vector: $r = b - Ax$)</h3>
+  <p>Όταν λύνουμε ένα γραμμικό σύστημα $Ax = b$ με επαναληπτική μέθοδο και έχουμε φτάσει σε μια προσέγγιση $x_{\text{approx}}$, πώς ξέρουμε πόσο καλή είναι η λύση μας <strong>αν δεν γνωρίζουμε εκ των προτέρων την πραγματική λύση</strong>;</p>
+  <p>Υπολογίζουμε το <strong>διάνυσμα υπολοίπου</strong>:</p>
+  <div class="formula-box">
+    $$r = b - A x_{\text{approx}}$$
+  </div>
+  <p>Το υπόλοιπο μετράει πόσο καλά ικανοποιούνται οι εξισώσεις. Αν το $x_{\text{approx}}$ ήταν η ακριβής λύση, τότε $Ax = b \implies r = 0$. Όσο πιο κοντά στο μηδενικό διάνυσμα είναι το $r$, τόσο καλύτερα ικανοποιείται το σύστημα.</p>
+
+  <p><strong>Αριθμητικό Παράδειγμα Υπολογισμού Υπολοίπου:</strong></p>
+  <p>Έστω $A = \begin{bmatrix} 3 & 1 \\ 1 & 2 \end{bmatrix}$ και $b = \begin{bmatrix} 7 \\ 4 \end{bmatrix}$. Η ακριβής λύση είναι $x^* = \begin{bmatrix} 2 \\ 1 \end{bmatrix}$.</p>
+  <p>Έστω ότι η πρώτη επανάληψη έβγαλε την προσέγγιση $x^{(1)} = \begin{bmatrix} 1.9 \\ 1.1 \end{bmatrix}$.</p>
+  <ul>
+    <li>Υπολογίζουμε το $A x^{(1)}$:
+      $$A x^{(1)} = \begin{bmatrix} 3(1.9) + 1(1.1) \\ 1(1.9) + 2(1.1) \end{bmatrix} = \begin{bmatrix} 5.7 + 1.1 \\ 1.9 + 2.2 \end{bmatrix} = \begin{bmatrix} 6.8 \\ 4.1 \end{bmatrix}$$
+    </li>
+    <li>Υπολογίζουμε το υπόλοιπο $r = b - A x^{(1)}$:
+      $$r = \begin{bmatrix} 7 \\ 4 \end{bmatrix} - \begin{bmatrix} 6.8 \\ 4.1 \end{bmatrix} = \begin{bmatrix} 7 - 6.8 \\ 4 - 4.1 \end{bmatrix} = \begin{bmatrix} 0.2 \\ -0.1 \end{bmatrix}$$
+    </li>
+  </ul>
+
+  <h3>Κριτήρια Τερματισμού στον Υπολογιστή (Stopping Criteria)</h3>
+  <p>Σε ένα MATLAB script (π.χ. Jacobi/Gauss-Seidel στο Θέμα 3), σταματάμε τον βρόχο επανάληψης όταν ισχύσει ένα από τα εξής:</p>
+  <ol>
+    <li>$\|x^{(k+1)} - x^{(k)}\| < \text{tol}$: Η λύση σταθεροποιήθηκε και δεν αλλάζει πια αισθητά.</li>
+    <li>$\|r^{(k)}\| = \|b - A x^{(k)}\| < \text{tol}$: Το υπόλοιπο έπεσε κάτω από την επιθυμητή ακρίβεια.</li>
+    <li>$k \ge \text{maxiter}$: Κόφτης ασφαλείας για να μην τρέχει ο βρόχος για πάντα αν η μέθοδος αποκλίνει.</li>
+  </ol>
+
+  <!-- MINI DRILL 7 -->
+  <div class="drill-card">
+    <div class="drill-header">
+      <span style="font-weight:700;font-size:1.05rem;">🎯 Mini-Drill 7: Υπολογισμός Σφάλματος &amp; Υπολοίπου</span>
+      <span class="drill-badge">Άσκηση Εμπέδωσης</span>
+    </div>
+    <p>Δίνεται το διαγώνιο σύστημα $\begin{bmatrix} 2 & 0 \\ 0 & 5 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 6 \\ 10 \end{bmatrix}$ και η προσεγγιστική λύση $x = \begin{bmatrix} 3.1 \\ 1.8 \end{bmatrix}$.</p>
+    <p><strong>Ερωτήσεις:</strong> (α) Βρες την ακριβή λύση $\xi$. (β) Υπολόγισε το διάνυσμα σφάλματος $e = x - \xi$ και το μέγιστο απόλυτο σφάλμα $\|e\|_\infty$. (γ) Υπολόγισε το διάνυσμα υπολοίπου $r = b - Ax$.</p>
+
+    <details class="drill-reveal">
+      <summary><span>👁️ Κλικ για αποκάλυψη της λύσης βήμα-βήμα</span></summary>
+      <div class="drill-solution">
+        <p><strong>(α) Ακριβής λύση:</strong>
+          <br>$2x_1 = 6 \implies x_1 = 3$
+          <br>$5x_2 = 10 \implies x_2 = 2$
+          <br>Άρα: $\xi = \begin{bmatrix} 3 \\ 2 \end{bmatrix}$.
+        </p>
+        <p><strong>(β) Διάνυσμα Σφάλματος:</strong>
+          $$e = x - \xi = \begin{bmatrix} 3.1 - 3 \\ 1.8 - 2 \end{bmatrix} = \begin{bmatrix} 0.1 \\ -0.2 \end{bmatrix}$$
+          Μέγιστο απόλυτο σφάλμα: $\|e\|_\infty = \max(|0.1|, |-0.2|) = \mathbf{0.2}$.
+        </p>
+        <p><strong>(γ) Διάνυσμα Υπολοίπου:</strong>
+          $$Ax = \begin{bmatrix} 2(3.1) \\ 5(1.8) \end{bmatrix} = \begin{bmatrix} 6.2 \\ 9.0 \end{bmatrix}$$
+          $$r = b - Ax = \begin{bmatrix} 6 \\ 10 \end{bmatrix} - \begin{bmatrix} 6.2 \\ 9.0 \end{bmatrix} = \begin{bmatrix} 6 - 6.2 \\ 10 - 9.0 \end{bmatrix} = \mathbf{\begin{bmatrix} -0.2 \\ 1.0 \end{bmatrix}}$$
+        </p>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     NEXT STEPS & NAVIGATION FOOTER
+     ========================================================================= -->
+<section id="next-steps">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">🚀</div>
+    <h2>Συγχαρητήρια! Έχεις όλα τα Μαθηματικά Εφόδια</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΕΤΟΙΜΟΣ ΓΙΑ ΤΗΝ ΥΛΗ ΤΟΥ ΜΑΘΗΜΑΤΟΣ</div>
+    Μόλις κάλυψες και τα 7 θεμέλια που χρειάζονται. Κανένας καθηγητής δεν θα σου ζητήσει ανώτερα μαθηματικά πέρα από αυτά. Τώρα μπορείς να ξεκινήσεις τη μελέτη των θεμάτων με απόλυτη αυτοπεποίθηση!
+  </div>
+
+  <div class="footer-nav">
+    <a href="topic1_direct_linear.html" class="footer-nav-card">
+      <span class="footer-nav-label">ΕΠΟΜΕΝΟ ΒΗΜΑ · TOPIC 01</span>
+      <span class="footer-nav-title">1. Άμεσες Μέθοδοι &amp; Gauss-Jordan &rarr;</span>
+      <span style="color:var(--muted);font-size:0.88rem">Μάθε πώς εφαρμόζονται οι γραμμοπράξεις και η μερική οδήγηση σε θέματα εξετάσεων.</span>
+    </a>
+    <a href="index.html" class="footer-nav-card">
+      <span class="footer-nav-label">ΚΕΝΤΡΙΚΟ HUB</span>
+      <span class="footer-nav-title">5-Day Study Sprint Plan &rarr;</span>
+      <span style="color:var(--muted);font-size:0.88rem">Δες το στρατηγικό πλάνο μελέτης 5 ημερών για να κλειδώσεις το 5-6/10.</span>
+    </a>
+  </div>
+</section>
+
+</div> <!-- /.wrap -->
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση (PASS Webnotes)</div>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 3 · Μη Γραμμικές Εξισώσεις (Fixed Point &amp; Newton-Raphson - Οδηγός Αρχαρίων)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<style>
+:root{
+  --bg:#0d1117;--bg-rgb:13,17,23;--surf:#161b22;--surf2:#1c2230;--border:#30363d;
+  --blue:#58a6ff;--blue-rgb:88,166,255;--bdim:#0d1f40;
+  --green:#3fb950;--green-rgb:63,185,80;--gdim:#0d2218;
+  --yellow:#e3b341;--ydim:#2d2208;
+  --red:#f85149;--rdim:#2d1010;
+  --cyan:#39d4c8;--cdim:#0a2422;
+  --purple:#bc8cff;--purple-rgb:188,140,255;--pdim:#1a1040;
+  --orange:#f0883e;--orange-rgb:240,136,62;--odim:#2d1800;
+  --txt:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+}
+.hero{background:linear-gradient(150deg,#0d1117 0%,var(--ydim) 55%,#0d1117 100%);position:relative;padding:60px 40px 40px}
+.hero::after{
+  content:'x_{n+1}=g(x_n)';
+  position:absolute;right:32px;bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1.5rem,4vw,3rem);
+  color:rgba(227,179,65,.08);
+  pointer-events:none;font-weight:700;
+}
+.cb{background:#060a10;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;margin:12px 0;overflow-x:auto}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.good-side{background:var(--gdim);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:12px}
+.bad-side{background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px}
+.side-label{font-size:0.8125rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase}
+.exam-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);background:var(--ydim);border:1px solid rgba(227,179,65,.3);border-radius:20px;padding:2px 8px;margin-left:6px}
+.step-box{background:var(--surf2);border-left:4px solid var(--yellow);border-radius:8px;padding:16px;margin:14px 0}
+.step-title{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--yellow);margin-bottom:6px;font-size:0.95rem}
+</style>
+<script src="js/nav.js" defer></script>
+<script src="data/questions.js" defer></script>
+<script src="js/quiz-loader.js" defer></script>
+<script src="data/flashcards.js" defer></script>
+<script src="js/flashcards.js" defer></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="hero">
+  <div class="hero-label">ΑΡΙΘΜΗΤΙΚΗ ΑΝΑΛΥΣΗ · TOPIC 03</div>
+  <h1>Μη Γραμμικές Εξισώσεις <em>(Fixed Point &amp; Newton)</em></h1>
+  <p>Πλήρης οδηγός για αρχάριους: Μέθοδος Σταθερού Σημείου $x_{n+1} = g(x_n)$, εύρεση παραμέτρου $\lambda$, τετραγωνική σύγκλιση &amp; Newton-Raphson.</p>
+  <div class="chips">
+    <span class="chip">Fixed Point</span>
+    <span class="chip">Newton-Raphson</span>
+    <span class="chip">Quadratic Convergence</span>
+    <span class="chip">Bisection</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#essence">🎯 Η Ουσία</a>
+  <a href="#fixed_point">1. Μέθοδος Σταθερού Σημείου</a>
+  <a href="#stepbystep">2. Βήμα-βήμα Λύση Θέματος 1.1</a>
+  <a href="#newton">3. Μέθοδος Newton-Raphson</a>
+  <a href="#flashcards">🗂️ Flashcards</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 📖 RECIPROCAL PREREQUISITE CALLOUT -->
+  <div class="prereq-callout">
+    <div class="prereq-icon">📖</div>
+    <div class="prereq-content">
+      <div class="prereq-badge">ΠΡΟΑΠΑΙΤΟΥΜΕΝΟ ΥΠΟΒΑΘΡΟ · STEP 0</div>
+      <div class="prereq-title">Προαπαιτούμενα για Σταθερό Σημείο &amp; Newton-Raphson</div>
+      <p class="prereq-text">
+        Ο έλεγχος σύγκλισης απαιτεί άμεσο υπολογισμό παραγώγων $g'(x)$, εύρεση κρίσιμων σημείων και επίλυση ανισώσεων με απόλυτη τιμή ($|g'(\xi)| < 1 \iff -1 < g'(\xi) < 1$) χωρίς λάθη στην αναστροφή ανισότητας.
+      </p>
+      <a href="prerequisites.html#sec-inequalities" class="prereq-link">Μετάβαση στα Μαθηματικά από το Μηδέν: Παράγωγοι &amp; Ανισότητες Απολύτων &rarr;</a>
+    </div>
+  </div>
+
+<!-- 🎯 ESSENCE SECTION -->
+<section id="essence">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">🎯</div>
+    <h2>Η Ουσία σε 60 δευτερόλεπτα</h2>
+  </div>
+
+  <div class="gbox">
+    <div class="lbl" style="color:var(--green)">ΤΙ ΚΑΝΕΙ</div>
+    Υπολογίζει προσεγγιστικά τις ρίζες $\xi$ μιας μη γραμμικής εξίσωσης $f(x) = 0$. Η μέθοδος μετατρέπει την $f(x)=0$ στη μορφή σταθερού σημείου $x = g(x)$ και παράγει την επαναληπτική ακολουθία $x_{n+1} = g(x_n)$.
+  </div>
+
+  <p style="margin-bottom:14px">
+    <strong>💡 Διαίσθηση για Αρχάριους:</strong> Φαντάσου ότι ψάχνεις το σημείο όπου η γραφική παράσταση της $y = g(x)$ τέμνει τη διαγώνιο $y = x$. Αν η κλίση της $g(x)$ είναι οριζόντια/ήπια ($|g'|<1$), κάθε νέο βήμα σε φέρνει πιο κοντά στο σημείο τομής!
+  </p>
+
+  <div class="compare">
+    <div class="good-side">
+      <div class="side-label" style="color:var(--green)">✅ Δουλεύει καλά όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>Η παράγωγος $|g'(x)| < 1$ στο διάστημα της ρίζας (εγγυημένη σύγκλιση).</li>
+        <li>Αν $g'(\xi) = 0$, η σύγκλιση είναι <strong>τετραγωνική</strong> (διπλασιάζονται τα ακριβή ψηφία σε κάθε βήμα!).</li>
+      </ul>
+    </div>
+    <div class="bad-side">
+      <div class="side-label" style="color:var(--red)">❌ Αποτυγχάνει όταν…</div>
+      <ul style="font-size:0.86rem;padding-left:18px;line-height:1.7;margin:0">
+        <li>$|g'(\xi)| > 1$ (αποκλίνει η επαναληπτική ακολουθία).</li>
+        <li>Στη Newton-Raphson, αν $f'(x_n) = 0$ (μηδενική παράγωγος / οριζόντια εφαπτομένη).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic3" data-section="essence"></div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="fixed_point">
+  <div id="fixed-point"></div>
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--ydim)">1️⃣</div>
+    <h2>1. Μέθοδος Σταθερού Σημείου (Fixed-Point Iteration) <span class="exam-badge">Θέμα 1.1</span></h2>
+  </div>
+
+  <div class="card">
+    <h4 style="color:var(--yellow);margin-top:0">Θεώρημα Σταθερού Σημείου Banach</h4>
+    <p>Έστω $g: [a,b] \to [a,b]$ μια συνεχής συνάρτηση. Αν υπάρχει σταθερά $L < 1$ τέτοια ώστε $|g'(x)| \le L < 1$ για κάθε $x \in (a,b)$, τότε:</p>
+    <ul>
+      <li>Υπάρχει μοναδικό σταθερό σημείο $\xi \in [a,b]$.</li>
+      <li>Η επαναληπτική μέθοδος $x_{n+1} = g(x_n)$ συγκλίνει στο $\xi$ για οποιαδήποτε αρχική τιμή $x_0 \in [a,b]$.</li>
+    </ul>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Σταθερό Σημείο ($\xi$) &amp; Τοπική Σύγκλιση ($|g'(\xi)| < 1$)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Σταθερό σημείο μιας συνάρτησης $g(x)$ είναι ο αριθμός $\xi$ που παραμένει αναλλοίωτος όταν περάσει από τη συνάρτηση: $g(\xi) = \xi$. Γεωμετρικά, είναι το σημείο τομής της $y = g(x)$ με την ευθεία $y = x$. Αν ξεκινήσεις κοντά του και εφαρμόσεις $x_{n+1} = g(x_n)$, η ακολουθία πλησιάζει τη ρίζα εφόσον η κλίση είναι ήπια: $|g'(\xi)| < 1$.</p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις (Θέμα 1.1 - 10-12 μόρια):</strong> Η εκφώνηση δίνει $x_{n+1} = x_n + \lambda \phi(x_n)$. Το $g(x)$ είναι ολόκληρο το δεξί μέλος! Παραγωγίζεις $g'(x) = 1 + \lambda \phi'(x)$, αντικαθιστάς τη ρίζα $\xi$, και λύνεις τη διπλή ανισότητα $-1 < g'(\xi) < 1$. <strong>Προσοχή:</strong> Αν διαιρέσεις με αρνητικό αριθμό, αντιστρέφονται τα σύμβολα ($<$ γίνεται $>$)!</p>
+    </div>
+  </details>
+
+  <div class="recognition-formula">
+    <div class="recognition-header">
+      <span class="recognition-badge">⚡ SOS ΣΥΝΤΑΓΗ ΕΠΙΤΥΧΙΑΣ</span>
+      <span class="recognition-topic">ΘΕΜΑ 1.1 · ΣΤΑΘΕΡΟ ΣΗΜΕΙΟ &amp; ΤΑΞΗ ΣΥΓΚΛΙΣΗΣ</span>
+    </div>
+    <div class="recognition-title">Μηχανική Επίλυση Σταθερού Σημείου με Παράμετρο $\lambda$</div>
+    <div class="recognition-trigger">
+      <div class="recognition-lbl">🔍 Πώς το αναγνωρίζεις αμέσως</div>
+      <p>Δίνεται αναδρομή $x_{n+1} = x_n + \lambda \phi(x_n)$ για ρίζα $\xi$. Ζητείται εύρος του $\lambda$ για σύγκλιση και τιμή του $\lambda$ για τετραγωνική σύγκλιση.</p>
+    </div>
+    <div class="recognition-recipe">
+      <div class="recognition-lbl">📋 Τα 3 Βήματα</div>
+      <ol class="recognition-steps">
+        <li><strong>Ορισμός $g(x)$:</strong> $g(x) = x + \lambda \phi(x)$ και υπολογισμός παραγώγου $g'(x) = 1 + \lambda \phi'(x)$.</li>
+        <li><strong>Σύγκλιση ($p \ge 1$):</strong> Απαιτείς $|g'(\xi)| < 1 \iff -1 < g'(\xi) < 1$. Λύνεις τη διπλή ανίσωση ως προς $\lambda$.</li>
+        <li><strong>Τετραγωνική Σύγκλιση ($p \ge 2$):</strong> Απαιτείς $g'(\xi) = 0 \iff 1 + \lambda \phi'(\xi) = 0$. Λύνεις την απλή γραμμική εξίσωση.</li>
+      </ol>
+    </div>
+    <div class="key-formula-box">
+      <div class="key-formula-lbl">🔑 ΣΥΝΘΗΚΕΣ ΣΥΓΚΛΙΣΗΣ &amp; ΤΑΞΗΣ</div>
+      <div class="key-formula-math">
+        $$\text{Σύγκλιση: } |g'(\xi)| < 1 \quad \text{και} \quad \text{Τετραγωνική } (p=2): g'(\xi) = 0 \text{ με } g''(\xi) \ne 0$$
+      </div>
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic3" data-section="fixed_point"></div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="stepbystep">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--cdim)">🔍</div>
+    <h2>2. Βήμα-βήμα Λύση Θέματος 1.1 (SOS Εξετάσεων)</h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Ας λύσουμε αναλυτικά το Θέμα 1.1 από τις εξετάσεις Ιουνίου 2025, όπως ακριβώς πρέπει να γραφτεί γραπτώς:
+  </p>
+
+  <div class="step-box">
+    <div class="step-title">Εκφώνηση:</div>
+    <p style="margin:4px 0">
+      Δίνεται η επαναληπτική μέθοδος $x_{n+1} = x_n + \lambda (x_n^2 - 3)$ για τον υπολογισμό της ρίζας $\xi = -\sqrt{3}$ της εξίσωσης $f(x) = x^2 - 3 = 0$.
+    </p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">α') Εύρεση Διαστήματος παραμέτρου $\lambda$ για Σύγκλιση:</div>
+    <ol style="margin:4px 0 0 18px;padding:0;line-height:1.7">
+      <li><strong>Προσδιορίζουμε τη $g(x)$:</strong> $g(x) = x + \lambda (x^2 - 3)$.</li>
+      <li><strong>Υπολογίζουμε την παράγωγο $g'(x)$:</strong> $g'(x) = 1 + 2\lambda x$.</li>
+      <li><strong>Υπολογίζουμε την παράγωγο στη ρίζα $\xi = -\sqrt{3}$:</strong>
+        $$g'(-\sqrt{3}) = 1 + 2\lambda (-\sqrt{3}) = 1 - 2\sqrt{3}\lambda$$
+      </li>
+      <li><strong>Εφαρμόζουμε τη συνθήκη σύγκλισης $|g'(\xi)| < 1$:</strong>
+        $$-1 < 1 - 2\sqrt{3}\lambda < 1$$
+      </li>
+      <li><strong>Λύνουμε την διπλή ανισότητα:</strong>
+        <ul>
+          <li>Αριστερά: $-1 < 1 - 2\sqrt{3}\lambda \implies 2\sqrt{3}\lambda < 2 \implies \lambda < \frac{1}{\sqrt{3}}$.</li>
+          <li>Δεξιά: $1 - 2\sqrt{3}\lambda < 1 \implies -2\sqrt{3}\lambda < 0 \implies \lambda > 0$.</li>
+        </ul>
+      </li>
+      <li><strong>Τελικό Διάστημα Σύγκλισης:</strong> $\lambda \in \left(0, \frac{1}{\sqrt{3}}\right)$!</li>
+    </ol>
+  </div>
+
+  <div class="student-trap">
+    <div class="student-trap-header">
+      <span class="student-trap-badge">⚠️ SOS ΠΑΓΙΔΑ ΕΞΕΤΑΣΕΩΝ</span>
+      <span class="student-trap-scope">ΘΕΜΑ 1.1 · ΠΡΟΣΗΜΑ ΑΝΙΣΩΣΗΣ</span>
+    </div>
+    <div class="student-trap-title">Αρνητική Ρίζα &amp; Αντιστροφή Φοράς Ανίσωσης</div>
+    <div class="student-trap-body">
+      <div class="student-trap-comparison">
+        <div class="student-trap-wrong">
+          <div class="student-trap-lbl">❌ Κλασικό Λάθος</div>
+          <p>Όταν η ρίζα είναι αρνητική ($\xi = -\sqrt{3}$), ο φοιτητής γράφει $1 + 2\sqrt{3}\lambda$ (ξεχνάει το μείον της ρίζας) ή όταν διαιρεί με $-2\sqrt{3}$ δεν αλλάζει τη φορά των ανισώσεων ($<$ σε $>$).</p>
+        </div>
+        <div class="student-trap-right">
+          <div class="student-trap-lbl">✅ Πώς το γράφεις σωστά</div>
+          <p>Πάντα ελέγχεις το πρόσημο της ρίζας: $g'(-\sqrt{3}) = 1 + 2\lambda(-\sqrt{3}) = 1 - 2\sqrt{3}\lambda$. Στη συνέχεια σπας τη διπλή ανίσωση σε δύο ξεχωριστές και λύνεις με προσοχή: $-1 < 1 - 2\sqrt{3}\lambda$ και $1 - 2\sqrt{3}\lambda < 1$.</p>
+        </div>
+      </div>
+      <div class="student-trap-takeaway">
+        <strong>💡 Κανόνας:</strong> Στην τετραγωνική σύγκλιση ελέγχεις πάντα ότι $g''(\xi) \ne 0$ ώστε η τάξη να είναι ακριβώς 2.
+      </div>
+    </div>
+  </div>
+
+  <div class="step-box" style="border-left-color:var(--green)">
+    <div class="step-title" style="color:var(--green)">β') Εύρεση $\lambda$ για Τετραγωνική Σύγκλιση:</div>
+    <ol style="margin:4px 0 0 18px;padding:0;line-height:1.7">
+      <li>Για να είναι η σύγκλιση τουλάχιστον τετραγωνική ($p=2$), απαιτείται <strong>$g'(\xi) = 0$</strong>.</li>
+      <li>Θέτουμε $1 - 2\sqrt{3}\lambda = 0 \implies 2\sqrt{3}\lambda = 1 \implies \lambda = \frac{1}{2\sqrt{3}}$.</li>
+      <li>Ελέγχουμε αν η τιμή αυτή ανήκει στο διάστημα σύγκλισης: $\frac{1}{2\sqrt{3}} \in \left(0, \frac{1}{\sqrt{3}}\right)$ ✅!</li>
+    </ol>
+  </div>
+
+  <div class="section-quiz" data-topic="topic3" data-section="convergence"></div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="newton">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--gdim)">📐</div>
+    <h2>3. Μέθοδος Newton-Raphson</h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:14px">
+    Η μέθοδος Newton-Raphson προκύπτει από την εφαπτομένη της συνάρτησης $f(x)$ στο σημείο $(x_n, f(x_n))$:
+    $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$$
+  </p>
+
+  <div class="card">
+    <h4 style="color:var(--green);margin-top:0">Ιδιότητες Newton-Raphson</h4>
+    <ul>
+      <li><strong>Τάξη Σύγκλισης:</strong> Τετραγωνική ($p=2$) εφόσον $f'(\xi) \neq 0$.</li>
+      <li><strong>Επαναληπτική Συνάρτηση:</strong> $g(x) = x - \frac{f(x)}{f'(x)}$. Παραγωγίζοντας: $g'(x) = 1 - \frac{[f'(x)]^2 - f(x)f''(x)}{[f'(x)]^2} = \frac{f(x)f''(x)}{[f'(x)]^2}$. Στη ρίζα $\xi$, $f(\xi)=0 \implies g'(\xi) = 0$!</li>
+    </ul>
+  </div>
+
+  <details class="jargon-buster">
+    <summary><strong>🔤 Jargon Buster:</strong> <span class="jargon-term">Τάξη Σύγκλισης ($p$) &amp; Τετραγωνική Σύγκλιση ($p=2$)</span></summary>
+    <div class="jargon-content">
+      <p><strong>Τι σημαίνει στα απλά ελληνικά:</strong> Η τάξη $p$ εκφράζει πόσο εκθετικά γρήγορα συρρικνώνεται το σφάλμα $e_n = |x_n - \xi|$ σε κάθε διαδοχικό βήμα: $e_{n+1} \approx C \cdot e_n^p$.
+        <br>• <strong>Γραμμική ($p=1$):</strong> Το σφάλμα πολλαπλασιάζεται με σταθερό κλάσμα (σταθερός ρυθμός βελτίωσης δεκαδικών).
+        <br>• <strong>Τετραγωνική ($p=2$):</strong> Το νέο σφάλμα είναι ανάλογο του <em>τετραγώνου</em> του προηγούμενου ($10^{-2} \to 10^{-4} \to 10^{-8}$). Τα σωστά δεκαδικά ψηφία <strong>διπλασιάζονται</strong> σε κάθε επανάληψη!
+      </p>
+      <p><strong>Διαίσθηση / Γιατί σε νοιάζει στις εξετάσεις:</strong> Στο Θέμα 1.1β ζητείται πάντα: <em>«Βρείτε το $\lambda$ ώστε η σύγκλιση να είναι τουλάχιστον τετραγωνική»</em>. Η συνταγή είναι αυτόματη: θέτεις <strong>$g'(\xi) = 0$</strong>, λύνεις ως προς $\lambda$, επιβεβαιώνεις ότι η τιμή ανήκει στο διάστημα σύγκλισης του ερωτήματος (α), και σημειώνεις ότι $g''(\xi) \neq 0$.</p>
+    </div>
+  </details>
+
+    <div class="card">
+    <div class="card-title" style="color:var(--purple)">Θεώρημα Γενικής Σύγκλισης — «συγκλίνει για ΚΑΘΕ αρχική τιμή $x_0$;»</div>
+    <p style="color:var(--muted);font-size:0.9rem">
+      Όταν η εκφώνηση ρωτά αν η N-R συγκλίνει <strong>για κάθε</strong> $x_0 \in [a,b]$ (όχι απλώς «κοντά στη ρίζα»),
+      ελέγχεις <strong>πέντε</strong> συνθήκες. Γράψ' τες σαν λίστα με ✓ — έτσι βαθμολογούνται.
+    </p>
+    <div style="overflow-x:auto">
+    <table class="vtbl">
+      <thead><tr><th style="width:6%">#</th><th style="width:34%">Συνθήκη</th><th>Τι εξασφαλίζει</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>$f \in C^2[a,b]$</td><td>Η f και οι δύο πρώτες παράγωγοί της είναι συνεχείς. <span style="color:var(--muted)">Για πολυώνυμο αρκεί να γράψεις «ως πολυωνυμική».</span></td></tr>
+        <tr><td>2</td><td>$f(a)\cdot f(b) \lt 0$</td><td><strong>Υπάρχει</strong> ρίζα στο $[a,b]$ (θεώρημα Bolzano).</td></tr>
+        <tr><td>3</td><td>$f'(x) \neq 0\ \ \forall x \in [a,b]$</td><td>Η f είναι μονότονη ⟹ η ρίζα είναι <strong>μοναδική</strong>· και δεν διαιρούμε με μηδέν.</td></tr>
+        <tr><td>4</td><td>Η $f''$ <strong>διατηρεί πρόσημο</strong> στο $[a,b]$</td><td>Δεν αλλάζει κυρτότητα ⟹ οι εφαπτόμενες δεν «πετάνε» την ακολουθία εκτός διαστήματος.</td></tr>
+        <tr><td>5</td><td>$\left|\dfrac{f(c)}{f'(c)}\right| \le b-a$ σε ένα άκρο $c$</td><td>Το <strong>πρώτο βήμα</strong> από το χειρότερο σημείο δεν βγάζει εκτός $[a,b]$.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Λυμένο: $f(x) = x^3 + 6x - 1$ στο $[0,1]$</div>
+      <ul style="padding-left:1.5rem;line-height:1.9;margin:0">
+        <li><strong>1.</strong> $f \in C^2[0,1]$ ως πολυωνυμική ✅</li>
+        <li><strong>2.</strong> $f(0) = -1$, $f(1) = 6$ ⟹ $f(0)f(1) = -6 \lt 0$ ✅</li>
+        <li><strong>3.</strong> $f'(x) = 3x^2 + 6 \gt 0\ \forall x \in [0,1]$, άρα $\neq 0$ ✅</li>
+        <li><strong>4.</strong> $f''(x) = 6x \ge 0$ στο $[0,1]$ — διατηρεί πρόσημο ✅</li>
+        <li><strong>5.</strong> Με $c = 0$: $\left|\dfrac{f(0)}{f'(0)}\right| = \left|\dfrac{-1}{6}\right| = \dfrac16 \le 1 - 0 = 1$ ✅</li>
+      </ul>
+      <p style="margin:10px 0 0"><strong>Συμπέρασμα:</strong> η N-R συγκλίνει για <strong>κάθε</strong> $x_0 \in [0,1]$. Ο τύπος:</p>
+      $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} = x_n - \frac{x_n^3 + 6x_n - 1}{3x_n^2 + 6}$$
+    </div>
+
+    <div class="wbox">
+      <div class="lbl" style="color:var(--yellow)">⚠️ Μη μπερδέψεις τα δύο θεωρήματα</div>
+      <strong>Τοπική σύγκλιση</strong> (μία συνθήκη, $|g'(\xi)| \lt 1$): εγγυάται σύγκλιση μόνο
+      σε μια <em>γειτονιά</em> γύρω από τη ρίζα.<br>
+      <strong>Γενική σύγκλιση</strong> (οι πέντε παραπάνω): εγγυάται σύγκλιση από
+      <em>οποιοδήποτε</em> σημείο του $[a,b]$. Αν η ερώτηση λέει «για κάθε αρχική τιμή», θέλει τις πέντε.
+    </div>
+  </div>
+
+  <div class="section-quiz" data-topic="topic3" data-section="newton"></div>
+</section>
+
+
+<section id="flashcards">
+  <div class="sh">
+    <div class="sh-icon" style="background:var(--pdim)">🗂️</div>
+    <h2>Flashcards — Μη Γραμμικές Εξισώσεις</h2>
+  </div>
+  <p style="color:var(--muted);margin-bottom:14px">
+    Κάρτες θεωρίας για γρήγορη επανάληψη. Κάνε κλικ σε μια κάρτα για να τη γυρίσεις,
+    ή πάτησε «Υπόδειξη» αν κολλήσεις. Για τεστ σε όλα τα κεφάλαια δες τη
+    <a href="flashcards.html">σελίδα Flashcards</a>.
+  </p>
+  <div data-fc-deck="topic3"></div>
+</section>
+</div>
+
+<div class="footer">ΕΚΠΑ · Τμήμα Πληροφορικής &amp; Τηλεπικοινωνιών · Αριθμητική Ανάλυση Notes</div>
+</body>
+</html>
