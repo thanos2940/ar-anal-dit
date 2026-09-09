@@ -1237,8 +1237,16 @@ html[data-theme="light"] {
 
 /* Light Mode Component Fixes */
 html[data-theme="light"] .cb {
-    background: #f8fafc;
-    border-color: #e2e8f0;
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+/* matrix-demo also uses #060a10 as inline style in topic1 */
+html[data-theme="light"] .matrix-demo {
+    background: #f0f9ff !important;
+    border-color: #e2e8f0 !important;
+    color: var(--cyan) !important;
 }
 
 html[data-theme="light"] .kw {
@@ -2838,5 +2846,182 @@ html[data-theme="light"] .fc-hint code {
 
 
 
+
+/* ==========================================================================
+   LIGHT MODE — SPRINT & CHECKLIST COMPREHENSIVE OVERRIDES
+   Fixes all hard-coded dark values (rgba(255,255,255,...), #060a10, #090d14,
+   rgba(20,24,34,...)) so every container and text is readable in light theme.
+   ========================================================================== */
+
+/* Nav sidebar — replace dark glass with light glass */
+html[data-theme="light"] #site-nav {
+    background: rgba(248, 250, 252, 0.92);
+    border-right-color: #e2e8f0;
+}
+
+/* Sprint outer container — replace dark gradient */
+html[data-theme="light"] .sprint-container {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-color: #e2e8f0;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+}
+
+html[data-theme="light"] .sprint-container::before {
+    background: radial-gradient(circle at 100% 0%, rgba(2, 132, 199, 0.06) 0%, transparent 70%);
+}
+
+/* Progress track — replace white-alpha ghost with visible light track */
+html[data-theme="light"] .sprint-progress-track {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+/* Progress/dashboard box */
+html[data-theme="light"] .sprint-progress-wrapper,
+html[data-theme="light"] .sprint-progress-box {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+/* Sprint day cards — replace dark surf background */
+html[data-theme="light"] .sprint-day-card,
+html[data-theme="light"] #sprint-day-1,
+html[data-theme="light"] #sprint-day-2,
+html[data-theme="light"] #sprint-day-3,
+html[data-theme="light"] #sprint-day-4,
+html[data-theme="light"] #sprint-day-5 {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+html[data-theme="light"] .sprint-day-card:hover {
+    border-color: rgba(2, 132, 199, 0.3);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10);
+}
+
+/* Day 3 has a gradient overlay — reset it */
+html[data-theme="light"] #sprint-day-3 {
+    background: linear-gradient(180deg, rgba(22, 163, 74, 0.03) 0%, #ffffff 100%);
+}
+
+/* Day badge backgrounds — replace white-alpha ghost with visible light chips */
+html[data-theme="light"] .day-tier-badge,
+html[data-theme="light"] .badge-target,
+html[data-theme="light"] .badge-pass,
+html[data-theme="light"] .badge-max {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #334155;
+}
+
+html[data-theme="light"] .day-progress-pill {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #475569;
+}
+
+/* Task items — replace white-alpha dark borders with light ones */
+html[data-theme="light"] .sprint-task-item,
+html[data-theme="light"] .task-item {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+html[data-theme="light"] .sprint-task-item:hover,
+html[data-theme="light"] .task-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+html[data-theme="light"] .sprint-task-item.task-completed,
+html[data-theme="light"] .task-item.task-completed {
+    background: #f0fdf4;
+    border-color: rgba(22, 163, 74, 0.25);
+}
+
+/* Drill cards */
+html[data-theme="light"] .sprint-drill-card,
+html[data-theme="light"] .drill-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+html[data-theme="light"] .drill-header {
+    border-bottom-color: #e2e8f0;
+}
+
+/* Drill solution block — the most visible bug (#060a10 = pitch black) */
+html[data-theme="light"] .drill-solution,
+html[data-theme="light"] .drill-solution-block {
+    background: #f0fdf4;
+    border-color: rgba(22, 163, 74, 0.3);
+    border-left-color: #16a34a;
+    color: #0f172a;
+}
+
+/* Drill code blocks inside solutions */
+html[data-theme="light"] .drill-code-block,
+html[data-theme="light"] .drill-solution .code-block,
+html[data-theme="light"] .drill-solution-block .code-block {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    color: #0f172a;
+}
+
+/* Drill trap alert */
+html[data-theme="light"] .drill-trap-alert {
+    background: #fff1f2;
+    border-left-color: #dc2626;
+    color: #9f1239;
+}
+
+/* Sprint reset button */
+html[data-theme="light"] .sprint-reset-btn {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #475569;
+}
+
+/* Sprint jump card */
+html[data-theme="light"] .sprint-jump-card {
+    background: linear-gradient(135deg, #ffffff, rgba(22, 163, 74, 0.05));
+    border-color: rgba(22, 163, 74, 0.35);
+}
+
+/* calc-step connecting line — replace white-alpha with a light border */
+html[data-theme="light"] .calc-step::before {
+    background: #e2e8f0;
+}
+
+/* calc-header divider */
+html[data-theme="light"] .calc-header {
+    border-bottom-color: #e2e8f0;
+}
+
+/* calc-intermediate-box */
+html[data-theme="light"] .calc-intermediate-box {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+/* key-formula-box (defined in components.css with #060a10) */
+html[data-theme="light"] .key-formula-box {
+    background: #f0fdfa;
+    border-color: #0d9488;
+    color: #0f172a;
+}
+
+/* prereq-callout hover box-shadow: replace dark RGBA */
+html[data-theme="light"] .prereq-callout:hover {
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* TOC bar in light mode */
+html[data-theme="light"] .toc {
+    background: rgba(248, 250, 252, 0.92);
+    border-bottom-color: #e2e8f0;
+}
 
 
